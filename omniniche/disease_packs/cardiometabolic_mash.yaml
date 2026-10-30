@@ -1,0 +1,75 @@
+pack_id: cardiometabolic_mash
+display_name: "Cardiometabolic Steatohepatitis & Fibrosis (MASH / CKM Liver-Metabolic Axis)"
+archetype: lipotoxic_metabolic_vascular_fibrotic_coupling
+organ_system: Liver_Sinusoid_Metabolic
+time_scale: years_to_decades
+
+clinical_query_spec:
+  condition_terms:
+    - "Metabolic Dysfunction-Associated Steatohepatitis"
+    - "Nonalcoholic Steatohepatitis"
+    - "MASH"
+    - "NASH Fibrosis"
+  exclusion_terms:
+    - "Traumatic Brain Injury"
+    - "Epilepsy"
+    - "Viral Hepatitis C"
+    - "Alcoholic Cirrhosis"
+  stages:
+    - "t0_healthy_liver"
+    - "t1_simple_steatosis_masld"
+    - "t2_lipotoxic_mash_f1_f2_lam_recruitment"
+    - "t3_advanced_bridging_fibrosis_f3_f4_capillarization"
+  min_phase: PHASE2
+
+organ_purity_spec:
+  ambient_contamination_genes:
+    - ALB
+    - APOA1
+    - APOA2
+    - HP
+    - TTR
+    - CYP2E1
+  dissociation_stress_genes:
+    - FOS
+    - JUN
+    - ATF3
+    - HSPA1A
+    - HSPA1B
+  vital_organ_toxicity_genes:
+    - KCNH2
+    - MYH6
+    - ABCB11
+    - LDLR_ATHERO_SHIELD
+
+barrier_delivery_spec:
+  barrier_type: sinusoidal_capillarization_and_fibrotic_septa
+  stage_permeability:
+    small_molecule: [0.96, 0.94, 0.89, 0.80]
+    mAb: [0.80, 0.75, 0.52, 0.30]
+    ADC: [0.74, 0.70, 0.48, 0.28]
+    ASO_siRNA: [0.90, 0.88, 0.78, 0.62]
+
+cell_ontology_map:
+  Lipotoxic_Hepatocyte:
+    - "Steatotic Hepatocyte"
+    - "Ballooned_Senescent_Hepatocyte"
+  Lipid_Associated_Macrophage:
+    - "TREM2_CD9_LAM"
+    - "Scar-Associated_Macrophage"
+    - "Kupffer Cell"
+  Hepatic_Stellate_Myofibroblast:
+    - "Activated_HSC"
+    - "COL1A1_Hepatic_Stellate_Cell"
+  Sinusoidal_Endothelium:
+    - "LSEC"
+    - "Capillarized_CD34_LSEC"
+
+clinical_anchors:
+  positive_approved_or_phase3_wins:
+    - "Resmetirom (MAESTRO-NASH Phase 3 FDA-approved hepatocyte-specific THR-beta agonist)"
+    - "Semaglutide / Tirzepatide / Efruxifermin (ESSENCE / SYNERGY-NASH metabolic-fibrotic uncoupling)"
+  negative_scientific_failures:
+    - "Selonsertib (STELLAR-3 / STELLAR-4 Phase 3 ASK1 monotherapy failures in F3/F4)"
+    - "Cenicriviroc (AURORA Phase 3 CCR2/CCR5 antagonist monotherapy failure once HSC lock-in established)"
+    - "Elafibranor (RESOLVE-IT Phase 3 failure)"

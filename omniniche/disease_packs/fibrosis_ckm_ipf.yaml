@@ -1,0 +1,95 @@
+pack_id: fibrosis_ckm_ipf
+display_name: "Cardiovascular-Kidney-Metabolic (AKI-to-CKD) & Cross-Organ Pulmonary Fibrosis"
+archetype: chronic_mechanochemical_ecm_lockin
+organ_system: Kidney_Cortex_to_Lung_Interstitium
+time_scale: months_to_years
+
+clinical_query_spec:
+  condition_terms:
+    - "Chronic Kidney Disease"
+    - "Diabetic Kidney Disease"
+    - "Renal Fibrosis"
+    - "Idiopathic Pulmonary Fibrosis"
+  exclusion_terms:
+    - "Traumatic Brain Injury"
+    - "Epilepsy"
+    - "Alzheimer Disease"
+    - "Polycystic Ovary"
+  stages:
+    - "t0_normal_parenchyma"
+    - "t1_acute_epithelial_injury"
+    - "t2_failed_repair_transitional_epithelium"
+    - "t3_irreversible_myofibroblast_ecm_stiffening"
+  min_phase: PHASE2
+
+organ_purity_spec:
+  ambient_contamination_genes:
+    - UMOD
+    - SLC12A1
+    - SLC34A1
+    - MIOX
+    - Kap
+    - SFTPC
+    - SCGB1A1
+  dissociation_stress_genes:
+    - FOS
+    - JUN
+    - ATF3
+    - HSPA1A
+    - HSPA1B
+    - EGR1
+  vital_organ_toxicity_genes:
+    - KCNH2
+    - MYH6
+    - SCN5A
+    - NPHS1
+    - NPHS2
+
+barrier_delivery_spec:
+  barrier_type: capillary_rarefaction_and_interstitial_ecm_stiffness
+  stage_permeability:
+    small_molecule: [0.94, 0.90, 0.84, 0.76]
+    mAb: [0.72, 0.68, 0.46, 0.24]
+    ADC: [0.65, 0.62, 0.44, 0.25]
+    ASO_siRNA: [0.78, 0.74, 0.58, 0.38]
+
+cell_ontology_map:
+  Injured_Epithelium:
+    - "VCAM1_HAVCR1_Failed_Repair_PT"
+    - "Injured Proximal Tubule"
+    - "Aberrant_Basaloid_AT2"
+  Profibrotic_Macrophage:
+    - "SPP1_TREM2_Macrophage"
+    - "Monocyte-derived Macrophage"
+    - "SPP1_Alveolar_Macrophage"
+  Myofibroblast_ECM:
+    - "POSTN_ACTA2_Myofibroblast"
+    - "Pericyte-derived Myofibroblast"
+    - "CTHRC1_Myofibroblast"
+  Microvascular_Endothelium:
+    - "Peritubular Capillary Endothelial"
+    - "Glomerular Endothelial"
+    - "Pulmonary Capillary Endothelial"
+
+cross_organ_transfer:
+  source_organ: Kidney_Cortex
+  target_organ: Lung_Alveolar_Interstitium
+  compartment_alignment:
+    Injured_Epithelium: Aberrant_Basaloid_AT2
+    Profibrotic_Macrophage: SPP1_Alveolar_Macrophage
+    Myofibroblast_ECM: CTHRC1_Myofibroblast
+    Microvascular_Endothelium: Pulmonary_Capillary_Endothelium
+  gene_ortholog_or_functional_swap:
+    HAVCR1: KRT17
+    VCAM1: GDF15
+    UMOD: SFTPC
+
+clinical_anchors:
+  positive_approved_or_phase3_wins:
+    - "Finerenone (FIDELIO-DKD / FIGARO-DKD mineralocorticoid antifibrotic)"
+    - "Empagliflozin/Dapagliflozin (EMPA-KIDNEY / DAPA-CKD)"
+    - "Nerandomilast/Nintedanib/Pirfenidone (IPF multi-pathway antifibrotics)"
+  negative_scientific_failures:
+    - "Simtuzumab (anti-LOXL2 mAb Phase 2/3 failure due to dense ECM exclusion & intracellular crosslinking)"
+    - "Bardoxolone methyl (BEACON Phase 3 heart failure safety termination)"
+    - "Pamrevlumab (ZEPHYRUS-1 Phase 3 anti-CTGF mAb monotherapy failure in established IPF)"

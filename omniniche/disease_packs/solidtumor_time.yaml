@@ -1,0 +1,76 @@
+pack_id: solidtumor_time
+display_name: "Desmoplastic Solid Tumor Immune Microenvironment (NSCLC / PDAC / CRC)"
+archetype: stromal_exclusion_and_epigenetic_t_exhaustion
+organ_system: Solid_Tumor_Stroma_Immune
+time_scale: months_to_years
+
+clinical_query_spec:
+  condition_terms:
+    - "Non-Small Cell Lung Cancer"
+    - "Pancreatic Ductal Adenocarcinoma"
+    - "Metastatic Colorectal Cancer"
+  exclusion_terms:
+    - "Traumatic Brain Injury"
+    - "Epilepsy"
+    - "Acute Lymphoblastic Leukemia"
+  stages:
+    - "t0_adjacent_normal_tissue"
+    - "t1_early_immune_infiltrated_lesion"
+    - "t2_mycaf_collagen_exclusion_remodeling"
+    - "t3_ici_refractory_tox_epigenetic_exhaustion"
+  min_phase: PHASE2
+
+organ_purity_spec:
+  ambient_contamination_genes:
+    - KRT8
+    - KRT18
+    - KRT19
+    - EPCAM
+    - PRSS1
+    - CPA1
+  dissociation_stress_genes:
+    - FOS
+    - JUN
+    - HSPA1A
+    - HSPA1B
+    - DUSP1
+    - IER2
+  vital_organ_toxicity_genes:
+    - KCNH2
+    - MYH6
+    - TNNI3
+    - ERBB2_CARDIAC_SHIELD
+
+barrier_delivery_spec:
+  barrier_type: desmoplastic_mycaf_collagen_physical_exclusion
+  stage_permeability:
+    small_molecule: [0.92, 0.89, 0.82, 0.75]
+    mAb: [0.76, 0.70, 0.42, 0.22]
+    ADC: [0.72, 0.68, 0.58, 0.48]
+    ASO_siRNA: [0.55, 0.50, 0.32, 0.18]
+
+cell_ontology_map:
+  Suppressive_Myeloid_TAM:
+    - "SPP1_TAM"
+    - "C1QC_TAM"
+    - "MDSC"
+  Desmoplastic_CAF:
+    - "COL1A1_MMP11_myCAF"
+    - "IL6_iCAF"
+    - "Cancer-Associated Fibroblast"
+  Exhausted_CD8_T:
+    - "TOX_PDCD1_Tex_CD8"
+    - "Progenitor_Exhausted_Tpex"
+    - "CD8 T cell"
+  Malignant_Epithelium:
+    - "Malignant Epithelial"
+    - "Tumor Cell"
+
+clinical_anchors:
+  positive_approved_or_phase3_wins:
+    - "Pembrolizumab/Atezolizumab + Anti-VEGF/Chemo (IMpower150 / KEYNOTE-189 vascular-stromal remodeling)"
+    - "Bystander-payload Topo-I ADCs (Trastuzumab deruxtecan / Ifinatamab deruxtecan)"
+  negative_scientific_failures:
+    - "Epacadostat + Pembrolizumab (ECHO-301 Phase 3 IDO1 monotherapy-add-on failure)"
+    - "PEGPH20 (HALO-301 Phase 3 hyaluronidase failure without myeloid/checkpoint co-unlocking)"
+    - "Single-agent anti-PD-1/PD-L1 in MSS-CRC and desmoplastic PDAC"

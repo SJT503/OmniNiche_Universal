@@ -1,0 +1,81 @@
+pack_id: sepsis_ards
+display_name: "Sepsis and Acute Respiratory Distress Syndrome (ARDS)"
+archetype: hyperacute_biphasic_flip
+organ_system: Systemic_Vascular_Lung
+time_scale: hours_to_days
+
+clinical_query_spec:
+  condition_terms:
+    - "Sepsis"
+    - "Septic Shock"
+    - "Acute Respiratory Distress Syndrome"
+    - "Severe Sepsis"
+  exclusion_terms:
+    - "Traumatic Brain Injury"
+    - "Epilepsy"
+    - "Glioblastoma"
+    - "Neonatal Jaundice"
+  stages:
+    - "t0_healthy_baseline"
+    - "t1_hyperacute_cytokine_storm_0_12h"
+    - "t2_endothelial_glycocalyx_leak_12_48h"
+    - "t3_late_hla_dr_immunoparalysis_72h_plus"
+  min_phase: PHASE2
+
+organ_purity_spec:
+  ambient_contamination_genes:
+    - HBA1
+    - HBB
+    - HBA2
+    - PPBP
+    - PF4
+    - ALAS2
+  dissociation_stress_genes:
+    - FOS
+    - JUN
+    - FOSB
+    - HSPA1A
+    - HSPA1B
+    - DNAJB1
+    - EGR1
+  vital_organ_toxicity_genes:
+    - KCNH2
+    - MYH6
+    - SCN5A
+    - CYP3A4
+
+barrier_delivery_spec:
+  barrier_type: endothelial_glycocalyx_microthrombus_biphasic
+  stage_permeability:
+    small_molecule: [0.95, 0.93, 0.86, 0.70]
+    mAb: [0.50, 0.88, 0.68, 0.34]
+    ADC: [0.42, 0.78, 0.58, 0.28]
+    ASO_siRNA: [0.35, 0.62, 0.45, 0.22]
+
+cell_ontology_map:
+  Initiator_Myeloid:
+    - "CD14 Monocyte"
+    - "MS1_Monocyte"
+    - "HLA_DR_low_Monocyte"
+    - "Alveolar Macrophage"
+  Amplifier_Neutrophil:
+    - "Neutrophil"
+    - "Immature_Neutrophil"
+    - "NET_forming_Neutrophil"
+  Barrier_Endothelium:
+    - "Capillary Endothelial"
+    - "Aerocyte"
+    - "Venular Endothelial"
+  Target_Alveolar_Epithelium:
+    - "AT1"
+    - "AT2"
+    - "Alveolar Epithelial"
+
+clinical_anchors:
+  positive_approved_or_phase3_wins:
+    - "Hydrocortisone+Fludrocortisone (APROCCHSS refractory shock window)"
+    - "Baricitinib/Tocilizumab (early severe hyperinflammatory ARDS subphenotype)"
+  negative_scientific_failures:
+    - "Eritoran (ACCESS Phase 3 TLR4 antagonist failure in unstratified late sepsis)"
+    - "Infliximab/Afelimomab (anti-TNF Phase 3 mortality/futility in late immunoparalysis)"
+    - "Drotrecogin alfa (PROWESS-SHOCK Phase 3 withdrawal)"

@@ -1,0 +1,76 @@
+pack_id: autoimmune_ibd_ra
+display_name: "Autoimmune Mucosal & Synovial Remodeling (Ulcerative Colitis / Crohn's / RA)"
+archetype: relapsing_compensatory_stromal_escape
+organ_system: Gut_Mucosa_and_Synovium
+time_scale: weeks_to_months
+
+clinical_query_spec:
+  condition_terms:
+    - "Ulcerative Colitis"
+    - "Crohn Disease"
+    - "Inflammatory Bowel Disease"
+    - "Rheumatoid Arthritis"
+  exclusion_terms:
+    - "Traumatic Brain Injury"
+    - "Epilepsy"
+    - "Infectious Gastroenteritis"
+  stages:
+    - "t0_healthy_mucosa_or_synovium"
+    - "t1_biologic_naive_active_flare"
+    - "t2_on_treatment_induction_phase"
+    - "t3_anti_tnf_refractory_osmr_fibroblast_escape"
+  min_phase: PHASE2
+
+organ_purity_spec:
+  ambient_contamination_genes:
+    - FABP1
+    - MUC2
+    - TFF3
+    - PIGR
+    - IGHA1
+    - JCHAIN
+  dissociation_stress_genes:
+    - FOS
+    - JUN
+    - NR4A1
+    - HSPA1A
+    - HSPA1B
+  vital_organ_toxicity_genes:
+    - KCNH2
+    - MYH6
+    - JAK2_HEMATOPOIETIC_SHIELD
+
+barrier_delivery_spec:
+  barrier_type: mucosal_ulcer_leak_and_tmdd_stromal_sink
+  stage_permeability:
+    small_molecule: [0.95, 0.93, 0.90, 0.86]
+    mAb: [0.68, 0.74, 0.56, 0.35]
+    ADC: [0.55, 0.60, 0.45, 0.28]
+    ASO_siRNA: [0.48, 0.52, 0.40, 0.25]
+
+cell_ontology_map:
+  Infiltrating_Myeloid:
+    - "OSM_Inflammatory_Monocyte"
+    - "IL1B_Macrophage"
+    - "Neutrophil"
+  Inflammatory_Fibroblast:
+    - "OSMR_IL11_CHI3L1_Fibroblast"
+    - "THY1_Sublining_Fibroblast"
+    - "Inflammatory Stromal"
+  Effector_Th17_T:
+    - "IL17A_IL23R_Th17"
+    - "Tissue-Resident_Memory_T"
+  Mucosal_Epithelium_Endothelium:
+    - "Colonocyte"
+    - "Crypt Epithelial"
+    - "ACKR1_Venular_Endothelial"
+
+clinical_anchors:
+  positive_approved_or_phase3_wins:
+    - "Upadacitinib (oral JAK1 inhibitor penetrating anti-TNF-refractory stromal STAT3 escape)"
+    - "Risankizumab / Guselkumab (selective IL-23p19 blockade)"
+    - "Guselkumab + Golimumab combination (VEGA trial dual-pathway synergy in UC)"
+  negative_scientific_failures:
+    - "Vixarelimab (NCT06137183 anti-OSMRbeta mAb Phase 2 termination in heavily pretreated fibrotic UC)"
+    - "Cobitolimod / Mongersen (Phase 3 luminal oligonucleotide delivery failures)"
+    - "Secukinumab in Crohn's disease (paradoxical epithelial barrier exacerbation by IL-17A blockade)"
