@@ -1,0 +1,58 @@
+{
+  "api_raw_records_fetched": 43878,
+  "duplicate_across_axes_removed": 1895,
+  "cns_neuro_firewall_excluded": 587,
+  "final_unique_non_cns_trials": 41396,
+  "target_resolved_trials": 29791,
+  "per_axis_counts": {
+    "Solid_Oncology": {
+      "api_total_available": 15981,
+      "unique_non_cns_kept": 15717
+    },
+    "Hepatic_MASH_Fibrosis": {
+      "api_total_available": 937,
+      "unique_non_cns_kept": 902
+    },
+    "Pulmonary_IPF_ARDS": {
+      "api_total_available": 3583,
+      "unique_non_cns_kept": 3525
+    },
+    "Renal_CKD_AKI": {
+      "api_total_available": 1939,
+      "unique_non_cns_kept": 1864
+    },
+    "Autoimmune_IBD_Rheum": {
+      "api_total_available": 2694,
+      "unique_non_cns_kept": 2529
+    },
+    "Cardiovascular_HF_Athero": {
+      "api_total_available": 3687,
+      "unique_non_cns_kept": 3381
+    },
+    "Metabolic_Endocrine": {
+      "api_total_available": 5807,
+      "unique_non_cns_kept": 4915
+    },
+    "Infectious_Sepsis": {
+      "api_total_available": 807,
+      "unique_non_cns_kept": 690
+    },
+    "Hematologic_Malignancy": {
+      "api_total_available": 3871,
+      "unique_non_cns_kept": 3695
+    },
+    "Dermatologic_Immune": {
+      "api_total_available": 1793,
+      "unique_non_cns_kept": 1740
+    },
+    "Musculoskeletal_Bone": {
+      "api_total_available": 1735,
+      "unique_non_cns_kept": 1424
+    },
+    "Ophthalmic_Retinal": {
+      "api_total_available": 1044,
+      "unique_non_cns_kept": 1014
+    }
+  },
+  "opentargets_lookup_keys": 17797
+}

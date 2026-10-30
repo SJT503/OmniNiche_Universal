@@ -1,0 +1,7 @@
+disease_axis,n_definitive_trials,n_phase34_completed,static_tau0_auroc,drift_no_barrier_auroc,omniniche_dynamic_auroc,static_tau0_or_per_sd,omniniche_or_per_sd,omniniche_pvalue
+Hepatic_MASH_Fibrosis,388,188,0.4114,0.5302,0.5326,0.9721,1.1346,0.21790519314010903
+Pulmonary_IPF_ARDS,1946,1264,0.5853,0.5907,0.6104,0.7214,1.4945,9.308865772575726e-17
+Renal_CKD_AKI,908,575,0.4769,0.5172,0.5444,1.004,1.1666,0.024397200714702808
+Solid_Oncology,9255,2255,0.5313,0.5765,0.5754,1.1065,1.3729,1.1565982735597229e-39
+Autoimmune_IBD_Rheum,1507,906,0.6037,0.6461,0.6993,1.4379,2.0688,2.264697096086077e-33
+Infectious_Sepsis,144,88,0.4738,0.5193,0.4732,1.061,0.9135,0.5936589239371111

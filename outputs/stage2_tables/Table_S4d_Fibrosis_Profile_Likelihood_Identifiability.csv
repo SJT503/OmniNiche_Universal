@@ -1,0 +1,5 @@
+edge_index,source,target,nominal_weight_v,max_delta_chi2_lower,max_delta_chi2_upper,identifiable_95ci
+0,Parenchyma_Injury,SPP1_SAMac,0.3508,565.243,159.514,True
+1,SPP1_SAMac,Myofibroblast,0.5358,569.74,348.631,True
+2,Myofibroblast,SPP1_SAMac,0.5308,0.0,180.187,False
+3,Myofibroblast,Parenchyma_Injury,0.3413,81.385,175.821,True

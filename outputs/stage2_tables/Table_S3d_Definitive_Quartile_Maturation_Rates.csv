@@ -1,0 +1,5 @@
+quartile,n_trials_static,static_tau0_maturation_pct,n_trials_omniniche,omniniche_maturation_pct
+Q1_Low,5992,44.5761,5992,25.9012
+Q2,5992,42.2063,5992,40.4539
+Q3,5991,44.6002,5991,52.2117
+Q4_High,5992,53.4045,5992,66.2216

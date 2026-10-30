@@ -1,0 +1,7 @@
+benchmark,method,auroc,auprc,brier_score
+PanOrgan_Fibrosis_14_Phase2b3_Trials,OmniNiche_v2_ZeroShot_Langevin,0.9583,0.9583,0.1257
+PanOrgan_Fibrosis_14_Phase2b3_Trials,B1_Static_Healthy_Tau0,0.5,0.4947,0.3181
+PanOrgan_Fibrosis_14_Phase2b3_Trials,B2_Polypharmacology_Target_Count,0.6667,0.6476,0.2502
+PanOrgan_Fibrosis_14_Phase2b3_Trials,B3_SingleCell_GRN_Retention_Only,0.5,0.4472,0.2587
+PanOrgan_Fibrosis_14_Phase2b3_Trials,B4_Static_LR_Compartment_Degree,0.9167,0.9048,0.1375
+PanOrgan_Fibrosis_14_Phase2b3_Trials,B5_Uninformative_Modality_Prior,0.75,0.6,0.2364

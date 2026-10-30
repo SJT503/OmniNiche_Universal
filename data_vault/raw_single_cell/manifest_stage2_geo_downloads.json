@@ -1,0 +1,554 @@
+{
+  "total_files": 74,
+  "total_size_gb": 4.363,
+  "files": [
+    {
+      "cohort": "GSE207422_NSCLC_AntiPD1",
+      "file": "GSE207422_series_matrix.txt.gz",
+      "bytes": 4588,
+      "mb": 0.0,
+      "sha256": "2a2ea1afc54b95e00ab8028d7bb259c1ed8ec1ed907e03f25f6b459aaa25fef9",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE207nnn/GSE207422/matrix/GSE207422_series_matrix.txt.gz"
+    },
+    {
+      "cohort": "GSE207422_NSCLC_AntiPD1",
+      "file": "GSE207422_NSCLC_scRNAseq_metadata.xlsx",
+      "bytes": 11323,
+      "mb": 0.01,
+      "sha256": "d098a750c7ebc595994c929b666177f25c4da6fe3d3e38bb795269a1fb21053e",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE207nnn/GSE207422/suppl/GSE207422_NSCLC_scRNAseq_metadata.xlsx"
+    },
+    {
+      "cohort": "GSE207422_NSCLC_AntiPD1",
+      "file": "GSE207422_NSCLC_bulk_RNAseq_metadata.xlsx",
+      "bytes": 12056,
+      "mb": 0.01,
+      "sha256": "c22d003db9315f38c95d7b51f46f2047130d213f6c4daa77f4dd754951930ea5",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE207nnn/GSE207422/suppl/GSE207422_NSCLC_bulk_RNAseq_metadata.xlsx"
+    },
+    {
+      "cohort": "GSE123813_BCC_SCC_AntiPD1",
+      "file": "GSE123813_bcc_all_metadata.txt.gz",
+      "bytes": 1384659,
+      "mb": 1.32,
+      "sha256": "8fad3be2c9777f9b56f7dcade4a54d1d71d6157e8a9f86711e6e75b509bd5235",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE123nnn/GSE123813/suppl/GSE123813_bcc_all_metadata.txt.gz"
+    },
+    {
+      "cohort": "GSE207422_NSCLC_AntiPD1",
+      "file": "GSE207422_NSCLC_bulk_RNAseq_log2TPM.txt.gz",
+      "bytes": 5629640,
+      "mb": 5.37,
+      "sha256": "fab29dc212ace1c45fd9333f2cf9d277eac6236d89945931efceede0f20e74b9",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE207nnn/GSE207422/suppl/GSE207422_NSCLC_bulk_RNAseq_log2TPM.txt.gz"
+    },
+    {
+      "cohort": "GSE123813_BCC_SCC_AntiPD1",
+      "file": "GSE123813_scc_metadata.txt.gz",
+      "bytes": 654637,
+      "mb": 0.62,
+      "sha256": "82533566eab224ba71f5cf1de0fa8714b20de57becbfc5b5d0317d49aa6f2837",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE123nnn/GSE123813/suppl/GSE123813_scc_metadata.txt.gz"
+    },
+    {
+      "cohort": "GSE123813_BCC_SCC_AntiPD1",
+      "file": "GSE123813_scc_scRNA_counts.txt.gz",
+      "bytes": 47514459,
+      "mb": 45.31,
+      "sha256": "cd26a7289babd8b81b9ccb1b2e598bac096e26a92f5a891cf65e8570393fbd7a",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE123nnn/GSE123813/suppl/GSE123813_scc_scRNA_counts.txt.gz"
+    },
+    {
+      "cohort": "GSE171351_BladderCa_Visium",
+      "file": "GSE171351_series_matrix.txt.gz",
+      "bytes": 2548,
+      "mb": 0.0,
+      "sha256": "d085faa83c4043453b4ef1599c8a6208d8d2f8fff138f7c1aa1344fbec21daed",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE171nnn/GSE171351/matrix/GSE171351_series_matrix.txt.gz"
+    },
+    {
+      "cohort": "GSE123813_BCC_SCC_AntiPD1",
+      "file": "GSE123813_bcc_scRNA_counts.txt.gz",
+      "bytes": 105220738,
+      "mb": 100.35,
+      "sha256": "3f8134b3de192e4790d92e678a1591f3b385dc1e8943d9ff33e038685e33bb22",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE123nnn/GSE123813/suppl/GSE123813_bcc_scRNA_counts.txt.gz"
+    },
+    {
+      "cohort": "GSE171351_BladderCa_Visium",
+      "file": "GSE171351_combined_visium.h5ad.gz",
+      "bytes": 48963566,
+      "mb": 46.7,
+      "sha256": "67287c8badfc6af009385b0f12a9aa9750e6a7b5e2216b8b3ca16c5145697ae7",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE171nnn/GSE171351/suppl/GSE171351_combined_visium.h5ad.gz"
+    },
+    {
+      "cohort": "GSE207422_NSCLC_AntiPD1",
+      "file": "GSE207422_NSCLC_scRNAseq_UMI_matrix.txt.gz",
+      "bytes": 132684508,
+      "mb": 126.54,
+      "sha256": "b23fd1066a772f0af7b4d159f1c693a3934eb4d9737f3f651931c44709d7945b",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE207nnn/GSE207422/suppl/GSE207422_NSCLC_scRNAseq_UMI_matrix.txt.gz"
+    },
+    {
+      "cohort": "GSE203612_PanCancer_Visium",
+      "file": "GSE203612_RAW.tar",
+      "bytes": 708270080,
+      "mb": 675.46,
+      "sha256": "5178ae0bea3f2d95f7155aaba149a7e332499cc166b0d6c0f9e913f3a4db3a4d",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE203nnn/GSE203612/suppl/GSE203612_RAW.tar"
+    },
+    {
+      "cohort": "GSE136103_Human_Liver_Cirrhosis",
+      "file": "GSE136103_RAW.tar",
+      "bytes": 436234240,
+      "mb": 416.03,
+      "sha256": "f986793cbf2008dee10fb42a534812189a4d921a95f4da02784d5b1bd581d495",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE136nnn/GSE136103/suppl/GSE136103_RAW.tar"
+    },
+    {
+      "cohort": "GSE269926_Human_MASH_Liver",
+      "file": "GSE269926_series_matrix.txt.gz",
+      "bytes": 2994,
+      "mb": 0.0,
+      "sha256": "3b0e307fa30c2f4f88b6a188af8788330f4103b689a801438969051574b53e81",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE269nnn/GSE269926/matrix/GSE269926_series_matrix.txt.gz"
+    },
+    {
+      "cohort": "GSE269926_Human_MASH_Liver",
+      "file": "GSE269926_barcodes.tsv.gz",
+      "bytes": 31520,
+      "mb": 0.03,
+      "sha256": "2dcc663bec4436e1083c237f918935cd956857bc3f020c7a7220cc553f427cdf",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE269nnn/GSE269926/suppl/GSE269926_barcodes.tsv.gz"
+    },
+    {
+      "cohort": "GSE269926_Human_MASH_Liver",
+      "file": "GSE269926_features.tsv.gz",
+      "bytes": 242430,
+      "mb": 0.23,
+      "sha256": "9196fd9c347e18e5301a6440ed8635e9402ac36c70063969227a3f366564383c",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE269nnn/GSE269926/suppl/GSE269926_features.tsv.gz"
+    },
+    {
+      "cohort": "GSE269926_Human_MASH_Liver",
+      "file": "GSE269926_matrix.mtx.gz",
+      "bytes": 28875618,
+      "mb": 27.54,
+      "sha256": "f304ac4372e8f06ac1ed35cbf49dd3cdd9915866ed4ff2d0d15da9ffe4c8778a",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE269nnn/GSE269926/suppl/GSE269926_matrix.mtx.gz"
+    },
+    {
+      "cohort": "GSE269926_Human_MASH_Liver",
+      "file": "GSE269926_meta_data.tsv.gz",
+      "bytes": 38868,
+      "mb": 0.04,
+      "sha256": "3d5f4505f6aa823e1e8e3fe0d630d49e1ea17a5f8228eed825d7461aa9267c76",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE269nnn/GSE269926/suppl/GSE269926_meta_data.tsv.gz"
+    },
+    {
+      "cohort": "GSE123813_BCC_SCC_AntiPD1",
+      "file": "GSE123813_series_matrix.txt.gz",
+      "bytes": 2711,
+      "mb": 0.0,
+      "sha256": "3f0667c3dc9d868cd19a4da916a0482278b4f8b3099a9a771815a2b0d78a2bc1",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE123nnn/GSE123813/matrix/GSE123813_series_matrix.txt.gz"
+    },
+    {
+      "cohort": "GSE203612_PanCancer_Visium",
+      "file": "GSE203612_series_matrix.txt.gz",
+      "bytes": 6717,
+      "mb": 0.01,
+      "sha256": "9bf8a98f5cfd8dc85bc0f3366534219c38d3b02edb7898935643bb3ed15a89fb",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE203nnn/GSE203612/matrix/GSE203612_series_matrix.txt.gz"
+    },
+    {
+      "cohort": "GSE135893_Human_Lung_IPF",
+      "file": "GSE135893_series_matrix.txt.gz",
+      "bytes": 2335,
+      "mb": 0.0,
+      "sha256": "ff72fff874bdb7d30c9fa9ef79afcc7010c550a71728766165bc0e8b5fd581c5",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE135nnn/GSE135893/matrix/GSE135893_series_matrix.txt.gz"
+    },
+    {
+      "cohort": "GSE136103_Human_Liver_Cirrhosis",
+      "file": "GSE136103_series_matrix.txt.gz",
+      "bytes": 3344,
+      "mb": 0.0,
+      "sha256": "5ce189b89d707892cd1f36934218707461420918e6a5ad54b734899915a4a071",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE136nnn/GSE136103/matrix/GSE136103_series_matrix.txt.gz"
+    },
+    {
+      "cohort": "GSE135893_Human_Lung_IPF",
+      "file": "GSE135893_IPF_metadata.csv.gz",
+      "bytes": 3354014,
+      "mb": 3.2,
+      "sha256": "5c67b3717375859aafc4463024847cf30d7af7bb9d5f4ad9a5364ee6d7726bf5",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE135nnn/GSE135893/suppl/GSE135893_IPF_metadata.csv.gz"
+    },
+    {
+      "cohort": "GSE135893_Human_Lung_IPF",
+      "file": "GSE135893_barcodes.tsv.gz",
+      "bytes": 936873,
+      "mb": 0.89,
+      "sha256": "37a9a98a95d59bb4333c8181c14bb2b384701e6fda1c409e79f3e41c681430d4",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE135nnn/GSE135893/suppl/GSE135893_barcodes.tsv.gz"
+    },
+    {
+      "cohort": "GSE135893_Human_Lung_IPF",
+      "file": "GSE135893_genes.tsv.gz",
+      "bytes": 129668,
+      "mb": 0.12,
+      "sha256": "7e8612e72f033ef214de101bb782ab1cb60b8c887be2d3e8a0d637de067b0233",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE135nnn/GSE135893/suppl/GSE135893_genes.tsv.gz"
+    },
+    {
+      "cohort": "GSE250487_Human_UC_Biopsy",
+      "file": "GSE250487_series_matrix.txt.gz",
+      "bytes": 4731,
+      "mb": 0.0,
+      "sha256": "cb0008a0091c7c376b3fdd4c1ff91f1d4fe8b655f125748d5c2007923c7d9b90",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE250nnn/GSE250487/matrix/GSE250487_series_matrix.txt.gz"
+    },
+    {
+      "cohort": "GSE167363_Human_Longitudinal_Sepsis",
+      "file": "GSE167363_series_matrix.txt.gz",
+      "bytes": 4864,
+      "mb": 0.0,
+      "sha256": "5eeb27b20361fbc36bb3dbae3cb256f72d7fd43de7a149cbd84d4673774bcb7f",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE167nnn/GSE167363/matrix/GSE167363_series_matrix.txt.gz"
+    },
+    {
+      "cohort": "GSE167363_Human_Longitudinal_Sepsis",
+      "file": "GSE167363_RAW.tar",
+      "bytes": 336906240,
+      "mb": 321.3,
+      "sha256": "7c809168de0192f2632c9847110c30c30e1c4fffe01c1f250e2f35263b79881f",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE167nnn/GSE167363/suppl/GSE167363_RAW.tar"
+    },
+    {
+      "cohort": "GSE250487_Human_UC_Biopsy",
+      "file": "GSE250487_biopsy_RNA.h5ad.gz",
+      "bytes": 606882181,
+      "mb": 578.77,
+      "sha256": "3643266b68b5ea828920634ea4f9dccbdadd418f993c548334ede378998308f3",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE250nnn/GSE250487/suppl/GSE250487_biopsy_RNA.h5ad.gz"
+    },
+    {
+      "cohort": "GSE135893_Human_Lung_IPF",
+      "file": "GSE135893_matrix.mtx.gz",
+      "bytes": 1076137992,
+      "mb": 1026.29,
+      "sha256": "036987d06ed9625a71f5e5be0717c2598e914a6c9cad0628f61a8ebb66e695a6",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE135nnn/GSE135893/suppl/GSE135893_matrix.mtx.gz"
+    },
+    {
+      "cohort": "GSE271188_Human_Kidney_CKD",
+      "file": "GSE271188_series_matrix.txt.gz",
+      "bytes": 5150,
+      "sha256": "9585511873198f4da94ca116dc38d360df25a98b1f68538b56f14f647bffa7d1",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE271nnn/GSE271188/matrix/GSE271188_series_matrix.txt.gz"
+    },
+    {
+      "cohort": "GSE271188_Human_Kidney_CKD",
+      "file": "filelist.txt",
+      "bytes": 8811,
+      "sha256": "79bfd6a50188e6592881ca6043eef444ded4ce37b9a3a1a61b521aa57171dd84",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE271nnn/GSE271188/suppl/filelist.txt"
+    },
+    {
+      "cohort": "GSE271188_Human_Kidney_CKD",
+      "file": "GSM8371526_kidney_snRNA_14_barcodes.tsv.gz",
+      "bytes": 50574,
+      "sha256": "ed78593691393044db071c6562d677d9fda6a5671aa531cf08346cfb69ba7dd4",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/samples/GSM8371nnn/GSM8371526/suppl/GSM8371526_kidney_snRNA_14_barcodes.tsv.gz"
+    },
+    {
+      "cohort": "GSE271188_Human_Kidney_CKD",
+      "file": "GSM8371526_kidney_snRNA_14_features.tsv.gz",
+      "bytes": 333437,
+      "sha256": "fca929f70cee91b6abfbfa3691f31bd129eee0a6745559157987f7535e80b307",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/samples/GSM8371nnn/GSM8371526/suppl/GSM8371526_kidney_snRNA_14_features.tsv.gz"
+    },
+    {
+      "cohort": "GSE271188_Human_Kidney_CKD",
+      "file": "GSM8371526_kidney_snRNA_14_matrix.mtx.gz",
+      "bytes": 53273517,
+      "sha256": "5b555465e84b968ac73e0e69c0cfc5c063147dd87a99483d3c9b9d399e3dd5ac",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/samples/GSM8371nnn/GSM8371526/suppl/GSM8371526_kidney_snRNA_14_matrix.mtx.gz"
+    },
+    {
+      "cohort": "GSE271188_Human_Kidney_CKD",
+      "file": "GSM8371527_kidney_snRNA_15_barcodes.tsv.gz",
+      "bytes": 50840,
+      "sha256": "973cc2b96dc70d201b0dc56e2fe7727c54845a4d1685ba176c1ddc2a236818cc",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/samples/GSM8371nnn/GSM8371527/suppl/GSM8371527_kidney_snRNA_15_barcodes.tsv.gz"
+    },
+    {
+      "cohort": "GSE271188_Human_Kidney_CKD",
+      "file": "GSM8371527_kidney_snRNA_15_features.tsv.gz",
+      "bytes": 333437,
+      "sha256": "cfc82ce0c150de8caccdf1cfd6edf1d6624a844131f6393daa2012014ff15668",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/samples/GSM8371nnn/GSM8371527/suppl/GSM8371527_kidney_snRNA_15_features.tsv.gz"
+    },
+    {
+      "cohort": "GSE271188_Human_Kidney_CKD",
+      "file": "GSM8371527_kidney_snRNA_15_matrix.mtx.gz",
+      "bytes": 106571426,
+      "sha256": "2e74f42f25d9e2f2b4d21050f78911a849863c2d7e75646dc6d3f2b0b9532b83",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/samples/GSM8371nnn/GSM8371527/suppl/GSM8371527_kidney_snRNA_15_matrix.mtx.gz"
+    },
+    {
+      "cohort": "GSE271188_Human_Kidney_CKD",
+      "file": "GSM8371528_kidney_snRNA_16_barcodes.tsv.gz",
+      "bytes": 50891,
+      "sha256": "77028a1b5007931887bc50a78e159b2e5a644113af0785b361cbe3e398165ca4",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/samples/GSM8371nnn/GSM8371528/suppl/GSM8371528_kidney_snRNA_16_barcodes.tsv.gz"
+    },
+    {
+      "cohort": "GSE271188_Human_Kidney_CKD",
+      "file": "GSM8371528_kidney_snRNA_16_features.tsv.gz",
+      "bytes": 333437,
+      "sha256": "0dc69c199d238c7b4c9e89afa14d28fdce3e29e310876bf5aedab6ea41aaa42c",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/samples/GSM8371nnn/GSM8371528/suppl/GSM8371528_kidney_snRNA_16_features.tsv.gz"
+    },
+    {
+      "cohort": "GSE271188_Human_Kidney_CKD",
+      "file": "GSM8371528_kidney_snRNA_16_matrix.mtx.gz",
+      "bytes": 92858551,
+      "sha256": "742a56a111ba21295f6985f76a3f943a2d68448e70fe66461614f5e447e48bf8",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/samples/GSM8371nnn/GSM8371528/suppl/GSM8371528_kidney_snRNA_16_matrix.mtx.gz"
+    },
+    {
+      "cohort": "GSE271188_Human_Kidney_CKD",
+      "file": "GSM8371529_kidney_snRNA_17_barcodes.tsv.gz",
+      "bytes": 50730,
+      "sha256": "a26688c0c5ba97c577e0ccaaeb71dddeca0391bcccc04c65f693ddfcd4c534b9",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/samples/GSM8371nnn/GSM8371529/suppl/GSM8371529_kidney_snRNA_17_barcodes.tsv.gz"
+    },
+    {
+      "cohort": "GSE271188_Human_Kidney_CKD",
+      "file": "GSM8371529_kidney_snRNA_17_features.tsv.gz",
+      "bytes": 333437,
+      "sha256": "c287626c4708864c8efbd892e66d16d7270cb7fd3aa20b11649e8f6fb665a358",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/samples/GSM8371nnn/GSM8371529/suppl/GSM8371529_kidney_snRNA_17_features.tsv.gz"
+    },
+    {
+      "cohort": "GSE271188_Human_Kidney_CKD",
+      "file": "GSM8371529_kidney_snRNA_17_matrix.mtx.gz",
+      "bytes": 112339263,
+      "sha256": "2a0776d06f3a6f12e1b845055570d2e2a7673dffa177a04ef8a0ba12889a3939",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/samples/GSM8371nnn/GSM8371529/suppl/GSM8371529_kidney_snRNA_17_matrix.mtx.gz"
+    },
+    {
+      "cohort": "GSE271188_Human_Kidney_CKD",
+      "file": "GSM8371530_kidney_snRNA_18_barcodes.tsv.gz",
+      "bytes": 50754,
+      "sha256": "cbe38b373c0cab8c2d5ca8e6789386169e6a0cee096c36d8c0c4b5dd6cd24d47",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/samples/GSM8371nnn/GSM8371530/suppl/GSM8371530_kidney_snRNA_18_barcodes.tsv.gz"
+    },
+    {
+      "cohort": "GSE271188_Human_Kidney_CKD",
+      "file": "GSM8371530_kidney_snRNA_18_features.tsv.gz",
+      "bytes": 333437,
+      "sha256": "8b72cce9e8fa2734d2b3b001eb2d094bdd19604f453dfe5828e9abdc16c17e51",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/samples/GSM8371nnn/GSM8371530/suppl/GSM8371530_kidney_snRNA_18_features.tsv.gz"
+    },
+    {
+      "cohort": "GSE271188_Human_Kidney_CKD",
+      "file": "GSM8371530_kidney_snRNA_18_matrix.mtx.gz",
+      "bytes": 102248876,
+      "sha256": "84821091aaf9f9f9171edd8f8a8bfecf07528675b63fea0cc0114c48d3017195",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/samples/GSM8371nnn/GSM8371530/suppl/GSM8371530_kidney_snRNA_18_matrix.mtx.gz"
+    },
+    {
+      "cohort": "GSE271188_Human_Kidney_CKD",
+      "file": "GSM8371513_kidney_snRNA_1_barcodes.tsv.gz",
+      "bytes": 70297,
+      "sha256": "fc6f54a672d0402c9eb03d803023f346cab6e41d2e2d599ffc43bad69468da98",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/samples/GSM8371nnn/GSM8371513/suppl/GSM8371513_kidney_snRNA_1_barcodes.tsv.gz"
+    },
+    {
+      "cohort": "GSE271188_Human_Kidney_CKD",
+      "file": "GSM8371513_kidney_snRNA_1_features.tsv.gz",
+      "bytes": 333437,
+      "sha256": "ce50620ad2fcb2c6ab961afb1fcf0e72283609d96eaaffec564af5d3d6da6a41",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/samples/GSM8371nnn/GSM8371513/suppl/GSM8371513_kidney_snRNA_1_features.tsv.gz"
+    },
+    {
+      "cohort": "GSE271188_Human_Kidney_CKD",
+      "file": "GSM8371513_kidney_snRNA_1_matrix.mtx.gz",
+      "bytes": 97309518,
+      "sha256": "62e0d1474ee4d9e60b13d5b85495ce6de57533ec4266c78cb79410d1effab093",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/samples/GSM8371nnn/GSM8371513/suppl/GSM8371513_kidney_snRNA_1_matrix.mtx.gz"
+    },
+    {
+      "cohort": "GSE271188_Human_Kidney_CKD",
+      "file": "GSM8371514_kidney_snRNA_2_barcodes.tsv.gz",
+      "bytes": 33808,
+      "sha256": "7c9108b917734d242f20050e871634a8ceef9e4edae5655ea3f7b2f9d8fe43ed",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/samples/GSM8371nnn/GSM8371514/suppl/GSM8371514_kidney_snRNA_2_barcodes.tsv.gz"
+    },
+    {
+      "cohort": "GSE271188_Human_Kidney_CKD",
+      "file": "GSM8371514_kidney_snRNA_2_features.tsv.gz",
+      "bytes": 333437,
+      "sha256": "451192a5af2c9daf47d5c21793410598f3806a7628f207e2f5a085fd4125c430",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/samples/GSM8371nnn/GSM8371514/suppl/GSM8371514_kidney_snRNA_2_features.tsv.gz"
+    },
+    {
+      "cohort": "GSE271188_Human_Kidney_CKD",
+      "file": "GSM8371514_kidney_snRNA_2_matrix.mtx.gz",
+      "bytes": 39446255,
+      "sha256": "b786b9d792f1f9c5516be373bfda4b41593430a3e859d54b2bfbea52cb4cd459",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/samples/GSM8371nnn/GSM8371514/suppl/GSM8371514_kidney_snRNA_2_matrix.mtx.gz"
+    },
+    {
+      "cohort": "GSE271188_Human_Kidney_CKD",
+      "file": "GSM8371515_kidney_snRNA_3_barcodes.tsv.gz",
+      "bytes": 60211,
+      "sha256": "6d7bea3a0bd6ba71a4804f88fd3be5de7ae335d554ee62bffb0e2e2cfbfb3b0b",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/samples/GSM8371nnn/GSM8371515/suppl/GSM8371515_kidney_snRNA_3_barcodes.tsv.gz"
+    },
+    {
+      "cohort": "GSE271188_Human_Kidney_CKD",
+      "file": "GSM8371515_kidney_snRNA_3_features.tsv.gz",
+      "bytes": 333437,
+      "sha256": "9b8a53a94e3d1c58a5da5d2e3235801f7a433347287c5243e5a389a9662aebde",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/samples/GSM8371nnn/GSM8371515/suppl/GSM8371515_kidney_snRNA_3_features.tsv.gz"
+    },
+    {
+      "cohort": "GSE271188_Human_Kidney_CKD",
+      "file": "GSM8371515_kidney_snRNA_3_matrix.mtx.gz",
+      "bytes": 70223221,
+      "sha256": "550ed8f5182b18895c055b45948ba62ab62f75dfe4631dcf6a4368935dbcb3b0",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/samples/GSM8371nnn/GSM8371515/suppl/GSM8371515_kidney_snRNA_3_matrix.mtx.gz"
+    },
+    {
+      "cohort": "GSE271188_Human_Kidney_CKD",
+      "file": "GSM8371516_kidney_snRNA_4_barcodes.tsv.gz",
+      "bytes": 60233,
+      "sha256": "6bbbeb7c08de23f44758bc13ced0179ef217900f2cd95e86e346ea6b05eac125",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/samples/GSM8371nnn/GSM8371516/suppl/GSM8371516_kidney_snRNA_4_barcodes.tsv.gz"
+    },
+    {
+      "cohort": "GSE271188_Human_Kidney_CKD",
+      "file": "GSM8371516_kidney_snRNA_4_features.tsv.gz",
+      "bytes": 333437,
+      "sha256": "f8d70b38569f26a0cfb52b2de2b13a10fe402e0d184b80f0432ef2a0913d96ff",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/samples/GSM8371nnn/GSM8371516/suppl/GSM8371516_kidney_snRNA_4_features.tsv.gz"
+    },
+    {
+      "cohort": "GSE271188_Human_Kidney_CKD",
+      "file": "GSM8371516_kidney_snRNA_4_matrix.mtx.gz",
+      "bytes": 88111800,
+      "sha256": "62ba685257975b822f54441f6c3ffdbc1d5af18ce50f6ae821c6c2a41fc13692",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/samples/GSM8371nnn/GSM8371516/suppl/GSM8371516_kidney_snRNA_4_matrix.mtx.gz"
+    },
+    {
+      "cohort": "GSE271188_Human_Kidney_CKD",
+      "file": "GSM8371517_kidney_snRNA_5_barcodes.tsv.gz",
+      "bytes": 60270,
+      "sha256": "ed78335a893fecd0882407d90e2fa4547825729548aba05c605ea08c003758e5",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/samples/GSM8371nnn/GSM8371517/suppl/GSM8371517_kidney_snRNA_5_barcodes.tsv.gz"
+    },
+    {
+      "cohort": "GSE271188_Human_Kidney_CKD",
+      "file": "GSM8371517_kidney_snRNA_5_features.tsv.gz",
+      "bytes": 333437,
+      "sha256": "c7d44b25d21934954ad102dfddb091bcb2f83c45ca8c14f2b5d95a64a5fc1764",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/samples/GSM8371nnn/GSM8371517/suppl/GSM8371517_kidney_snRNA_5_features.tsv.gz"
+    },
+    {
+      "cohort": "GSE271188_Human_Kidney_CKD",
+      "file": "GSM8371517_kidney_snRNA_5_matrix.mtx.gz",
+      "bytes": 93011232,
+      "sha256": "607e2ba2d91d981e85ea72c5f13d4bf238da6c52f1fe5b6827b522fe0a74637a",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/samples/GSM8371nnn/GSM8371517/suppl/GSM8371517_kidney_snRNA_5_matrix.mtx.gz"
+    },
+    {
+      "cohort": "GSE271188_Human_Kidney_CKD",
+      "file": "GSM8371518_kidney_snRNA_6_barcodes.tsv.gz",
+      "bytes": 60251,
+      "sha256": "98a7571cd8df7354038ae1b3e7519c9d73c80fd4d93fd04d96ecd6ab8b69b3d6",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/samples/GSM8371nnn/GSM8371518/suppl/GSM8371518_kidney_snRNA_6_barcodes.tsv.gz"
+    },
+    {
+      "cohort": "GSE271188_Human_Kidney_CKD",
+      "file": "GSM8371518_kidney_snRNA_6_features.tsv.gz",
+      "bytes": 333437,
+      "sha256": "f39ef72e381c05c9206bcf82105e13c23639265323fce7e8cfcdfa82cb3a3b77",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/samples/GSM8371nnn/GSM8371518/suppl/GSM8371518_kidney_snRNA_6_features.tsv.gz"
+    },
+    {
+      "cohort": "GSE271188_Human_Kidney_CKD",
+      "file": "GSM8371518_kidney_snRNA_6_matrix.mtx.gz",
+      "bytes": 87127223,
+      "sha256": "8566fae47ee64031736b341011749e52d03ac6827b3f11c8aff122b4f8db2b35",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/samples/GSM8371nnn/GSM8371518/suppl/GSM8371518_kidney_snRNA_6_matrix.mtx.gz"
+    },
+    {
+      "cohort": "GSE271188_Human_Kidney_CKD",
+      "file": "GSM8371519_kidney_snRNA_7_barcodes.tsv.gz",
+      "bytes": 57707,
+      "sha256": "5b27f7f4f0797f64f17d99630d469250894e60496228bfd597c79fc51a640b13",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/samples/GSM8371nnn/GSM8371519/suppl/GSM8371519_kidney_snRNA_7_barcodes.tsv.gz"
+    },
+    {
+      "cohort": "GSE271188_Human_Kidney_CKD",
+      "file": "GSM8371519_kidney_snRNA_7_features.tsv.gz",
+      "bytes": 333437,
+      "sha256": "4b8c924844a96733b265874ad3ca701caaa08b8fbee7ed6041919ede4e5c9211",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/samples/GSM8371nnn/GSM8371519/suppl/GSM8371519_kidney_snRNA_7_features.tsv.gz"
+    },
+    {
+      "cohort": "GSE271188_Human_Kidney_CKD",
+      "file": "GSM8371519_kidney_snRNA_7_matrix.mtx.gz",
+      "bytes": 74833833,
+      "sha256": "08edca58caa5bdaaef4d8bd96b6f74f4f1dde726521c9fd042cbd90390063372",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/samples/GSM8371nnn/GSM8371519/suppl/GSM8371519_kidney_snRNA_7_matrix.mtx.gz"
+    },
+    {
+      "cohort": "GSE271188_Human_Kidney_CKD",
+      "file": "GSM8371520_kidney_snRNA_8_barcodes.tsv.gz",
+      "bytes": 30461,
+      "sha256": "770bd0d520042c75b46a121e4653dec9e70ee75b192671479120262d8adb1c66",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/samples/GSM8371nnn/GSM8371520/suppl/GSM8371520_kidney_snRNA_8_barcodes.tsv.gz"
+    },
+    {
+      "cohort": "GSE271188_Human_Kidney_CKD",
+      "file": "GSM8371520_kidney_snRNA_8_features.tsv.gz",
+      "bytes": 333437,
+      "sha256": "ceffa88628d6053d2290438c939eebcf1715434f9b12cb742abe15f0d0b60346",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/samples/GSM8371nnn/GSM8371520/suppl/GSM8371520_kidney_snRNA_8_features.tsv.gz"
+    },
+    {
+      "cohort": "GSE271188_Human_Kidney_CKD",
+      "file": "GSM8371520_kidney_snRNA_8_matrix.mtx.gz",
+      "bytes": 39659981,
+      "sha256": "e978acb50c8febb38c869e191071b4471f6a105b5a3518bc74f6e9f89a132f7f",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/samples/GSM8371nnn/GSM8371520/suppl/GSM8371520_kidney_snRNA_8_matrix.mtx.gz"
+    },
+    {
+      "cohort": "GSE271188_Human_Kidney_CKD",
+      "file": "GSM8371521_kidney_snRNA_9_barcodes.tsv.gz",
+      "bytes": 60302,
+      "sha256": "b78fcd2d7d8307f426fb7116142a60fd1cbe7b90e1d7fd007fd2073bf82ccad9",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/samples/GSM8371nnn/GSM8371521/suppl/GSM8371521_kidney_snRNA_9_barcodes.tsv.gz"
+    },
+    {
+      "cohort": "GSE271188_Human_Kidney_CKD",
+      "file": "GSM8371521_kidney_snRNA_9_features.tsv.gz",
+      "bytes": 333437,
+      "sha256": "c78ecaf4135eaa71b32426dc246aae3eaf5b89eab7ea959b47deed1956279d0c",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/samples/GSM8371nnn/GSM8371521/suppl/GSM8371521_kidney_snRNA_9_features.tsv.gz"
+    },
+    {
+      "cohort": "GSE271188_Human_Kidney_CKD",
+      "file": "GSM8371521_kidney_snRNA_9_matrix.mtx.gz",
+      "bytes": 81635500,
+      "sha256": "c8139cc20101d4820c2b5e99ad0e533abcb02295e0f3381a1f6f04c1ce0dd001",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/samples/GSM8371nnn/GSM8371521/suppl/GSM8371521_kidney_snRNA_9_matrix.mtx.gz"
+    }
+  ]
+}

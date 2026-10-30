@@ -74,6 +74,8 @@ COHORT_FILES: dict[str, list[str]] = {
 
 
 def stream_download_with_sha256(url: str, dest: pathlib.Path) -> tuple[int, str]:
+    import subprocess
+
     dest.parent.mkdir(parents=True, exist_ok=True)
     if dest.exists() and dest.stat().st_size > 128:
         h = hashlib.sha256()
@@ -82,26 +84,54 @@ def stream_download_with_sha256(url: str, dest: pathlib.Path) -> tuple[int, str]
                 h.update(chunk)
         return dest.stat().st_size, h.hexdigest()
 
+    # Auto-resolve multi-platform GEO series_matrix URLs (e.g., GSE123813-GPL20301_series_matrix.txt.gz)
+    if url.endswith("_series_matrix.txt.gz") and "-" not in url.rsplit("/", 1)[-1]:
+        mat_dir_url = url.rsplit("/", 1)[0] + "/"
+        probe = subprocess.run(
+            ["curl.exe", "--ssl-no-revoke", "-fsSL", mat_dir_url],
+            capture_output=True,
+            text=True,
+        )
+        if probe.returncode == 0:
+            found = re.findall(r'<a href="([^"?/]+_series_matrix\.txt\.gz)">', probe.stdout)
+            if found and url.rsplit("/", 1)[-1] not in found:
+                url = mat_dir_url + found[0]
+
     tmp = dest.with_suffix(dest.suffix + ".part")
-    last_err: Exception | None = None
-    for attempt in range(4):
-        try:
-            req = urllib.request.Request(url, headers={"User-Agent": "OmniNiche/2.0"})
-            h = hashlib.sha256()
-            total = 0
-            with urllib.request.urlopen(req, timeout=180) as resp, tmp.open("wb") as fout:
-                while True:
-                    chunk = resp.read(2 * 1024 * 1024)
-                    if not chunk:
-                        break
-                    fout.write(chunk)
-                    h.update(chunk)
-                    total += len(chunk)
+    last_err: str = ""
+    for attempt in range(5):
+        cmd = [
+            "curl.exe",
+            "--ssl-no-revoke",
+            "-fSL",
+            "--retry",
+            "8",
+            "--retry-delay",
+            "2",
+            "--retry-all-errors",
+            "--connect-timeout",
+            "30",
+            "-C",
+            "-",
+            "-A",
+            "OmniNiche/2.0",
+            "-o",
+            str(tmp),
+            url,
+        ]
+        res = subprocess.run(cmd, capture_output=True, text=True)
+        if res.returncode == 0 and tmp.exists() and tmp.stat().st_size > 0:
             tmp.replace(dest)
-            return total, h.hexdigest()
-        except Exception as exc:
-            last_err = exc
-            time.sleep(2.0 * (attempt + 1))
+            h = hashlib.sha256()
+            with dest.open("rb") as f:
+                while chunk := f.read(4 * 1024 * 1024):
+                    h.update(chunk)
+            return dest.stat().st_size, h.hexdigest()
+        last_err = (res.stderr or f"rc={res.returncode}")[:300]
+        # If HTTP range resume failed (e.g. code 33/36), clear partial and retry clean
+        if res.returncode in (33, 36) and tmp.exists():
+            tmp.unlink(missing_ok=True)
+        time.sleep(2.0 * (attempt + 1))
     raise RuntimeError(f"Failed downloading {url}: {last_err}")
 
 
@@ -175,28 +205,39 @@ def download_gse271188_human_kidney_ckd_biopsies(manifest_entries: list[dict]) -
 
 
 def main() -> None:
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+
     VAULT_SC.mkdir(parents=True, exist_ok=True)
     manifest_entries: list[dict] = []
 
+    jobs: list[tuple[str, str, pathlib.Path]] = []
     for cohort_name, urls in COHORT_FILES.items():
         cdir = VAULT_SC / cohort_name
         cdir.mkdir(parents=True, exist_ok=True)
-        print(f"\n>>> Downloading {cohort_name} ({len(urls)} files)...")
         for url in urls:
             fname = url.rsplit("/", 1)[-1]
-            dest = cdir / fname
-            b, sha = stream_download_with_sha256(url, dest)
+            jobs.append((cohort_name, url, cdir / fname))
+
+    print(f">>> Launching 4-way parallel curl download across {len(jobs)} primary files...")
+    with ThreadPoolExecutor(max_workers=4) as pool:
+        fut_map = {
+            pool.submit(stream_download_with_sha256, url, dest): (cohort_name, url, dest)
+            for cohort_name, url, dest in jobs
+        }
+        for fut in as_completed(fut_map):
+            cohort_name, url, dest = fut_map[fut]
+            b, sha = fut.result()
             manifest_entries.append(
                 {
                     "cohort": cohort_name,
-                    "file": fname,
+                    "file": dest.name,
                     "bytes": b,
                     "mb": round(b / (1024 * 1024), 2),
                     "sha256": sha,
                     "url": url,
                 }
             )
-            print(f"  [OK] {cohort_name}/{fname} ({b/1e6:.2f} MB) | sha256={sha[:12]}...")
+            print(f"  [OK] {cohort_name}/{dest.name} ({b/1e6:.2f} MB) | sha256={sha[:12]}...")
 
     print("\n>>> Downloading GSE271188_Human_Kidney_CKD stratified primary human kidney biopsies...")
     download_gse271188_human_kidney_ckd_biopsies(manifest_entries)

@@ -1,0 +1,152 @@
+[
+  {
+    "file": "GSE212837_Human_NASH_Liver\\GSM6556450_humanCTRL_2_barcodes.tsv.gz",
+    "bytes": 76373,
+    "sha256": "ea5b5b26dfa3fd425fd8938d3c1fc32a5afc6b7f8a4d3d9cd65e020bf4db3171"
+  },
+  {
+    "file": "GSE212837_Human_NASH_Liver\\GSM6556450_humanCTRL_2_features.tsv.gz",
+    "bytes": 333437,
+    "sha256": "7c3d7c7866192e28cfad99e63725c979d9301a89b017be4adc80932328a23bad"
+  },
+  {
+    "file": "GSE212837_Human_NASH_Liver\\GSM6556450_humanCTRL_2_matrix.mtx.gz",
+    "bytes": 136049556,
+    "sha256": "5d5d7253692ca9798607840945ccd3391f3039313f7984a863a7b6d8a384f88f"
+  },
+  {
+    "file": "GSE212837_Human_NASH_Liver\\GSM6556451_humanCTRL_3_barcodes.tsv.gz",
+    "bytes": 91269,
+    "sha256": "7d36c049930dca8e7a8f8392cb31b86da25bd3966ad1859090532746d61e7ece"
+  },
+  {
+    "file": "GSE212837_Human_NASH_Liver\\GSM6556451_humanCTRL_3_features.tsv.gz",
+    "bytes": 333437,
+    "sha256": "46ec8d96d2e1670d7b6ea8342bdcb7b469da33f1adffd20649865df63b9ab321"
+  },
+  {
+    "file": "GSE212837_Human_NASH_Liver\\GSM6556451_humanCTRL_3_matrix.mtx.gz",
+    "bytes": 119803295,
+    "sha256": "7a123093c6d02f8096a2703c36ebcbb5f09919459e06e8cb28728f1c152699fb"
+  },
+  {
+    "file": "GSE212837_Human_NASH_Liver\\GSM6556454_humanNASH_2_R1C1_30kNuclei_barcodes.tsv.gz",
+    "bytes": 32065,
+    "sha256": "de649dbf978bff3e9a869c2ee031074a321d6f1b63ce431abc2c0c5d66c1183a"
+  },
+  {
+    "file": "GSE212837_Human_NASH_Liver\\GSM6556454_humanNASH_2_R1C1_30kNuclei_features.tsv.gz",
+    "bytes": 333437,
+    "sha256": "2d3bc3cf76b27c93c655b3c565ca14212f9aabd7098e877383e5348d1cbd56c4"
+  },
+  {
+    "file": "GSE212837_Human_NASH_Liver\\GSM6556454_humanNASH_2_R1C1_30kNuclei_matrix.mtx.gz",
+    "bytes": 47763543,
+    "sha256": "5867559e4fd95ffa969516d9b353fb9d45e8bb759740298270aaae0b2e88ba6b"
+  },
+  {
+    "file": "GSE212837_Human_NASH_Liver\\GSM6556456_humanNASH_3_R4C1_30kNuclei_barcodes.tsv.gz",
+    "bytes": 24194,
+    "sha256": "e25624e3e551808e992af5f2ceeab5723f1c04c661191700be9f3cf1e996f38c"
+  },
+  {
+    "file": "GSE212837_Human_NASH_Liver\\GSM6556456_humanNASH_3_R4C1_30kNuclei_features.tsv.gz",
+    "bytes": 333437,
+    "sha256": "4b88c4a750ffe14a270e7deaa45bded1c09e6353c1e72c41d26a3295b5ba4024"
+  },
+  {
+    "file": "GSE212837_Human_NASH_Liver\\GSM6556456_humanNASH_3_R4C1_30kNuclei_matrix.mtx.gz",
+    "bytes": 25171897,
+    "sha256": "18668e346d265d374ab547534648e4353c9f78f9a53085d1ebbaf25d9a64aa54"
+  },
+  {
+    "file": "GSE212837_Human_NASH_Liver\\GSM6556459_humanNASH_4_R4C1_20kNoFacsNuclei_barcodes.tsv.gz",
+    "bytes": 20476,
+    "sha256": "361204cc8c59fab053f1a424bf628e5623c80480d5c5c078c08ebfab14e09e43"
+  },
+  {
+    "file": "GSE212837_Human_NASH_Liver\\GSM6556459_humanNASH_4_R4C1_20kNoFacsNuclei_features.tsv.gz",
+    "bytes": 333437,
+    "sha256": "ef76a88158994e9947ef410dfc87b5fbc7b68d26fbc00e04ea077a58440a0691"
+  },
+  {
+    "file": "GSE212837_Human_NASH_Liver\\GSM6556459_humanNASH_4_R4C1_20kNoFacsNuclei_matrix.mtx.gz",
+    "bytes": 22108339,
+    "sha256": "03a82f272941b49e3e2984e420346686050945de4bde422f2c6ebc5c05a70b1b"
+  },
+  {
+    "file": "GSE212837_Human_NASH_Liver\\GSM6556461_humanNASH_5_R3C8_20kNoFacsNuclei_barcodes.tsv.gz",
+    "bytes": 31000,
+    "sha256": "b83c82ced27bae17d2d90cbc534cb093624f42af4e2589f5cdad8ea5725b1432"
+  },
+  {
+    "file": "GSE212837_Human_NASH_Liver\\GSM6556461_humanNASH_5_R3C8_20kNoFacsNuclei_features.tsv.gz",
+    "bytes": 333437,
+    "sha256": "5e5a0a0d326409f3656046fcb56b0295276ffc4d99e9255869781b6da504d94d"
+  },
+  {
+    "file": "GSE212837_Human_NASH_Liver\\GSM6556461_humanNASH_5_R3C8_20kNoFacsNuclei_matrix.mtx.gz",
+    "bytes": 15829059,
+    "sha256": "9d82de066e1e228fa44637bc3efd0e6cbb9efae386511f62e40b97dc39b914a0"
+  },
+  {
+    "file": "GSE212837_Human_NASH_Liver\\GSM6556464_humanNASH_7_barcodes.tsv.gz",
+    "bytes": 58315,
+    "sha256": "90160578193f635c43cf2e7c0eebd80d4f08ee708382c57dd134134d2aaf3cda"
+  },
+  {
+    "file": "GSE212837_Human_NASH_Liver\\GSM6556464_humanNASH_7_features.tsv.gz",
+    "bytes": 333437,
+    "sha256": "991a844d169d7a968bba0c622c51b769a9063d1d505dc423bdbce5925789ddfd"
+  },
+  {
+    "file": "GSE212837_Human_NASH_Liver\\GSM6556464_humanNASH_7_matrix.mtx.gz",
+    "bytes": 115744332,
+    "sha256": "281ebbfe48efcc394eccf27c15fa9dd978cf01f7bcb0156ba078809d06990d13"
+  },
+  {
+    "file": "GSE271188_Human_Kidney_CKD\\GSM8371531_kidney_snRNA_19_barcodes.tsv.gz",
+    "bytes": 72374,
+    "sha256": "d34b440bb6c1d75a970e8064774afbcb3c87ec3ec4b4394db3eba9acf7cf8d09"
+  },
+  {
+    "file": "GSE271188_Human_Kidney_CKD\\GSM8371531_kidney_snRNA_19_features.tsv.gz",
+    "bytes": 333437,
+    "sha256": "0e4d5c6c365cdd500579e883181e921d49cde75cb2da162e0d58665a25d6670b"
+  },
+  {
+    "file": "GSE271188_Human_Kidney_CKD\\GSM8371531_kidney_snRNA_19_matrix.mtx.gz",
+    "bytes": 106302234,
+    "sha256": "7fb058ca9302289425652b19660d3682e5b16ac0db206fdfc52ccf0312631cf0"
+  },
+  {
+    "file": "GSE271188_Human_Kidney_CKD\\GSM8371534_kidney_snRNA_22_barcodes.tsv.gz",
+    "bytes": 36740,
+    "sha256": "e53304bcb843f618095b8341d98715e8695b63117064ab59997da2fff8b47bd9"
+  },
+  {
+    "file": "GSE271188_Human_Kidney_CKD\\GSM8371534_kidney_snRNA_22_features.tsv.gz",
+    "bytes": 333437,
+    "sha256": "b5808df341183012ed7984141f6a8dbfbfd1a1423c5b36ab01d1cd9d3828b9b1"
+  },
+  {
+    "file": "GSE271188_Human_Kidney_CKD\\GSM8371534_kidney_snRNA_22_matrix.mtx.gz",
+    "bytes": 48023253,
+    "sha256": "f44261d22f4257b236577ac6dc46532dd06e99ff8eae181dbb78b29d543e684d"
+  },
+  {
+    "file": "GSE271188_Human_Kidney_CKD\\GSM8371537_kidney_snRNA_25_barcodes.tsv.gz",
+    "bytes": 84325,
+    "sha256": "9d0276f7fd63186ebd498d82c5d35ea3bdbb437a59912ee0ba3a368d96ee66b6"
+  },
+  {
+    "file": "GSE271188_Human_Kidney_CKD\\GSM8371537_kidney_snRNA_25_features.tsv.gz",
+    "bytes": 333437,
+    "sha256": "c54d16c535f2a3b002917667846bd4fcf2b889515ec11e88f010b6c265b80f21"
+  },
+  {
+    "file": "GSE271188_Human_Kidney_CKD\\GSM8371537_kidney_snRNA_25_matrix.mtx.gz",
+    "bytes": 125908754,
+    "sha256": "b85b8691a83ac9b1d4ed9d2702f05d9a09cf383ed19bb342e3d0a4fdc7b55fa7"
+  }
+]

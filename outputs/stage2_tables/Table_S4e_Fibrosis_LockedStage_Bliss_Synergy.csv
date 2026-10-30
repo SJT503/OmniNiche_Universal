@@ -1,0 +1,13 @@
+arm_a,arm_b,comp_a,comp_b,effect_a,effect_b,combo_remission_rate,bliss_expected,bliss_excess,hsa_excess
+TGFBR1_PDGFRB_Myofibro_LowDose_SM,TREM2_SPP1_SAMac_Modulator_SM,Myofibroblast,SPP1_SAMac,0.0091,0.0091,1.0,0.0181,0.9819,0.9909
+GLP1R_Semaglutide_Metabolic_SM,TGFBR1_PDGFRB_Myofibro_LowDose_SM,Parenchyma_Injury,Myofibroblast,0.0136,0.0091,1.0,0.0226,0.9774,0.9864
+THRB_Resmetirom_Parenchyma_SM,TREM2_SPP1_SAMac_Modulator_SM,Parenchyma_Injury,SPP1_SAMac,0.0409,0.0182,1.0,0.0583,0.9417,0.9591
+GLP1R_Semaglutide_Metabolic_SM,TREM2_SPP1_SAMac_Modulator_SM,Parenchyma_Injury,SPP1_SAMac,0.0409,0.0273,1.0,0.0671,0.9329,0.9591
+GLP1R_Semaglutide_Metabolic_SM,CCR2_Cenicriviroc_TargetLost_SM,Parenchyma_Injury,SPP1_SAMac,0.0364,0.0,0.9545,0.0364,0.9182,0.9182
+THRB_Resmetirom_Parenchyma_SM,TGFBR1_PDGFRB_Myofibro_LowDose_SM,Parenchyma_Injury,Myofibroblast,0.0545,0.0318,1.0,0.0846,0.9154,0.9455
+THRB_Resmetirom_Parenchyma_SM,CCR2_Cenicriviroc_TargetLost_SM,Parenchyma_Injury,SPP1_SAMac,0.0545,0.0,0.9545,0.0545,0.9,0.9
+TGFBR1_PDGFRB_Myofibro_LowDose_SM,CCR2_Cenicriviroc_TargetLost_SM,Myofibroblast,SPP1_SAMac,0.0091,0.0,0.7773,0.0091,0.7682,0.7682
+THRB_Resmetirom_Parenchyma_SM,LOXL2_Simtuzumab_StericBlocked_mAb,Parenchyma_Injury,Myofibroblast,0.0682,0.0,0.7864,0.0682,0.7182,0.7182
+GLP1R_Semaglutide_Metabolic_SM,LOXL2_Simtuzumab_StericBlocked_mAb,Parenchyma_Injury,Myofibroblast,0.0409,0.0,0.75,0.0409,0.7091,0.7091
+TREM2_SPP1_SAMac_Modulator_SM,LOXL2_Simtuzumab_StericBlocked_mAb,SPP1_SAMac,Myofibroblast,0.0136,0.0,0.4591,0.0136,0.4455,0.4455
+LOXL2_Simtuzumab_StericBlocked_mAb,CCR2_Cenicriviroc_TargetLost_SM,Myofibroblast,SPP1_SAMac,0.0,0.0,0.0,0.0,0.0,0.0
