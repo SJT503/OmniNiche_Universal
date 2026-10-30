@@ -1,7 +1,11 @@
 __pycache__/
 *.py[cod]
 .pytest_cache/
+.benchmarks/
 *.egg-info/
 dist/
 build/
 outputs/private_*/
+data_vault/*/*
+!data_vault/*/.gitkeep
+!data_vault/*/*manifest*.json

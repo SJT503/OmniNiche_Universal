@@ -2,7 +2,7 @@
 
 > [!IMPORTANT]
 > **项目双定位与零冲突隔离原则**
-> 1. **全新独立代码库**：所有代码与配置全部从零构建于独立目录 [D:/AI工具/OmniNiche_Universal/](file:///D:/AI工具/OmniNiche_Universal/)，绝不修改或触碰已锁定归档的 *Nature Biomedical Engineering* 在审稿件包（`nBME-26-6122`，[D:/AI工具/NeuroImmune_Virtual_Biotech/flagship_paper/submission_package_v1.0/](file:///D:/AI工具/NeuroImmune_Virtual_Biotech/flagship_paper/submission_package_v1.0/)）。
+> 1. **全新独立代码库与数据仓（整库落盘 F 盘）**：所有代码、Git 历史与未来下载数据集全部统一存放在 [F:/OmniNiche_Universal/](file:///F:/OmniNiche_Universal/)，绝不修改或触碰已锁定归档的 *Nature Biomedical Engineering* 在审稿件包（`nBME-26-6122`，[D:/AI工具/NeuroImmune_Virtual_Biotech/flagship_paper/submission_package_v1.0/](file:///D:/AI工具/NeuroImmune_Virtual_Biotech/flagship_paper/submission_package_v1.0/)）。
 > 2. **对标 2025–2026 CNS / *Nature Methods* / *Nature Biotechnology* 满配标准**：
 >    - **体量升级（双层金字塔）**：塔基支持横扫 $10,000\text{--}25,000+$ 项跨 12+ ICD 非神经疾病大类临床试验 + 塔中 $20\text{--}25$ 个纵向/多期单细胞与空间转录组队列 + 塔尖真实临床治疗应答（Responder/Non-Responder）与 CRISPR/药物微扰真值盲测；
 >    - **算法升级（四大核心）**：① 去混杂因果跨细胞边提取（对标 *Nat. Methods* 2026 `CauTrigger`）；② 无量纲化随机朗之万微分方程（Langevin SDE）与 Waddington 多细胞准势能景观 $U(\mathbf{S})$（对标 *Nat. Biotechnol.* 2026 `DynaVelo`）；③ 剖面似然（Profile Likelihood）结构可辨识性与 BIC 稀疏拓扑剪枝；④ 五重校准基线正面对决评测框架（对标 *Nat. Biotechnol.* 2026 `PMID: 42823510`）；
@@ -85,8 +85,13 @@ $$dS_j = \left[ \alpha_j + (1 - S_j) \sum_{i \in \mathcal{A}(j)} v_{ij} \frac{S_
 ## 三、 工程阶段 I 目录结构与 TDD 实施模块
 
 ```text
-D:/AI工具/OmniNiche_Universal/
+F:/OmniNiche_Universal/
 ├── pyproject.toml
+├── data_vault/                          # F 盘高速数据仓 (大文件 .gitignore 排除，仅保留 SHA-256 清单)
+│   ├── raw_clinical_trials/             # ClinicalTrials.gov API v2 原始 JSON 与 PRISMA 台账
+│   ├── raw_single_cell/                 # GEO / CELLxGENE 原始 .h5ad / 10x 稀疏矩阵 (流式分块读取 <10GB RAM)
+│   ├── processed_pseudobulk/            # 样本级 Pseudobulk 与腔室致病轨迹缓存
+│   └── perturbation_benchmarks/         # 公开单细胞基因/药物微扰校准真值集
 ├── omniniche/
 │   ├── __init__.py
 │   ├── core/
