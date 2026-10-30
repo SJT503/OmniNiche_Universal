@@ -15,46 +15,47 @@ from omniniche.engine.langevin_solver import (
 
 
 def _build_bistable_3comp_grammar() -> NicheGrammar:
+    # Realistic 72-hour cellular turnover rates (h^-1): half-life ~ 6-10 hours, lock-in tipping window ~ 12-22 hours
     return NicheGrammar(
         grammar_id="bistable_fibrosis_test",
         source_pack_id="fibrosis_ckm_ipf",
         organ_context="Kidney_Cortex",
         compartments=[
-            CompartmentRule(name="Injured_Epithelium", baseline_production=0.015, decay_rate=0.42, noise_sigma=0.045),
-            CompartmentRule(name="Profibrotic_Macrophage", baseline_production=0.015, decay_rate=0.40, noise_sigma=0.045),
-            CompartmentRule(name="Myofibroblast_ECM", baseline_production=0.010, decay_rate=0.32, noise_sigma=0.040),
+            CompartmentRule(name="Injured_Epithelium", baseline_production=0.0015, decay_rate=0.055, noise_sigma=0.018),
+            CompartmentRule(name="Profibrotic_Macrophage", baseline_production=0.0015, decay_rate=0.050, noise_sigma=0.018),
+            CompartmentRule(name="Myofibroblast_ECM", baseline_production=0.0010, decay_rate=0.042, noise_sigma=0.016),
         ],
         edges=[
             DirectedEdgeRule(
                 source="Injured_Epithelium",
                 target="Profibrotic_Macrophage",
                 interaction_type="activation",
-                weight_v=0.95,
-                half_max_k=0.36,
+                weight_v=0.115,
+                half_max_k=0.38,
                 hill_n=3.0,
             ),
             DirectedEdgeRule(
                 source="Profibrotic_Macrophage",
                 target="Myofibroblast_ECM",
                 interaction_type="activation",
-                weight_v=0.95,
-                half_max_k=0.38,
+                weight_v=0.115,
+                half_max_k=0.40,
                 hill_n=3.0,
             ),
             DirectedEdgeRule(
                 source="Myofibroblast_ECM",
                 target="Injured_Epithelium",
                 interaction_type="activation",
-                weight_v=1.05,
-                half_max_k=0.36,
+                weight_v=0.125,
+                half_max_k=0.40,
                 hill_n=3.0,
             ),
             DirectedEdgeRule(
                 source="Myofibroblast_ECM",
                 target="Myofibroblast_ECM",
                 interaction_type="activation",
-                weight_v=0.58,
-                half_max_k=0.45,
+                weight_v=0.088,
+                half_max_k=0.52,
                 hill_n=4.0,
             ),
         ],
@@ -66,10 +67,10 @@ def _build_bistable_3comp_grammar() -> NicheGrammar:
 def test_bistable_langevin_sde_monotherapy_cliff_t50_and_combination_synergy():
     pack = load_disease_pack("fibrosis_ckm_ipf")
     grammar = _build_bistable_3comp_grammar()
-    solver = LangevinNicheSolver(grammar=grammar, pack=pack, t_end=72.0, dt=0.5)
+    solver = LangevinNicheSolver(grammar=grammar, pack=pack, t_end=96.0, dt=0.5)
 
-    # Acute injury trigger initial state: high epithelial injury, low established ECM lock-in at t=0
-    s0 = np.array([0.82, 0.22, 0.12])
+    # Acute injury trigger initial state: high primary epithelial injury, quiescent downstream macrophage & ECM at t=0
+    s0 = np.array([0.82, 0.08, 0.04])
 
     untreated = solver.simulate_ensemble(s0=s0, regimens=[], n_patients=200, seed=42)
     assert np.all(untreated["trajectories"] >= 0.0) and np.all(untreated["trajectories"] <= 1.0)
