@@ -251,7 +251,10 @@ class LangevinNicheSolver:
         rng = np.random.default_rng(seed)
         n_steps = int(np.round(self.t_end / self.dt)) + 1
         times = np.linspace(0.0, self.t_end, n_steps)
-        curr = rng.uniform(0.05, 0.92, size=(n_trajectories, self.n_comp))
+        n_half = n_trajectories // 2
+        curr_low = rng.uniform(0.02, 0.32, size=(n_half, self.n_comp))
+        curr_high = rng.uniform(0.28, 0.92, size=(n_trajectories - n_half, self.n_comp))
+        curr = np.vstack([curr_low, curr_high])
 
         ix = self.comp_idx[comp_x]
         iy = self.comp_idx[comp_y]

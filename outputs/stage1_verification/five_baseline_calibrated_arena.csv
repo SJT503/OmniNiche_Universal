@@ -1,0 +1,6 @@
+model_name,auroc,auprc,brier_score,calibrated_delta_auroc_vs_null
+B1_Static_Healthy_Tau,0.3542,0.3596,0.451,-0.1458
+B2_Uninformative_Linear_Mean,0.5,0.4,0.24,0.0
+B3_SingleCell_GRN_Only,0.5156,0.4004,0.3689,0.0156
+B4_Static_LR_Centrality,0.0156,0.259,0.4358,-0.4844
+OmniNiche_v2_Full,1.0,1.0,0.0196,0.5
