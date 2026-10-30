@@ -1,0 +1,7 @@
+source_calibration,source_organs,n_source_donors,n_heldout_trials,all14_auroc,all14_ci_low,all14_ci_high,all14_brier,heldout_zeroshot_auroc,heldout_zeroshot_brier,target_liver_auroc,target_lung_auroc,target_kidney_accuracy,edge_v_parenchyma_to_samac,edge_v_samac_to_myofib
+Liver_Only (n=17 donors),Liver_MASH,17,5,0.9583,0.8125,1.0,0.1114,1.0,0.0,0.8889,1.0,1.0,0.375,0.5358
+Lung_Only (n=30 donors),Lung_IPF,30,10,0.9792,0.875,1.0,0.0787,0.9583,0.1101,0.9444,1.0,1.0,0.3626,0.5376
+Kidney_Only (n=17 donors),Kidney_CKD,17,13,1.0,1.0,1.0,0.1036,1.0,0.1115,1.0,1.0,1.0,0.3692,0.5358
+LOOO_Lung+Kidney -> HeldOut_Liver,Lung_IPF;Kidney_CKD,47,9,0.9792,0.875,1.0,0.0899,0.9444,0.1399,0.9444,1.0,1.0,0.3508,0.5358
+LOOO_Liver+Kidney -> HeldOut_Lung,Liver_MASH;Kidney_CKD,34,4,0.9583,0.8125,1.0,0.1352,1.0,0.0,0.8889,1.0,1.0,0.3714,0.5358
+LOOO_Liver+Lung -> HeldOut_Kidney,Liver_MASH;Lung_IPF,47,1,0.9792,0.875,1.0,0.0775,1.0,0.0,0.9444,1.0,1.0,0.3538,0.5358

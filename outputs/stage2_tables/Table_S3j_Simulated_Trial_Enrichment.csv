@@ -1,0 +1,8 @@
+bottom_percentile_gated_out,n_programs_advanced,dnacc_success_rate_pct,static_tau0_success_rate_pct,futile_trials_prevented_dnacc,futile_trials_prevented_pct,futile_trials_prevented_tau0_pct,true_winners_retained_pct,patients_spared_futile_exposure,median_phase3_enrollment_used
+0,23967,46.2,46.2,0,0.0,0.0,100.0,0,276
+10,21589,48.5,45.26,1777,13.78,8.35,94.57,490452,276
+20,19184,51.48,45.56,3586,27.81,18.99,89.19,989736,276
+25,17975,53.08,46.68,4462,34.6,25.68,86.18,1231512,276
+30,16777,53.78,47.54,5141,39.87,31.75,81.49,1418916,276
+40,14395,55.47,49.34,6485,50.29,43.44,72.12,1789860,276
+50,11986,59.06,49.0,7988,61.95,52.6,63.94,2204688,276

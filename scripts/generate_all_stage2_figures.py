@@ -1,4 +1,4 @@
-"""Generate all 5 Main Flagship Figures + 3 Extended Data Figures for OmniNiche v2.0 Stage II."""
+"""Generate all 5 Main Flagship Figures + 4 Extended Data Figures for OmniNiche Stage II v2.0."""
 from __future__ import annotations
 
 import pathlib
@@ -21,28 +21,33 @@ from omniniche.viz.stage2_flagship_figures import (
 def main() -> None:
     tables_dir = ROOT / "outputs" / "stage2_tables"
     out_dir = ROOT / "outputs" / "stage2_figures"
-    artifact_dir = pathlib.Path(r"C:\Users\sheng\.gemini\antigravity\brain\c14f9ca0-84c8-456f-a314-0bd06b6f8bd7")
+    out_dir.mkdir(parents=True, exist_ok=True)
 
-    fig1_src = artifact_dir / "fig1_omniniche_architecture_and_framework_v2_1793349563115.jpg"
-    print(">>> [1/6] Exporting Fig. 1 BioRender Architecture Illustration (600 DPI PNG + PDF + SVG)...")
-    export_fig1_illustration(fig1_src, out_dir, artifact_dir)
+    # Purge superseded v1 figure files so outputs/stage2_figures holds strictly the clean v2.0 9-figure suite
+    for old_f in list(out_dir.glob("*")):
+        if old_f.is_file():
+            old_f.unlink()
 
-    print(">>> [2/6] Rendering Fig. 2 Macro-Atlas (41,396 Non-CNS Phase II-IV Clinical Trials)...")
-    build_fig2_macro_clinical_atlas(tables_dir, out_dir, artifact_dir)
+    fig1_src = ROOT / "data_vault" / "assets" / "fig1_raw_v2_biorender.png"
+    print(">>> [1/6] Exporting Fig. 1 BioRender 4-Panel (a-d) Overview Illustration (600 DPI PNG + PDF + SVG)...")
+    export_fig1_illustration(fig1_src, out_dir, artifact_dir=None)
 
-    print(">>> [3/6] Rendering Fig. 3 Pan-Organ Dynamic Drift x Biophysical Barrier Law...")
-    build_fig3_pan_disease_drift_law(tables_dir, out_dir, artifact_dir)
+    print(">>> [2/6] Rendering Fig. 2 Macro-Atlas (41,396 Systemic & Parenchymal Organ Trials, 6 Panels a-f)...")
+    build_fig2_macro_clinical_atlas(tables_dir, out_dir, artifact_dir=None)
 
-    print(">>> [4/6] Rendering Fig. 4 Pure Human MASH & Cross-Organ Zero-Shot Fibrosis Benchmark...")
-    build_fig4_fibrosis_mash_deconvolution(tables_dir, out_dir, artifact_dir)
+    print(">>> [3/6] Rendering Fig. 3 Pan-Organ Dynamic Drift & DNAcc Law (7 Panels a-g)...")
+    build_fig3_pan_disease_drift_law(tables_dir, out_dir, artifact_dir=None)
 
-    print(">>> [5/6] Rendering Fig. 5 Solid Tumor 10x Visium Spatial Barrier & Blind ICB Responder Arena...")
-    build_fig5_solid_tumor_spatial_icb(tables_dir, out_dir, artifact_dir)
+    print(">>> [4/6] Rendering Fig. 4 Pan-Organ Human Fibrosis Zero-Shot Benchmark & Hysteresis (7 Panels a-g)...")
+    build_fig4_fibrosis_mash_deconvolution(tables_dir, out_dir, artifact_dir=None)
 
-    print(">>> [6/6] Rendering Extended Data Figs. 1-3...")
-    build_extended_data_figures(tables_dir, out_dir, artifact_dir)
+    print(">>> [5/6] Rendering Fig. 5 Solid-Tumor 10x Visium Spatial Barrier & Blind Pre-ICB Responder (7 Panels a-g)...")
+    build_fig5_solid_tumor_spatial_icb(tables_dir, out_dir, artifact_dir=None)
 
-    print("\n=== ALL 8 STAGE II FLAGSHIP & EXTENDED DATA FIGURES GENERATED SUCCESSFULLY ===")
+    print(">>> [6/6] Rendering Extended Data Figs. 1-4 (4 Panels a-d Each)...")
+    build_extended_data_figures(tables_dir, out_dir, artifact_dir=None)
+
+    print("\n=== ALL 9 STAGE II v2.0 FLAGSHIP & EXTENDED DATA FIGURES GENERATED SUCCESSFULLY ===")
 
 
 if __name__ == "__main__":

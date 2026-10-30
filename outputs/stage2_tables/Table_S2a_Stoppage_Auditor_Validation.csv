@@ -1,0 +1,5 @@
+stoppage_class,n_reference,n_predicted,true_positives,precision,recall,f1_score,overall_accuracy,cohen_kappa
+Scientific_Efficacy_Futility,60,54,54,1.0,0.9,0.9474,0.8833,0.8444
+Scientific_Safety_Toxicity,60,64,57,0.8906,0.95,0.9194,0.8833,0.8444
+Administrative_Commercial_Enrollment,60,45,43,0.9556,0.7167,0.819,0.8833,0.8444
+Other_or_Unreported,60,77,58,0.7532,0.9667,0.8467,0.8833,0.8444

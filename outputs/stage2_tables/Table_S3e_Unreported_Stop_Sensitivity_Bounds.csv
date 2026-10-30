@@ -1,0 +1,6 @@
+regime_id,regime_description,n_trials,n_positive,n_negative,static_tau0_auroc,static_tau0_ci_low,static_tau0_ci_high,dnacc_auroc,dnacc_ci_low,dnacc_ci_high,delta_auroc,delong_p_value,delong_log10_p,dnacc_brier
+R1_Primary_Explicit_Scientific,Primary explicit scientific outcomes (Completed Ph3/4 vs explicit futility/toxicity),11843,11072,771,0.5283,0.5084,0.5488,0.6683,0.6477,0.6876,0.14,8.684653151961644e-28,-27.061,0.0593
+R2_Negation_Filtered_Strict_Scientific,Clause-level negation-filtered scientific stops ('not due to safety' excluded),11663,11072,591,0.5364,0.5142,0.5601,0.6633,0.641,0.685,0.1269,4.3990963866420645e-20,-19.357,0.0472
+R3_WorstCase_All3118_Unreported_As_Failure,"Worst-case bound: all 3,118 unreported/other stops treated as biological failure",14961,11072,3889,0.525,0.515,0.5352,0.6552,0.6449,0.6649,0.1302,2.088704688299332e-83,-82.68,0.1817
+R4_IPW_Propensity_Reweighted,Inverse-probability weighted (IPW) for stop-reason reporting propensity,11843,11072,771,0.5283,0.5083,0.5489,0.6684,0.6482,0.6875,0.1401,1.7571253819762704e-29,-28.755,0.0974
+R5_Posted_ClinicalResults_Only,Restricted strictly to trials with posted quantitative results (HasResults=True),5757,5235,522,0.536,0.512,0.5614,0.6676,0.6436,0.6907,0.1316,1.7883738945376687e-19,-18.748,0.0803

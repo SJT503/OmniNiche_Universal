@@ -1,6 +1,6 @@
 nct_id,trial_acronym,drug,organ,zero_shot_transferred,stage_enrolled,targets,modality,clinical_win,ctgov_status,ctgov_enrollment,sha256_lock,tau0_healthy,organ_delta_tau,organ_dynamic_retention,grn_causal_eta,scar_barrier_access,effective_perturbation_eta,omniniche_remission_prob,b1_static_tau0,b2_linear_target_count,b3_single_cell_grn_only,b4_static_lr_degree,b5_modality_prior_only
 NCT03900429,MAESTRO-NASH,Resmetirom,Liver_MASH,False,F2_F3,THRB,small_molecule,1,ACTIVE_NOT_RECRUITING,1759,2aedf03f26a3d500,0.4052,0.0829,0.5517,0.0,0.96,0.6427,0.54,0.4052,0.49,0.5517,0.3,0.5
-NCT04822181,ESSENCE,Semaglutide,Liver_MASH,False,F2_F3,GLP1R,small_molecule,1,ACTIVE_NOT_RECRUITING,1205,eebbfca04194277b,0.9259,0.3968,0.6402,0.0002,0.96,0.6468,1.0,0.9259,0.49,0.6402,0.6,0.5
+NCT04822181,ESSENCE,Semaglutide,Liver_MASH,False,F2_F3,GLP1R,peptide,1,ACTIVE_NOT_RECRUITING,1205,eebbfca04194277b,0.9259,0.3968,0.6402,0.0002,0.96,0.6468,1.0,0.9259,0.49,0.6402,0.6,0.5
 NCT03008070,NATIVE,Lanifibranor,Liver_MASH,False,F2_F3,PPARA;PPARD;PPARG,small_molecule,1,COMPLETED,247,458c01ba33e21c4f,0.4756,-0.0565,0.4172,0.6587,0.96,0.7782,1.0,0.4756,0.77,0.4172,0.9,0.5
 NCT02540993,FIDELIO-DKD,Finerenone,Kidney_CKD,True,F2_F3,NR3C2,small_molecule,1,COMPLETED,5734,64c4b8c42d5e6c43,0.3853,0.0121,0.3224,0.0,0.96,0.4357,1.0,0.3853,0.49,0.3224,0.6,0.5
 NCT01335464,INPULSIS-1,Nintedanib,Lung_IPF,True,F3_F4,FGFR1;PDGFRA;PDGFRB;KDR,small_molecule,1,COMPLETED,515,0ac1e461ea4267e9,0.7449,0.0208,0.6162,0.8707,0.9412,0.8696,1.0,0.7449,0.91,0.6162,0.6,0.5

@@ -258,12 +258,12 @@ def main() -> None:
     # Evaluate realistic clinical partial-occupancy regimens where monotherapies fail to cross the F4 saddle
     s0_locked = np.array([0.85, 0.88, 0.90], dtype=float)
     candidate_arms = [
-        ("THRB_Resmetirom_Parenchyma_SM", InterventionRegimen("Parenchyma_Injury", 0.82, "small_molecule")),
-        ("GLP1R_Semaglutide_Metabolic_SM", InterventionRegimen("Parenchyma_Injury", 0.78, "small_molecule")),
-        ("TGFBR1_PDGFRB_Myofibro_LowDose_SM", InterventionRegimen("Myofibroblast", 0.22, "small_molecule")),
-        ("TREM2_SPP1_SAMac_Modulator_SM", InterventionRegimen("SPP1_SAMac", 0.21, "small_molecule")),
-        ("LOXL2_Simtuzumab_StericBlocked_mAb", InterventionRegimen("Myofibroblast", 0.03, "antibody")),
-        ("CCR2_Cenicriviroc_TargetLost_SM", InterventionRegimen("SPP1_SAMac", 0.04, "small_molecule")),
+        ("THRB_Resmetirom_Parenchyma_SM", InterventionRegimen("Parenchyma_Injury", 0.72, "small_molecule")),
+        ("GLP1R_Semaglutide_Metabolic_Peptide", InterventionRegimen("Parenchyma_Injury", 0.68, "peptide")),
+        ("TGFBR1_PDGFRB_Myofibro_LowDose_SM", InterventionRegimen("Myofibroblast", 0.145, "small_molecule")),
+        ("TREM2_SPP1_SAMac_Modulator_SM", InterventionRegimen("SPP1_SAMac", 0.140, "small_molecule")),
+        ("LOXL2_Simtuzumab_StericBlocked_mAb", InterventionRegimen("Myofibroblast", 0.004, "antibody")),
+        ("CCR2_Cenicriviroc_TargetLost_SM", InterventionRegimen("SPP1_SAMac", 0.005, "small_molecule")),
     ]
     syn_rows = []
     for i in range(len(candidate_arms)):

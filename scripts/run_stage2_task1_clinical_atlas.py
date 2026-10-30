@@ -47,7 +47,7 @@ def main() -> None:
             {
                 "disease_axis": axis_id,
                 "api_total_reported": prisma["per_axis_counts"].get(axis_id, {}).get("api_total_available", len(sub)),
-                "unique_non_cns_trials": int(len(sub)),
+                "unique_systemic_organ_trials": int(len(sub)),
                 "phase2_trials": int((sub["max_phase_num"] == 2).sum()),
                 "phase3_trials": int((sub["max_phase_num"] == 3).sum()),
                 "phase4_trials": int((sub["max_phase_num"] == 4).sum()),
@@ -67,7 +67,7 @@ def main() -> None:
     import pandas as pd
 
     t_s1 = pd.DataFrame(axis_rows)
-    t_s1.to_csv(out_tables / "Table_S1_NonCNS_ClinicalTrials_PRISMA_Summary.csv", index=False, encoding="utf-8")
+    t_s1.to_csv(out_tables / "Table_S1_Systemic_Organ_ClinicalTrials_PRISMA_Summary.csv", index=False, encoding="utf-8")
 
     # Table S2: Target-Resolved Clinical Trials Deconvolution Ledger
     df_resolved = df[df["n_targets"] > 0].copy()

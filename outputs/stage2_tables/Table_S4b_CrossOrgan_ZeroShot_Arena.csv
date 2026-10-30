@@ -1,7 +1,7 @@
-benchmark,method,auroc,auprc,brier_score
-PanOrgan_Fibrosis_14_Phase2b3_Trials,OmniNiche_v2_ZeroShot_Langevin,0.9583,0.9583,0.1257
-PanOrgan_Fibrosis_14_Phase2b3_Trials,B1_Static_Healthy_Tau0,0.5,0.4947,0.3181
-PanOrgan_Fibrosis_14_Phase2b3_Trials,B2_Polypharmacology_Target_Count,0.6667,0.6476,0.2502
-PanOrgan_Fibrosis_14_Phase2b3_Trials,B3_SingleCell_GRN_Retention_Only,0.5,0.4472,0.2587
-PanOrgan_Fibrosis_14_Phase2b3_Trials,B4_Static_LR_Compartment_Degree,0.9167,0.9048,0.1375
-PanOrgan_Fibrosis_14_Phase2b3_Trials,B5_Uninformative_Modality_Prior,0.75,0.6,0.2364
+benchmark,method,n_trials,n_winners,auroc,auroc_ci_low,auroc_ci_high,auprc,auprc_ci_low,auprc_ci_high,brier_score,brier_ci_low,brier_ci_high,exact_perm_p_vs_null,exact_perm_p_vs_tau0
+PanOrgan_Fibrosis_14_Phase2b3_Trials,OmniNiche_v2_ZeroShot_Langevin,14,6,0.9583,0.8125,1.0,0.9583,0.8485,1.0,0.1257,0.0056,0.2763,0.0028,0.0194
+PanOrgan_Fibrosis_14_Phase2b3_Trials,B1_Static_Healthy_Tau0,14,6,0.5,0.187,0.8333,0.4947,0.3623,0.8308,0.3181,0.2182,0.4299,1.0,1.0
+PanOrgan_Fibrosis_14_Phase2b3_Trials,B2_Polypharmacology_Target_Count,14,6,0.6667,0.3958,0.9062,0.6476,0.419,0.9048,0.2502,0.1139,0.3788,0.30017,0.37686
+PanOrgan_Fibrosis_14_Phase2b3_Trials,B3_SingleCell_GRN_Retention_Only,14,6,0.5,0.1667,0.8542,0.4472,0.3527,0.7758,0.2587,0.1877,0.3353,1.0,1.0
+PanOrgan_Fibrosis_14_Phase2b3_Trials,B4_Static_LR_Compartment_Degree,14,6,0.9167,0.75,1.0,0.9048,0.7143,1.0,0.1375,0.0555,0.2484,0.0035,0.0147
+PanOrgan_Fibrosis_14_Phase2b3_Trials,B5_Uninformative_Modality_Prior,14,6,0.75,0.5625,0.9375,0.6,0.4615,0.8571,0.2364,0.2263,0.2466,0.08409,0.33877

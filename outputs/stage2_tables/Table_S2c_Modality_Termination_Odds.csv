@@ -1,0 +1,10 @@
+modality_group,reference_modality,termination_cause,n_modality_events,n_modality_total,n_ref_events,n_ref_total,odds_ratio,ci95_low,ci95_high,log2_or,p_value
+Antibody_Biologic,Small_Molecule,Scientific_Efficacy_Futility,123,7308,192,17963,1.5867,1.2637,1.9923,0.6661,7.02823316507228e-05
+Antibody_Biologic,Small_Molecule,Scientific_Safety_Toxicity,68,7308,148,17963,1.135,0.8513,1.5132,0.1827,0.3881077329319209
+Antibody_Biologic,Small_Molecule,Administrative_Commercial_Enrollment,976,7308,1924,17963,1.2852,1.1836,1.3955,0.362,2.3121236521318603e-09
+Protein_Peptide,Small_Molecule,Scientific_Efficacy_Futility,25,4021,192,17963,0.5891,0.3892,0.8916,-0.7635,0.012323361513769959
+Protein_Peptide,Small_Molecule,Scientific_Safety_Toxicity,25,4021,148,17963,0.7655,0.5022,1.1668,-0.3856,0.2140016803341681
+Protein_Peptide,Small_Molecule,Administrative_Commercial_Enrollment,363,4021,1924,17963,0.8281,0.7361,0.9315,-0.2722,0.0016822488125314101
+Cell_Gene_Oligo,Small_Molecule,Scientific_Efficacy_Futility,4,334,192,17963,1.257,0.4905,3.2211,0.33,0.6337823401513323
+Cell_Gene_Oligo,Small_Molecule,Scientific_Safety_Toxicity,0,334,148,17963,0.1793,0.0111,2.8866,-2.4793,0.2254226155940251
+Cell_Gene_Oligo,Small_Molecule,Administrative_Commercial_Enrollment,38,334,1924,17963,1.0822,0.771,1.519,0.114,0.6479257674553535

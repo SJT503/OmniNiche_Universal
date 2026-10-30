@@ -1,5 +1,5 @@
-quartile,n_trials_static,static_tau0_maturation_pct,n_trials_omniniche,omniniche_maturation_pct
-Q1_Low,5992,44.5761,5992,25.9012
-Q2,5992,42.2063,5992,40.4539
-Q3,5991,44.6002,5991,52.2117
-Q4_High,5992,53.4045,5992,66.2216
+quartile,n_trials_static,static_tau0_maturation_pct,static_ci95_low,static_ci95_high,n_trials_dnacc,dnacc_maturation_pct,dnacc_ci95_low,dnacc_ci95_high
+Q1_Low,5992,44.576,43.318,45.835,5992,25.534,24.43,26.638
+Q2,5992,42.206,40.956,43.457,5992,41.138,39.892,42.384
+Q3,5991,44.6,43.342,45.859,5991,52.746,51.482,54.01
+Q4_High,5992,53.405,52.141,54.668,5992,65.37,64.166,66.575
