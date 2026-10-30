@@ -1,0 +1,4 @@
+Open Targets Platform Licence Notification
+Recorded Timestamp: 2026-10-30T15:22:30+08:00
+Terms URL: https://platform-docs.opentargets.org/licence
+Notice: Open Targets Platform data is used for drug-target mechanism-of-action and disease association resolution in OmniNiche v2.0. Users have been notified to review the licence terms at https://platform-docs.opentargets.org/licence.
