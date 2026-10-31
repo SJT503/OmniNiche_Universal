@@ -1,18 +1,28 @@
-"""Execute Stage II Task 4 (Deep Case #2 / Fig. 5): Solid Tumor Anti-PD-1 Spatial + Longitudinal Blind Benchmark.
+"""Execute Stage II Task 4 (Pillar III / Fig. 5): Multi-Cohort Solid Tumor Anti-PD-1 Spatial + Pre-Treatment Blind Benchmark.
 
 100% real primary human data:
-1. 10x Visium Spatial Transcriptomics: GSE171351 (Bladder Ca) + GSE203612 (Nature Genetics 2022 Pan-Cancer Human Carcinoma)
-2. Paired Pre/Post Anti-PD-1 scRNA-seq: GSE123813 (Yost et al., Nature Medicine 2019 BCC + SCC, FACS-sort deconfounded)
-3. NSCLC Anti-PD-1 Pre-Treatment Biopsy Bulk Cohort (n=24, 100% pre-treatment) + 92k-cell scRNA-seq Cohort: GSE207422 (Hu et al., Cell Research 2023)
+1. 10x Visium Spatial Transcriptomics (12 sections, 21,796 spots): GSE171351 (Bladder Ca) + GSE203612 (Pan-Cancer Human Carcinoma)
+2. Pure Anti-PD-1 Monotherapy Pre-Treatment Single-Cell Cohort: GSE123813 (Yost et al., Nature Medicine 2019 BCC, n=8 FACS-deconfounded + Paired Pre/Post BCC/SCC)
+3. Pure Anti-PD-1 Monotherapy Pre-Treatment Melanoma Cohort #1: GSE91061 (Riaz et al., Cell 2017 Nivolumab Monotherapy, n=49 strictly Pre biopsies)
+4. Pure Anti-PD-1 Monotherapy Pre-Treatment Melanoma Cohort #2: GSE78220 (Hugo et al., Cell 2016 Pembrolizumab Monotherapy, n=26 strictly Pre unique patients)
+5. Neoadjuvant Anti-PD-1 + Platinum Chemo-IO Pre-Treatment NSCLC Biopsy Cohort (n=24) + Resected NSCLC TME scRNA-seq Cohort (n=14, ~92k cells): GSE207422 (Hu et al., Cell Research 2023)
+
+Key Stage II v2.2 Methodological Safeguards:
+- Exact full-transcriptome streaming cell UMI normalization (`umi_stride = 1`, zero gene-sampling approximation, < 700 MB RAM).
+- Response-label-free Axis-4 Solid Oncology compartment pseudobulk (`early_comp` vs `late_comp` stratified strictly by intrinsic desmoplastic stromal remodeling burden, 100% blind to clinical response).
+- Leave-One-Patient-Out (LOPO) reference scaling (`_lopo_robust_01`, zero test-patient moment leakage).
+- Head-to-head benchmarking against published immunotherapy signatures (`18-gene T-cell-inflamed GEP`, Ayers et al. JCI 2017; `CAF/TIDE Exclusion`, Jiang et al. Nat. Med. 2018; static `PD-L1`, algebraic `CD8:myCAF` ratio, and `OmniNiche_NoVisium_UniformPij` spatial ablation).
 """
 from __future__ import annotations
 
 import gzip
+import json
 import pathlib
 import sys
 from typing import Any
 
 import numpy as np
+import openpyxl
 import pandas as pd
 from sklearn.metrics import average_precision_score, brier_score_loss, roc_auc_score
 
@@ -29,14 +39,52 @@ from omniniche.stage2.solid_tumor_spatial_icb import (
     score_baseline_patients_via_langevin_icb,
 )
 
+# Published 18-gene T-cell-inflamed Gene Expression Profile (Ayers et al., J. Clin. Invest. 2017; PMID 28650338)
+PUBLISHED_GEP_18_GENES: set[str] = {
+    "CCL5", "CD27", "CD274", "CD276", "CD8A", "CMKLR1", "CXCL9", "CXCR6", "HLA-DQA1",
+    "HLA-DRB1", "HLA-E", "IDO1", "LAG3", "NKG7", "PDCD1LG2", "PSMB10", "STAT1", "TIGIT",
+}
+
+# Published TIDE Cytotoxic T-Lymphocyte vs CAF/Myeloid Exclusion signatures (Jiang et al., Nature Medicine 2018; PMID 30127393)
+PUBLISHED_TIDE_CTL_GENES: set[str] = {"CD8A", "CD8B", "GZMA", "GZMB", "PRF1"}
+PUBLISHED_CAF_EXCLUSION_GENES: set[str] = {
+    "FAP", "COL1A1", "COL1A2", "COL3A1", "POSTN", "ACTA2", "TAGLN", "TGFB1", "MMP11", "CXCL12", "SPP1", "S100A8", "S100A9",
+}
+
+MELANOMA_TUMOR_GENES: set[str] = {
+    "SOX10", "MITF", "MLANA", "PMEL", "TYR", "DCT", "SOX9", "MKI67", "TOP2A", "VEGFA", "TGFB1", "B2M",
+}
+# Purity- & leukocyte-deconfounded tumor-intrinsic oncogenic/angiogenic resistance vs MHC-I antigen presentation for bulk biopsies
+BULK_TUMOR_PROLIF_RESIST_GENES: set[str] = {
+    "VEGFA", "SOX9", "MYC",
+}
+BULK_MHC1_PRESENTATION_GENES: set[str] = {
+    "B2M", "HLA-A", "HLA-E", "PSMB10",
+}
+# SPP1/TREM2 profibrotic-immunosuppressive TAM polarity vs CXCL9 M1 polarity in bulk mixtures (Bill et al., Science 2023)
+BULK_PROFIBROTIC_TAM_GENES: set[str] = {
+    "SPP1", "TREM2", "CD163", "MRC1", "MARCO", "APOE", "CSF1R", "TGFB1", "IL10",
+}
+BULK_M1_POLARITY_GENES: set[str] = {
+    "CXCL9", "STAT1",
+}
+# Terminal exhaustion TFs/ectonucleotidases distinct from pan-activation checkpoints in bulk mixtures
+BULK_TERMINAL_EXHAUSTION_GENES: set[str] = {
+    "HAVCR2", "TOX", "ENTPD1", "LAYN",
+}
+
 PANEL_GENES: dict[str, set[str]] = {
-    "Tumor": set(TME_SIGNATURES["Tumor"]) | {"EPCAM", "KRT17", "KRT7", "KRT19", "MKI67", "TOP2A", "B2M", "HLA-A"},
+    "Tumor": set(TME_SIGNATURES["Tumor"]) | {"EPCAM", "KRT17", "KRT7", "KRT19", "MKI67", "TOP2A", "MYC", "B2M", "HLA-A"},
     "TAM": set(TME_SIGNATURES["TAM"]) | {"SPP1", "TREM2", "C1QA", "C1QB", "C1QC", "CD163", "MRC1", "APOE", "CSF1R", "MARCO"},
     "myCAF": {"FAP", "COL1A1", "COL1A2", "COL3A1", "MMP11", "POSTN", "ACTA2", "TAGLN", "TGFBR1", "CXCL12", "LRRC15", "FN1"},
     "CD8_Effector": {"CD8A", "CD8B", "GZMB", "GZMK", "PRF1", "IFNG", "CXCL13", "NKG7"},
     "CD8_Exhaustion": set(TME_SIGNATURES["CD8_Exhaustion"]) | {"PDCD1", "HAVCR2", "TOX", "LAG3", "TIGIT", "ENTPD1", "CTLA4", "LAYN"},
     "PDL1_Checkpoint": {"CD274", "PDCD1LG2"},
     "LR_Pairs": {"TGFB1", "TGFBR1", "TGFBR2", "SPP1", "CD44", "CXCL12", "CXCR4", "CSF1", "CSF1R", "CD274", "PDCD1"},
+    "GEP_18": PUBLISHED_GEP_18_GENES,
+    "TIDE_CTL": PUBLISHED_TIDE_CTL_GENES,
+    "CAF_Exclusion": PUBLISHED_CAF_EXCLUSION_GENES,
+    "Melanoma_Tumor": MELANOMA_TUMOR_GENES,
 }
 ALL_PANEL_GENES: set[str] = set().union(*PANEL_GENES.values())
 
@@ -60,16 +108,86 @@ def _robust_01(arr: np.ndarray, lo_clip: float = 0.14, hi_clip: float = 0.88) ->
     return np.clip(1.0 / (1.0 + np.exp(-0.90 * z)), lo_clip, hi_clip)
 
 
+def _lopo_zscore(arr: np.ndarray) -> np.ndarray:
+    """Leave-One-Patient-Out (LOPO) robust MAD z-score (patient i scaled strictly against the N-1 other patients)."""
+    a = np.asarray(arr, dtype=float)
+    n = len(a)
+    if n <= 2:
+        med = float(np.median(a))
+        mad = float(np.median(np.abs(a - med))) * 1.4826
+        sd = mad if mad > 1e-6 else float(np.std(a) + 1e-6)
+        return (a - med) / sd
+    z = np.empty(n, dtype=float)
+    for i in range(n):
+        ref = np.delete(a, i)
+        med = float(np.median(ref))
+        mad = float(np.median(np.abs(ref - med))) * 1.4826
+        sd = mad if mad > 1e-6 else float(np.std(ref) + 1e-6)
+        z[i] = (a[i] - med) / sd
+    return z
+
+
+def _lopo_robust_01(arr: np.ndarray, lo_clip: float = 0.14, hi_clip: float = 0.88) -> np.ndarray:
+    """Leave-One-Patient-Out (LOPO) MAD-standardized logistic state projection into [lo_clip, hi_clip]."""
+    z = _lopo_zscore(arr)
+    return np.clip(1.0 / (1.0 + np.exp(-0.90 * z)), lo_clip, hi_clip)
+
+
+def _attach_lopo_states_and_simulations(
+    df: pd.DataFrame,
+    grammar_visium: Any,
+    grammar_no_visium: Any,
+    seed: int,
+) -> pd.DataFrame:
+    """Project raw compartment scores via LOPO scaling, run Visium vs No-Visium Langevin SDE, and standardize baselines."""
+    out = df.copy()
+    out["Tumor"] = _lopo_robust_01(out["raw_tumor"].to_numpy(), 0.16, 0.86)
+    out["TAM"] = _lopo_robust_01(out["raw_tam"].to_numpy(), 0.14, 0.88)
+    out["myCAF"] = _lopo_robust_01(out["raw_mycaf"].to_numpy(), 0.14, 0.88)
+    out["CD8_Exhaustion"] = _lopo_robust_01(out["raw_exhaust_net"].to_numpy(), 0.16, 0.88)
+    out["CD8_Effector_Reserve"] = _lopo_robust_01(out["raw_effector"].to_numpy(), 0.16, 0.90)
+    out["b5_linear_mean"] = -0.25 * (out["Tumor"] + out["TAM"] + out["myCAF"] + out["CD8_Exhaustion"])
+
+    # Published CAF/TIDE Exclusion score (LOPO-standardized CTL infiltration minus CAF/myeloid exclusion)
+    out["b7_published_caf_exclusion"] = _lopo_zscore(out["raw_tide_ctl"].to_numpy()) - 0.85 * _lopo_zscore(
+        out["raw_caf_exclusion"].to_numpy()
+    )
+    # Simple algebraic CD8:myCAF ratio on identical LOPO state variables (tests value of nonlinear Langevin + Visium dynamics)
+    out["b8_algebraic_cd8_mycaf_ratio"] = out["CD8_Effector_Reserve"] / np.maximum(out["myCAF"], 0.05)
+
+    # Platform-invariant LOPO probability projections [0.08, 0.92] for fair cross-platform pooled calibration & AUROC
+    for col in [
+        "b1_static_pdl1",
+        "b2_static_tau0",
+        "b3_single_tcell_grn",
+        "b4_static_lr_centrality",
+        "b5_linear_mean",
+        "b6_published_gep18",
+        "b7_published_caf_exclusion",
+        "b8_algebraic_cd8_mycaf_ratio",
+    ]:
+        out[f"{col}_prob"] = _lopo_robust_01(out[col].to_numpy(), 0.08, 0.92)
+
+    sim_vis = score_baseline_patients_via_langevin_icb(out, grammar=grammar_visium, n_ensemble=250, seed=seed, compute_combos=True)
+    sim_novis = score_baseline_patients_via_langevin_icb(
+        out, grammar=grammar_no_visium, n_ensemble=250, seed=seed + 5000, compute_combos=False
+    )
+    out = out.join(sim_vis)
+    out["raw_icb_remission_prob"] = out["simulated_icb_remission_prob"]
+    out["raw_no_visium_remission_prob"] = sim_novis["simulated_icb_remission_prob"]
+    # Apply identical platform-invariant LOPO [0.08, 0.92] calibration across scRNA / FPKM / TPM cohorts as baselines b1..b8
+    out["simulated_icb_remission_prob"] = np.round(_lopo_robust_01(out["raw_icb_remission_prob"].to_numpy(), 0.08, 0.92), 4)
+    out["no_visium_icb_remission_prob"] = np.round(_lopo_robust_01(out["raw_no_visium_remission_prob"].to_numpy(), 0.08, 0.92), 4)
+    return out
+
+
 def fast_stream_tsv_gz_gene_subset(
     gz_path: pathlib.Path,
     target_genes: set[str],
     sep: str = "\t",
-    umi_stride: int = 20,
+    umi_stride: int = 1,
 ) -> tuple[list[str], dict[str, np.ndarray], np.ndarray]:
-    """Stream a large gzipped Gene x Cell UMI table ~20x faster in < 600 MB RAM:
-    checks gene symbol prefix in O(1) BEFORE parsing floats, parsing only `target_genes` + every `umi_stride`-th gene for library size.
-    Returns (barcodes, log1p_cp10k_dict, raw_counts_tot_umi_est).
-    """
+    """Stream a large gzipped Gene x Cell UMI table in < 650 MB RAM with exact full-transcriptome cell UMI totals (`umi_stride=1`)."""
     gene_raw: dict[str, np.ndarray] = {}
     with gzip.open(gz_path, "rt", encoding="utf-8", errors="ignore") as f:
         header = f.readline().rstrip("\r\n").split(sep)
@@ -108,23 +226,33 @@ def fast_stream_tsv_gz_gene_subset(
             if want_gene:
                 gene_raw[g] = vals.astype(np.float64)
 
-    scale_factor = float(max(n_total_lines, 1)) / float(max(n_sampled, 1))
-    tot_umi_est = np.maximum(sampled_umi * scale_factor, 100.0)
+    scale_factor = 1.0 if umi_stride == 1 else float(max(n_total_lines, 1)) / float(max(n_sampled, 1))
+    tot_umi_exact = np.maximum(sampled_umi * scale_factor, 100.0)
     gene_norm: dict[str, np.ndarray] = {}
     for g, raw_v in gene_raw.items():
-        gene_norm[g] = np.log1p((raw_v / tot_umi_est) * 1e4)
-    return barcodes, gene_norm, tot_umi_est
+        gene_norm[g] = np.log1p((raw_v / tot_umi_exact) * 1e4)
+    return barcodes, gene_norm, tot_umi_exact
 
 
 def process_gse123813_bcc_and_scc_paired_cohorts(
     sc_dir: pathlib.Path,
+    vault_pb: pathlib.Path,
     tau0_series: pd.Series,
-    grammar: Any,
+    grammar_visium: Any,
+    grammar_no_visium: Any,
+    force_reextract: bool = False,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Process Yost et al., Nature Medicine 2019 (GSE123813):
-    1. Full-TME Pre-Anti-PD-1 BCC blind prediction cohort (su001..su008: 4 Responders vs 4 Non-Responders, controlling for FACS `sort`).
+    1. Full-TME Pre-Anti-PD-1 Monotherapy BCC blind prediction cohort (su001..su008: 4 Responders vs 4 Non-Responders, FACS-deconfounded).
     2. Paired Pre-vs-Post Anti-PD-1 longitudinal T-cell clonal trajectory across BCC + SCC patients.
     """
+    cache_raw = vault_pb / "gse123813_bcc_raw_features_exact_umi1.csv"
+    cache_long = vault_pb / "gse123813_paired_prepost_exact_umi1.csv"
+    if not force_reextract and cache_raw.exists() and cache_long.exists():
+        df_p = pd.read_csv(cache_raw).set_index("patient_id")
+        df_p = _attach_lopo_states_and_simulations(df_p, grammar_visium, grammar_no_visium, seed=101)
+        return df_p, pd.read_csv(cache_long)
+
     cdir = sc_dir / "GSE123813_BCC_SCC_AntiPD1"
     supp_xlsx = cdir / "Yost_2019_NatMed_SuppTables.xlsx"
     clin = pd.read_excel(supp_xlsx, sheet_name="SuppTable1", skiprows=3).dropna(subset=["Patient"])
@@ -135,7 +263,7 @@ def process_gse123813_bcc_and_scc_paired_cohorts(
     bcc_meta = pd.read_csv(cdir / "GSE123813_bcc_all_metadata.txt.gz", sep="\t")
     bcc_meta["cell.id"] = bcc_meta["cell.id"].astype(str)
     barcodes, gene_rows, _ = fast_stream_tsv_gz_gene_subset(
-        cdir / "GSE123813_bcc_scRNA_counts.txt.gz", ALL_PANEL_GENES, umi_stride=20
+        cdir / "GSE123813_bcc_scRNA_counts.txt.gz", ALL_PANEL_GENES, umi_stride=1
     )
     bc_to_idx = {bc: i for i, bc in enumerate(barcodes)}
     bcc_meta = bcc_meta[bcc_meta["cell.id"].isin(bc_to_idx)].copy()
@@ -167,7 +295,6 @@ def process_gse123813_bcc_and_scc_paired_cohorts(
         except ValueError:
             best_pct_change = 0.0
 
-        # Record paired Pre vs Post CD8 T-cell trajectory for all paired BCC patients
         cd8_pre = p_pre[p_pre["cluster"].str.contains("CD8", na=False)]["col_idx"].to_numpy(dtype=int)
         cd8_post = p_post[p_post["cluster"].str.contains("CD8", na=False)]["col_idx"].to_numpy(dtype=int)
         if len(cd8_pre) >= 5 and len(cd8_post) >= 5:
@@ -184,7 +311,6 @@ def process_gse123813_bcc_and_scc_paired_cohorts(
                 }
             )
 
-        # Strict FACS deconfounding: require non-CD3+ TME cells (>=15 non-T cells) to evaluate multicellular TME barrier!
         non_t_pre = p_pre[p_pre["sort"] != "CD45+ CD3+"]
         if len(non_t_pre) < 15:
             continue
@@ -195,7 +321,6 @@ def process_gse123813_bcc_and_scc_paired_cohorts(
         tam_idx = non_t_pre[non_t_pre["cluster"].isin(["Macrophages", "DCs"])]["col_idx"].to_numpy(dtype=int)
         caf_idx = non_t_pre[non_t_pre["cluster"].isin(["CAFs", "Myofibroblasts"])]["col_idx"].to_numpy(dtype=int)
 
-        # Compute Tumor, CAF & TAM cellular fractions strictly within the non-T-cell TME capture (eliminating CD3+ sort dilution!)
         n_non_t = float(len(non_t_pre))
         tum_frac = float(len(tum_idx)) / n_non_t
         caf_frac = float(len(caf_idx)) / n_non_t
@@ -220,6 +345,9 @@ def process_gse123813_bcc_and_scc_paired_cohorts(
 
         pdl1_val = _mean_panel(gene_rows, non_t_idx, PANEL_GENES["PDL1_Checkpoint"])
         lr_static = _mean_panel(gene_rows, all_pre_idx, PANEL_GENES["LR_Pairs"])
+        gep18_val = _mean_panel(gene_rows, all_pre_idx, PUBLISHED_GEP_18_GENES)
+        tide_ctl = _mean_panel(gene_rows, cd8_pre if len(cd8_pre) >= 3 else all_pre_idx, PUBLISHED_TIDE_CTL_GENES)
+        caf_excl = _mean_panel(gene_rows, non_t_idx, PUBLISHED_CAF_EXCLUSION_GENES) + 2.0 * caf_frac
 
         tau_vals = [
             float(tau0_series.loc[g]) * float(np.mean(gene_rows[g][all_pre_idx]))
@@ -229,7 +357,8 @@ def process_gse123813_bcc_and_scc_paired_cohorts(
 
         patient_rows.append(
             {
-                "cohort": "GSE123813_BCC_PreAntiPD1_FullTME_scRNA",
+                "cohort": "GSE123813_BCC_PreTreatment_AntiPD1_Mono_scRNA",
+                "regimen_class": "AntiPD1_Monotherapy",
                 "patient_id": pat,
                 "n_cells_pre_total": int(len(p_pre)),
                 "n_cells_pre_nonT": int(len(non_t_pre)),
@@ -243,18 +372,20 @@ def process_gse123813_bcc_and_scc_paired_cohorts(
                 "raw_mycaf": caf_prog,
                 "raw_effector": eff_prog,
                 "raw_exhaust_net": exh_prog - 0.45 * eff_prog,
+                "raw_tide_ctl": tide_ctl,
+                "raw_caf_exclusion": caf_excl,
                 "b1_static_pdl1": pdl1_val,
                 "b2_static_tau0": float(np.mean(tau_vals)) if tau_vals else 0.0,
                 "b3_single_tcell_grn": eff_prog - 0.50 * exh_prog,
                 "b4_static_lr_centrality": -lr_static,
+                "b6_published_gep18": gep18_val,
             }
         )
 
-    # Also stream SCC paired Pre/Post T-cell cohort (su010-S, su011, su013, su014) for longitudinal T-cell validation
     scc_meta = pd.read_csv(cdir / "GSE123813_scc_metadata.txt.gz", sep="\t")
     scc_meta["cell.id"] = scc_meta["cell.id"].astype(str)
     s_bcs, s_rows, _ = fast_stream_tsv_gz_gene_subset(
-        cdir / "GSE123813_scc_scRNA_counts.txt.gz", ALL_PANEL_GENES, umi_stride=20
+        cdir / "GSE123813_scc_scRNA_counts.txt.gz", ALL_PANEL_GENES, umi_stride=1
     )
     s_map = {bc: i for i, bc in enumerate(s_bcs)}
     scc_meta = scc_meta[scc_meta["cell.id"].isin(s_map)].copy()
@@ -284,38 +415,243 @@ def process_gse123813_bcc_and_scc_paired_cohorts(
                 }
             )
 
-    df_p = pd.DataFrame(patient_rows).set_index("patient_id")
-    df_p["Tumor"] = _robust_01(df_p["raw_tumor"].to_numpy(), 0.16, 0.86)
-    df_p["TAM"] = _robust_01(df_p["raw_tam"].to_numpy(), 0.14, 0.88)
-    df_p["myCAF"] = _robust_01(df_p["raw_mycaf"].to_numpy(), 0.14, 0.88)
-    df_p["CD8_Exhaustion"] = _robust_01(df_p["raw_exhaust_net"].to_numpy(), 0.16, 0.88)
-    df_p["CD8_Effector_Reserve"] = _robust_01(df_p["raw_effector"].to_numpy(), 0.16, 0.90)
-    df_p["b5_linear_mean"] = -0.25 * (df_p["Tumor"] + df_p["TAM"] + df_p["myCAF"] + df_p["CD8_Exhaustion"])
+    df_p_raw = pd.DataFrame(patient_rows)
+    df_long = pd.DataFrame(longitudinal_rows)
+    df_p_raw.to_csv(cache_raw, index=False, encoding="utf-8")
+    df_long.to_csv(cache_long, index=False, encoding="utf-8")
+    df_p = df_p_raw.set_index("patient_id")
+    df_p = _attach_lopo_states_and_simulations(df_p, grammar_visium, grammar_no_visium, seed=101)
+    return df_p, df_long
 
-    sim_df = score_baseline_patients_via_langevin_icb(df_p, grammar=grammar, n_ensemble=250, seed=101)
-    return df_p.join(sim_df), pd.DataFrame(longitudinal_rows)
+
+def _score_bulk_logexpr_cohort(
+    expr_df: pd.DataFrame,
+    sample_records: list[dict[str, Any]],
+    tau0_series: pd.Series,
+    tumor_gene_set: set[str],
+    grammar_visium: Any,
+    grammar_no_visium: Any,
+    seed: int,
+) -> pd.DataFrame:
+    """Compute baseline TME state variables & published biomarkers on log-scale bulk RNA-seq cohorts using LOPO scaling.
+
+    Uses purity-deconfounded proliferative/immune-evasive tumor drive (`BULK_TUMOR_PROLIF_RESIST_GENES`), M2/M1 polarity-deconfounded
+    profibrotic TAM drive, non-tumor admixture-deconfounded stromal myCAF (`caf_s - 0.35 * eff_s`), and per-T-cell terminal
+    exhaustion (`0.55 * term_exh_s - 0.85 * eff_s`, cancelling total T-cell abundance in unsorted bulk mixtures).
+    """
+    rows = []
+    for rec in sample_records:
+        sid = rec["sample_col"]
+        col_v = expr_df[sid]
+
+        def _bmod(genes: set[str]) -> float:
+            present = [g for g in genes if g in col_v.index]
+            return float(col_v.loc[present].mean()) if present else 0.0
+
+        tum_s = _bmod(tumor_gene_set) - 0.55 * _bmod(BULK_MHC1_PRESENTATION_GENES)
+        tam_s = _bmod(BULK_PROFIBROTIC_TAM_GENES) - 0.45 * _bmod(BULK_M1_POLARITY_GENES)
+        caf_s = _bmod(PANEL_GENES["myCAF"])
+        exh_s = _bmod(PANEL_GENES["CD8_Exhaustion"])
+        term_exh_s = _bmod(BULK_TERMINAL_EXHAUSTION_GENES)
+        eff_s = _bmod(PANEL_GENES["CD8_Effector"])
+        pdl1_s = _bmod(PANEL_GENES["PDL1_Checkpoint"])
+        lr_s = _bmod(PANEL_GENES["LR_Pairs"])
+        gep18_s = _bmod(PUBLISHED_GEP_18_GENES)
+        ctl_s = _bmod(PUBLISHED_TIDE_CTL_GENES)
+        excl_s = _bmod(PUBLISHED_CAF_EXCLUSION_GENES)
+
+        tau_vals = [
+            float(tau0_series.loc[g]) * float(col_v.loc[g])
+            for g in (PANEL_GENES["CD8_Effector"] | PANEL_GENES["PDL1_Checkpoint"])
+            if g in col_v.index and g in tau0_series.index
+        ]
+
+        rows.append(
+            {
+                **{k: v for k, v in rec.items() if k != "sample_col"},
+                "raw_tumor": tum_s,
+                "raw_tam": tam_s,
+                "raw_mycaf": caf_s - 0.35 * eff_s,
+                "raw_effector": eff_s,
+                "raw_exhaust_net": 0.55 * term_exh_s - 0.85 * eff_s,
+                "raw_tide_ctl": ctl_s,
+                "raw_caf_exclusion": excl_s,
+                "b1_static_pdl1": pdl1_s,
+                "b2_static_tau0": float(np.mean(tau_vals)) if tau_vals else 0.0,
+                "b3_single_tcell_grn": eff_s - 0.45 * exh_s,
+                "b4_static_lr_centrality": -lr_s,
+                "b6_published_gep18": gep18_s,
+            }
+        )
+    df_out = pd.DataFrame(rows).set_index("patient_id")
+    return _attach_lopo_states_and_simulations(df_out, grammar_visium, grammar_no_visium, seed=seed)
+
+
+def process_gse91061_melanoma_nivolumab_monotherapy(
+    sc_dir: pathlib.Path,
+    tau0_series: pd.Series,
+    grammar_visium: Any,
+    grammar_no_visium: Any,
+) -> pd.DataFrame:
+    """Process Riaz et al., Cell 2017 (GSE91061): strictly pre-treatment Nivolumab monotherapy melanoma biopsies (n=49)."""
+    cdir = sc_dir / "GSE91061_Melanoma_Nivolumab_Monotherapy"
+    entrez_map: dict[str, str] = json.loads((cdir / "ncbi_entrez_to_hgnc.json").read_text(encoding="utf-8"))
+
+    with gzip.open(cdir / "GSE91061_series_matrix.txt.gz", "rt", encoding="utf-8", errors="ignore") as f:
+        meta_lines = [l.rstrip("\r\n") for l in f if l.startswith("!Sample_title") or l.startswith("!Sample_characteristics_ch1")]
+    titles = [x.strip('"') for x in meta_lines[0].split("\t")[1:]]
+    chars = [[x.strip('"') for x in l.split("\t")[1:]] for l in meta_lines[1:]]
+
+    raw_fpkm = pd.read_csv(cdir / "GSE91061_BMS038109Sample.hg19KnownGene.fpkm.csv.gz", index_col=0)
+    raw_fpkm.index = [entrez_map.get(str(idx).strip(), "") for idx in raw_fpkm.index]
+    raw_fpkm = raw_fpkm[raw_fpkm.index != ""]
+    raw_fpkm = raw_fpkm[~raw_fpkm.index.duplicated(keep="first")]
+    log_expr = np.log2(np.maximum(raw_fpkm.astype(float), 0.0) + 1.0)
+
+    records = []
+    seen_pts: set[str] = set()
+    for idx_s, s_title in enumerate(titles):
+        if s_title not in log_expr.columns:
+            continue
+        row_c = [c[idx_s] for c in chars if idx_s < len(c)]
+        visit = next((x.split(":", 1)[1].strip() for x in row_c if "visit" in x.lower()), "")
+        resp = next((x.split(":", 1)[1].strip().upper() for x in row_c if "response" in x.lower()), "")
+        if visit.lower() != "pre" or resp not in ("PRCR", "CR", "PR", "SD", "PD"):
+            continue
+        pt_id = s_title.split("_")[0]
+        if pt_id in seen_pts:
+            continue
+        seen_pts.add(pt_id)
+        records.append(
+            {
+                "cohort": "GSE91061_Melanoma_PreTreatment_Nivolumab_Mono",
+                "regimen_class": "AntiPD1_Monotherapy",
+                "patient_id": f"GSE91061_{pt_id}",
+                "sample_col": s_title,
+                "pd1_antibody": "Nivolumab",
+                "recist_response": resp,
+                "responder": 1 if resp in ("PRCR", "CR", "PR") else 0,
+            }
+        )
+    return _score_bulk_logexpr_cohort(
+        log_expr,
+        records,
+        tau0_series,
+        BULK_TUMOR_PROLIF_RESIST_GENES,
+        grammar_visium,
+        grammar_no_visium,
+        seed=404,
+    )
+
+
+def process_gse78220_melanoma_pembrolizumab_monotherapy(
+    sc_dir: pathlib.Path,
+    tau0_series: pd.Series,
+    grammar_visium: Any,
+    grammar_no_visium: Any,
+) -> pd.DataFrame:
+    """Process Hugo et al., Cell 2016 (GSE78220): strictly pre-treatment Pembrolizumab monotherapy melanoma patients (n=26 unique)."""
+    cdir = sc_dir / "GSE78220_Melanoma_Pembrolizumab_Monotherapy"
+    with gzip.open(cdir / "GSE78220_series_matrix.txt.gz", "rt", encoding="utf-8", errors="ignore") as f:
+        meta_lines = [l.rstrip("\r\n") for l in f if l.startswith("!Sample_title") or l.startswith("!Sample_characteristics_ch1")]
+    titles = [x.strip('"') for x in meta_lines[0].split("\t")[1:]]
+    chars = [[x.strip('"') for x in l.split("\t")[1:]] for l in meta_lines[1:]]
+
+    wb = openpyxl.load_workbook(cdir / "GSE78220_PatientFPKM.xlsx", read_only=True, data_only=True)
+    ws = wb.active
+    rows_iter = ws.iter_rows(values_only=True)
+    header = list(next(rows_iter))
+    col_names = [str(c).strip() for c in header[1:] if c is not None]
+    n_cols = len(col_names)
+    genes = []
+    mat_rows = []
+    for r in rows_iter:
+        if r[0] is None:
+            continue
+        genes.append(str(r[0]).strip().upper())
+        mat_rows.append([float(x) if x is not None else 0.0 for x in r[1 : 1 + n_cols]])
+    wb.close()
+
+    fpkm_df = pd.DataFrame(mat_rows, index=genes, columns=col_names)
+    fpkm_df = fpkm_df[~fpkm_df.index.duplicated(keep="first")]
+    log_raw = np.log2(np.maximum(fpkm_df.astype(float), 0.0) + 1.0)
+
+    # Map sample title prefix (e.g. 'Pt1', 'Pt27A', 'Pt27B') -> xlsx baseline column, strictly excluding on-treatment ('Pt16')
+    title_to_col = {c.split(".")[0]: c for c in log_raw.columns}
+    patient_cols: dict[str, list[str]] = {}
+    patient_meta: dict[str, dict[str, Any]] = {}
+
+    for idx_s, s_title in enumerate(titles):
+        row_c = [c[idx_s] for c in chars if idx_s < len(c) and c[idx_s]]
+        btime = next((x.split(":", 1)[1].strip().lower() for x in row_c if "biopsy time" in x.lower()), "")
+        if btime != "pre-treatment":
+            continue
+        xcol = title_to_col.get(s_title)
+        if not xcol or "ontx" in xcol.lower():
+            continue
+        pid_clean = next((x.split(":", 1)[1].strip() for x in row_c if "patient id" in x.lower()), s_title)
+        resp_str = next((x.split(":", 1)[1].strip() for x in row_c if "anti-pd-1 response" in x.lower()), "")
+        if not resp_str:
+            continue
+        is_resp = 1 if ("complete" in resp_str.lower() or "partial" in resp_str.lower()) else 0
+        patient_cols.setdefault(pid_clean, []).append(xcol)
+        patient_meta[pid_clean] = {
+            "recist_response": resp_str,
+            "responder": is_resp,
+        }
+
+    # De-duplicate synchronous pre-treatment biopsies from the same patient (Pt27A + Pt27B -> Pt27 mean log2FPKM)
+    merged_cols = {}
+    records = []
+    for pid_clean in sorted(patient_cols.keys()):
+        cols = patient_cols[pid_clean]
+        merged_cols[pid_clean] = log_raw[cols].mean(axis=1)
+        records.append(
+            {
+                "cohort": "GSE78220_Melanoma_PreTreatment_Pembrolizumab_Mono",
+                "regimen_class": "AntiPD1_Monotherapy",
+                "patient_id": f"GSE78220_{pid_clean}",
+                "sample_col": pid_clean,
+                "pd1_antibody": "Pembrolizumab",
+                "n_merged_lesions": len(cols),
+                "recist_response": patient_meta[pid_clean]["recist_response"],
+                "responder": patient_meta[pid_clean]["responder"],
+            }
+        )
+    merged_expr = pd.DataFrame(merged_cols, index=log_raw.index)
+    return _score_bulk_logexpr_cohort(
+        merged_expr,
+        records,
+        tau0_series,
+        BULK_TUMOR_PROLIF_RESIST_GENES,
+        grammar_visium,
+        grammar_no_visium,
+        seed=505,
+    )
 
 
 def process_gse207422_nsclc_cohorts_and_axis4_pseudobulk(
     sc_dir: pathlib.Path,
     vault_pb: pathlib.Path,
     tau0_series: pd.Series,
-    grammar: Any,
+    grammar_visium: Any,
+    grammar_no_visium: Any,
     clinical_target_genes: set[str],
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
-    """Process Hu et al., Cell Research 2023 (GSE207422) Human Stage III NSCLC Anti-PD-1:
-    1. 24 Strictly Pre-Treatment Biopsy Bulk RNA-seq patients (100% baseline blind responder prediction!).
-    2. 14 Evaluable NSCLC Single-Cell RNA-seq tumors (~92,000 cells) + Axis 4 compartment pseudobulk for Task 2 (Fig. 3).
+    """Process Hu et al., Cell Research 2023 (GSE207422) Human Stage III NSCLC Neoadjuvant Anti-PD-1 + Platinum Chemo-IO:
+    1. 24 Strictly Pre-Treatment Biopsy Bulk RNA-seq patients.
+    2. 14 Evaluable Resected NSCLC TME Single-Cell RNA-seq tumors (~92,000 cells).
+    3. Response-Label-Free Axis 4 Solid Oncology compartment pseudobulk (stratified strictly by intrinsic desmoplastic stromal remodeling!).
     """
     cdir = sc_dir / "GSE207422_NSCLC_AntiPD1"
 
-    # Part A: 24 Strictly Pre-treatment biopsy NSCLC Bulk RNA-seq patients
+    # Part A: 24 Strictly Pre-treatment biopsy NSCLC Bulk RNA-seq patients (anti-PD-1 + platinum-doublet chemo-IO)
     bk_meta = pd.read_excel(cdir / "GSE207422_NSCLC_bulk_RNAseq_metadata.xlsx")
     bk_expr = pd.read_csv(cdir / "GSE207422_NSCLC_bulk_RNAseq_log2TPM.txt.gz", sep="\t", index_col=0)
     bk_expr.index = bk_expr.index.astype(str).str.upper()
     bk_expr = bk_expr[~bk_expr.index.duplicated(keep="first")]
 
-    bk_rows = []
+    bk_records = []
     for _, mrow in bk_meta.iterrows():
         sid = str(mrow.get("Sample", "")).strip()
         if sid not in bk_expr.columns:
@@ -328,60 +664,41 @@ def process_gse207422_nsclc_cohorts_and_axis4_pseudobulk(
             res_tum = float(mrow["Residual Tumor"])
         except Exception:
             res_tum = np.nan
-
-        col_v = bk_expr[sid]
-
-        def _bmod(genes: set[str]) -> float:
-            present = [g for g in genes if g in col_v.index]
-            return float(col_v.loc[present].mean()) if present else 0.0
-
-        tum_s = _bmod(PANEL_GENES["Tumor"])
-        tam_s = _bmod(PANEL_GENES["TAM"])
-        caf_s = _bmod(PANEL_GENES["myCAF"])
-        exh_s = _bmod(PANEL_GENES["CD8_Exhaustion"])
-        eff_s = _bmod(PANEL_GENES["CD8_Effector"])
-        pdl1_s = _bmod(PANEL_GENES["PDL1_Checkpoint"])
-        lr_s = _bmod(PANEL_GENES["LR_Pairs"])
-        tau_vals = [
-            float(tau0_series.loc[g]) * float(col_v.loc[g])
-            for g in (PANEL_GENES["CD8_Effector"] | PANEL_GENES["PDL1_Checkpoint"])
-            if g in col_v.index and g in tau0_series.index
-        ]
-
-        bk_rows.append(
+        bk_records.append(
             {
-                "cohort": "GSE207422_NSCLC_PreBiopsy_Bulk",
+                "cohort": "GSE207422_NSCLC_PreTreatment_ChemoAntiPD1_Biopsy",
+                "regimen_class": "AntiPD1_Plus_Platinum_ChemoIO",
                 "patient_id": f"{mrow['Patient']}_{sid}",
+                "sample_col": sid,
                 "resource": str(mrow["Resource"]),
-                "pd1_antibody": str(mrow["PD1 Antibody"]),
+                "pd1_antibody": f"{mrow['PD1 Antibody']} + Platinum-Doublet",
                 "responder": is_mpr,
                 "residual_tumor_frac": res_tum,
-                "raw_tumor": tum_s,
-                "raw_tam": tam_s,
-                "raw_mycaf": caf_s,
-                "raw_effector": eff_s,
-                "raw_exhaust_net": exh_s - 0.55 * eff_s,
-                "b1_static_pdl1": pdl1_s,
-                "b2_static_tau0": float(np.mean(tau_vals)) if tau_vals else 0.0,
-                "b3_single_tcell_grn": eff_s - 0.45 * exh_s,
-                "b4_static_lr_centrality": -lr_s,
             }
         )
+    df_bk = _score_bulk_logexpr_cohort(
+        bk_expr,
+        bk_records,
+        tau0_series,
+        BULK_TUMOR_PROLIF_RESIST_GENES,
+        grammar_visium,
+        grammar_no_visium,
+        seed=202,
+    )
 
-    df_bk = pd.DataFrame(bk_rows).set_index("patient_id")
-    df_bk["Tumor"] = _robust_01(df_bk["raw_tumor"].to_numpy(), 0.16, 0.86)
-    df_bk["TAM"] = _robust_01(df_bk["raw_tam"].to_numpy(), 0.14, 0.88)
-    df_bk["myCAF"] = _robust_01(df_bk["raw_mycaf"].to_numpy(), 0.14, 0.88)
-    df_bk["CD8_Exhaustion"] = _robust_01(df_bk["raw_exhaust_net"].to_numpy(), 0.16, 0.88)
-    df_bk["CD8_Effector_Reserve"] = _robust_01(df_bk["raw_effector"].to_numpy(), 0.16, 0.90)
-    df_bk["b5_linear_mean"] = -0.25 * (df_bk["Tumor"] + df_bk["TAM"] + df_bk["myCAF"] + df_bk["CD8_Exhaustion"])
-    df_bk = df_bk.join(score_baseline_patients_via_langevin_icb(df_bk, grammar=grammar, n_ensemble=250, seed=202))
+    # Part B: GSE207422 NSCLC 92k-cell scRNA-seq cohort (exact umi_stride=1) + Response-Label-Free Axis 4 Pseudobulk!
+    cache_ns_sc = vault_pb / "gse207422_nsclc_sc_raw_features_exact_umi1.csv"
+    ax4_e_p = vault_pb / "axis4_solid_tumor_early_comp.csv"
+    ax4_l_p = vault_pb / "axis4_solid_tumor_late_comp.csv"
+    if "--reextract" not in sys.argv and cache_ns_sc.exists() and ax4_e_p.exists() and ax4_l_p.exists():
+        df_sc = pd.read_csv(cache_ns_sc).set_index("patient_id")
+        df_sc = _attach_lopo_states_and_simulations(df_sc, grammar_visium, grammar_no_visium, seed=303)
+        return df_bk, df_sc
 
-    # Part B: GSE207422 NSCLC 92k-cell scRNA-seq cohort + Axis 4 Solid Tumor Compartment Pseudobulk for Task 2!
     sc_meta = pd.read_excel(cdir / "GSE207422_NSCLC_scRNAseq_metadata.xlsx")
     tracked_all = ALL_PANEL_GENES | clinical_target_genes
     barcodes, gene_rows, _ = fast_stream_tsv_gz_gene_subset(
-        cdir / "GSE207422_NSCLC_scRNAseq_UMI_matrix.txt.gz", tracked_all, umi_stride=25
+        cdir / "GSE207422_NSCLC_scRNAseq_UMI_matrix.txt.gz", tracked_all, umi_stride=1
     )
     sample_to_idxs: dict[str, list[int]] = {}
     for idx, bc in enumerate(barcodes):
@@ -390,9 +707,45 @@ def process_gse207422_nsclc_cohorts_and_axis4_pseudobulk(
         sample_to_idxs.setdefault(sname, []).append(idx)
 
     comp_names = ["Tumor", "TAM", "myCAF", "CD8_T"]
-    early_comp_pbs: list[pd.DataFrame] = []
-    late_comp_pbs: list[pd.DataFrame] = []
     t_list = sorted(clinical_target_genes)
+
+    # First pass over ALL scRNA-seq tumor samples in sample_to_idxs (100% BLIND to Pathologic Response!) to build Axis 4 Early vs Late
+    blind_tumor_pbs: list[tuple[float, pd.DataFrame]] = []
+    for sname in sorted(sample_to_idxs.keys()):
+        idxs_all = np.asarray(sample_to_idxs[sname], dtype=int)
+        if len(idxs_all) < 50:
+            continue
+
+        def _smod_blind(genes: set[str]) -> np.ndarray:
+            arrs = [gene_rows[g][idxs_all] for g in genes if g in gene_rows]
+            return np.mean(arrs, axis=0) if arrs else np.zeros(len(idxs_all), dtype=float)
+
+        bt_tum = _smod_blind(PANEL_GENES["Tumor"])
+        bt_tam = _smod_blind(PANEL_GENES["TAM"])
+        bt_caf = _smod_blind(PANEL_GENES["myCAF"])
+        bt_t = np.maximum(_smod_blind(PANEL_GENES["CD8_Effector"]), _smod_blind(PANEL_GENES["CD8_Exhaustion"]))
+        dom_b = np.argmax(np.vstack([bt_tum, bt_tam, bt_caf, bt_t]), axis=0)
+        desmoplastic_burden = float(np.mean(bt_caf)) + 2.8 * float(np.mean(dom_b == 2))
+
+        pb_dict: dict[str, np.ndarray] = {}
+        for ci, cname in enumerate(comp_names):
+            cmask = dom_b == ci
+            use_idxs = idxs_all[cmask] if np.sum(cmask) >= 5 else idxs_all
+            vec = np.array([float(np.mean(gene_rows[g][use_idxs])) if g in gene_rows else 0.0 for g in t_list], dtype=float)
+            pb_dict[cname] = vec
+        blind_tumor_pbs.append((desmoplastic_burden, pd.DataFrame(pb_dict, index=t_list)))
+
+    if len(blind_tumor_pbs) >= 4:
+        med_desmo = float(np.median([x[0] for x in blind_tumor_pbs]))
+        early_pbs = [pb for score_d, pb in blind_tumor_pbs if score_d <= med_desmo]
+        late_pbs = [pb for score_d, pb in blind_tumor_pbs if score_d > med_desmo]
+        if early_pbs and late_pbs:
+            (sum(early_pbs) / float(len(early_pbs))).to_csv(
+                vault_pb / "axis4_solid_tumor_early_comp.csv", encoding="utf-8"
+            )
+            (sum(late_pbs) / float(len(late_pbs))).to_csv(
+                vault_pb / "axis4_solid_tumor_late_comp.csv", encoding="utf-8"
+            )
 
     sc_rows = []
     for _, mrow in sc_meta.iterrows():
@@ -423,21 +776,11 @@ def process_gse207422_nsclc_cohorts_and_axis4_pseudobulk(
         caf_frac = float(np.mean(dom == 2))
         tam_frac = float(np.mean(dom == 1))
 
-        # Accumulate Axis 4 Solid Oncology compartment pseudobulk (Permissive MPR/pCR vs Locked NMPR)
-        pb_dict: dict[str, np.ndarray] = {}
-        for ci, cname in enumerate(comp_names):
-            cmask = dom == ci
-            use_idxs = idxs[cmask] if np.sum(cmask) >= 5 else idxs
-            vec = np.array([float(np.mean(gene_rows[g][use_idxs])) if g in gene_rows else 0.0 for g in t_list], dtype=float)
-            pb_dict[cname] = vec
-        pb_df = pd.DataFrame(pb_dict, index=t_list)
-        if is_mpr == 1:
-            early_comp_pbs.append(pb_df)
-        else:
-            late_comp_pbs.append(pb_df)
-
         pdl1_s = float(np.mean(_smod(PANEL_GENES["PDL1_Checkpoint"])))
         lr_s = float(np.mean(_smod(PANEL_GENES["LR_Pairs"])))
+        gep18_s = float(np.mean(_smod(PUBLISHED_GEP_18_GENES)))
+        ctl_s = float(np.mean(_smod(PUBLISHED_TIDE_CTL_GENES)))
+        excl_s = float(np.mean(_smod(PUBLISHED_CAF_EXCLUSION_GENES))) + 2.0 * caf_frac
         tau_vals = [
             float(tau0_series.loc[g]) * float(np.mean(gene_rows[g][idxs]))
             for g in (PANEL_GENES["CD8_Effector"] | PANEL_GENES["PDL1_Checkpoint"])
@@ -446,7 +789,8 @@ def process_gse207422_nsclc_cohorts_and_axis4_pseudobulk(
 
         sc_rows.append(
             {
-                "cohort": "GSE207422_NSCLC_TME_scRNA",
+                "cohort": "GSE207422_NSCLC_Resected_TME_scRNA",
+                "regimen_class": "AntiPD1_Plus_Platinum_ChemoIO_ResectedTME",
                 "patient_id": f"{mrow['Patient']}_{sname}",
                 "resource": str(mrow["Resource"]),
                 "n_cells": int(len(idxs)),
@@ -459,46 +803,41 @@ def process_gse207422_nsclc_cohorts_and_axis4_pseudobulk(
                 "raw_mycaf": float(np.mean(c_caf)) + 2.8 * caf_frac,
                 "raw_effector": float(np.mean(c_eff)),
                 "raw_exhaust_net": float(np.mean(c_exh)) - 0.55 * float(np.mean(c_eff)),
+                "raw_tide_ctl": ctl_s,
+                "raw_caf_exclusion": excl_s,
                 "b1_static_pdl1": pdl1_s,
                 "b2_static_tau0": float(np.mean(tau_vals)) if tau_vals else 0.0,
                 "b3_single_tcell_grn": float(np.mean(c_eff)) - 0.45 * float(np.mean(c_exh)),
                 "b4_static_lr_centrality": -lr_s,
+                "b6_published_gep18": gep18_s,
             }
         )
 
-    if early_comp_pbs and late_comp_pbs:
-        (sum(early_comp_pbs) / float(len(early_comp_pbs))).to_csv(
-            vault_pb / "axis4_solid_tumor_early_comp.csv", encoding="utf-8"
-        )
-        (sum(late_comp_pbs) / float(len(late_comp_pbs))).to_csv(
-            vault_pb / "axis4_solid_tumor_late_comp.csv", encoding="utf-8"
-        )
-
-    df_sc = pd.DataFrame(sc_rows).set_index("patient_id")
-    df_sc["Tumor"] = _robust_01(df_sc["raw_tumor"].to_numpy(), 0.16, 0.86)
-    df_sc["TAM"] = _robust_01(df_sc["raw_tam"].to_numpy(), 0.14, 0.88)
-    df_sc["myCAF"] = _robust_01(df_sc["raw_mycaf"].to_numpy(), 0.14, 0.88)
-    df_sc["CD8_Exhaustion"] = _robust_01(df_sc["raw_exhaust_net"].to_numpy(), 0.16, 0.88)
-    df_sc["CD8_Effector_Reserve"] = _robust_01(df_sc["raw_effector"].to_numpy(), 0.16, 0.90)
-    df_sc["b5_linear_mean"] = -0.25 * (df_sc["Tumor"] + df_sc["TAM"] + df_sc["myCAF"] + df_sc["CD8_Exhaustion"])
-    df_sc = df_sc.join(score_baseline_patients_via_langevin_icb(df_sc, grammar=grammar, n_ensemble=250, seed=303))
+    df_sc_raw = pd.DataFrame(sc_rows)
+    df_sc_raw.to_csv(cache_ns_sc, index=False, encoding="utf-8")
+    df_sc = df_sc_raw.set_index("patient_id")
+    df_sc = _attach_lopo_states_and_simulations(df_sc, grammar_visium, grammar_no_visium, seed=303)
     return df_bk, df_sc
 
 
-def evaluate_cohort_5baselines(df: pd.DataFrame, cohort_label: str) -> list[dict[str, Any]]:
-    """Compute calibrated AUROC, AUPRC, and Brier Score across OmniNiche vs 5 baselines."""
+def evaluate_cohort_methods(df: pd.DataFrame, cohort_label: str) -> list[dict[str, Any]]:
+    """Compute calibrated AUROC, AUPRC, and Brier Score across OmniNiche, Visium spatial ablation, and 8 clinical/biological baselines."""
     y = df["responder"].to_numpy(dtype=int)
     methods = [
-        ("OmniNiche_v2_Spatial_Langevin", df["simulated_icb_remission_prob"].to_numpy(dtype=float), True),
-        ("B1_Static_PDL1_CD274", df["b1_static_pdl1"].to_numpy(dtype=float), False),
-        ("B2_Static_Healthy_Tau0", df["b2_static_tau0"].to_numpy(dtype=float), False),
-        ("B3_SingleComp_TCell_GRN", df["b3_single_tcell_grn"].to_numpy(dtype=float), False),
-        ("B4_Static_LR_Centrality", df["b4_static_lr_centrality"].to_numpy(dtype=float), False),
-        ("B5_Uninformative_Linear_Mean", df["b5_linear_mean"].to_numpy(dtype=float), False),
+        ("OmniNiche_v2_Spatial_Langevin", df["simulated_icb_remission_prob"].to_numpy(dtype=float)),
+        ("OmniNiche_NoVisium_UniformPij", df["no_visium_icb_remission_prob"].to_numpy(dtype=float)),
+        ("B1_Static_PDL1_CD274", df["b1_static_pdl1_prob"].to_numpy(dtype=float)),
+        ("B2_Static_Healthy_Tau0", df["b2_static_tau0_prob"].to_numpy(dtype=float)),
+        ("B3_SingleComp_TCell_GRN", df["b3_single_tcell_grn_prob"].to_numpy(dtype=float)),
+        ("B4_Static_LR_Centrality", df["b4_static_lr_centrality_prob"].to_numpy(dtype=float)),
+        ("B5_Uninformative_Linear_Mean", df["b5_linear_mean_prob"].to_numpy(dtype=float)),
+        ("B6_Published_18Gene_Tcell_GEP", df["b6_published_gep18_prob"].to_numpy(dtype=float)),
+        ("B7_Published_CAF_TIDE_Exclusion", df["b7_published_caf_exclusion_prob"].to_numpy(dtype=float)),
+        ("B8_Algebraic_CD8_to_myCAF_Ratio", df["b8_algebraic_cd8_mycaf_ratio_prob"].to_numpy(dtype=float)),
     ]
     rows = []
-    for mname, raw_s, already_prob in methods:
-        prob = np.clip(raw_s, 0.02, 0.98) if already_prob else _minmax_01(raw_s, 0.08, 0.92)
+    for mname, prob_s in methods:
+        prob = np.clip(prob_s, 1e-4, 1.0 - 1e-4)
         rows.append(
             {
                 "cohort": cohort_label,
@@ -533,11 +872,11 @@ def main() -> None:
     vis_a_p = out_tables / "Table_S5a_Visium_Spatial_Barrier_Sections.csv"
     vis_b_p = out_tables / "Table_S5b_Visium_Consensus_Proximity_Matrix.csv"
     if vis_a_p.exists() and vis_b_p.exists() and (out_tables / "Fig5_Exemplar_Visium_Spot_Landscape.csv").exists():
-        print(">>> [1/4] Loading verified 10x Visium Spatial Collagen Barrier & Proximity Matrix from cache...")
+        print(">>> [1/6] Loading verified 10x Visium Spatial Collagen Barrier & Proximity Matrix from cache...")
         vis_sec_df = pd.read_csv(vis_a_p)
         consensus_prox = pd.read_csv(vis_b_p, index_col=0)
     else:
-        print(">>> [1/4] Extracting 10x Visium Spatial Collagen Barrier & Proximity Matrix (GSE171351 + GSE203612)...")
+        print(">>> [1/6] Extracting 10x Visium Spatial Collagen Barrier & Proximity Matrix (GSE171351 + GSE203612)...")
         vis_ev = extract_visium_spatial_evidence(sc_dir)
         vis_sec_df = vis_ev["sections_df"]
         consensus_prox = vis_ev["consensus_proximity_df"]
@@ -551,51 +890,82 @@ def main() -> None:
             ex_df.to_csv(out_tables / "Fig5_Exemplar_Visium_Spot_Landscape.csv", encoding="utf-8")
     print(vis_sec_df.to_string(index=False))
 
-    grammar = build_default_solid_tumor_icb_grammar(consensus_prox)
+    grammar_visium = build_default_solid_tumor_icb_grammar(consensus_prox)
+    uniform_prox = pd.DataFrame(
+        np.ones((4, 4), dtype=float),
+        index=["Tumor", "TAM", "myCAF", "CD8_Exhaustion"],
+        columns=["Tumor", "TAM", "myCAF", "CD8_Exhaustion"],
+    )
+    grammar_no_visium = build_default_solid_tumor_icb_grammar(uniform_prox)
     DeconfoundedAutoGrammarCompiler.export_yaml(
-        grammar, ROOT / "outputs" / "compiled_grammars" / "solidtumor_time_icb_v2.yaml"
+        grammar_visium, ROOT / "outputs" / "compiled_grammars" / "solidtumor_time_icb_v2.yaml"
     )
 
-    print("\n>>> [2/4] Fast-Streaming & Blind-Testing GSE123813 (Nature Medicine 2019 FACS-Deconfounded Pre-Anti-PD-1 BCC + Paired SCC)...")
-    df_bcc, df_long = process_gse123813_bcc_and_scc_paired_cohorts(sc_dir, tau0_series, grammar)
+    print("\n>>> [2/6] Exact-UMI Streaming & LOPO Blind-Testing GSE123813 (Nat. Med. 2019 Anti-PD-1 Monotherapy BCC n=8 + Paired SCC)...")
+    df_bcc, df_long = process_gse123813_bcc_and_scc_paired_cohorts(
+        sc_dir, vault_pb, tau0_series, grammar_visium, grammar_no_visium, force_reextract=("--reextract" in sys.argv)
+    )
     df_bcc.to_csv(out_tables / "Table_S5c_GSE123813_PreAntiPD1_Patient_Predictions.csv", encoding="utf-8")
     df_long.to_csv(out_tables / "Table_S5f_GSE123813_Paired_PrePost_Trajectory.csv", index=False, encoding="utf-8")
-    print(df_bcc[["responder", "best_pct_tumor_change", "caf_frac_nonT", "tam_frac_nonT", "Tumor", "myCAF", "CD8_Effector_Reserve", "simulated_icb_remission_prob", "combo_pd1_plus_mycaf_remission_prob"]].to_string())
 
-    print("\n>>> [3/4] Fast-Streaming & Blind-Testing GSE207422 (Cell Research 2023 NSCLC Pre-Biopsy Bulk n=24 + 92k-Cell scRNA)...")
+    print("\n>>> [3/6] LOPO Blind-Testing GSE91061 (Riaz et al., Cell 2017 Pre-Nivolumab Monotherapy Melanoma n=49)...")
+    df_91061 = process_gse91061_melanoma_nivolumab_monotherapy(sc_dir, tau0_series, grammar_visium, grammar_no_visium)
+    df_91061.to_csv(out_tables / "Table_S5j_GSE91061_Melanoma_PreNivo_Mono_Predictions.csv", encoding="utf-8")
+
+    print("\n>>> [4/6] LOPO Blind-Testing GSE78220 (Hugo et al., Cell 2016 Pre-Pembrolizumab Monotherapy Melanoma n=26 unique)...")
+    df_78220 = process_gse78220_melanoma_pembrolizumab_monotherapy(sc_dir, tau0_series, grammar_visium, grammar_no_visium)
+    df_78220.to_csv(out_tables / "Table_S5k_GSE78220_Melanoma_PrePembro_Mono_Predictions.csv", encoding="utf-8")
+
+    print("\n>>> [5/6] Exact-UMI Streaming & LOPO Blind-Testing GSE207422 (Cell Res. 2023 NSCLC Chemo-Anti-PD-1 Pre-Biopsy n=24 + Resected TME scRNA n=14)...")
     df_nsclc_bk, df_nsclc_sc = process_gse207422_nsclc_cohorts_and_axis4_pseudobulk(
-        sc_dir, vault_pb, tau0_series, grammar, clinical_genes
+        sc_dir, vault_pb, tau0_series, grammar_visium, grammar_no_visium, clinical_genes
     )
     df_nsclc_bk.to_csv(out_tables / "Table_S5d_GSE207422_NSCLC_PreBiopsy_Bulk_Predictions.csv", encoding="utf-8")
     df_nsclc_sc.to_csv(out_tables / "Table_S5e_GSE207422_NSCLC_scRNA_Predictions.csv", encoding="utf-8")
 
-    print("\n>>> [4/4] Compiling 5-Baseline Calibrated Arena Summary & Solid-Tumor Quasi-Potential Landscape...")
-    arena_rows = []
-    arena_rows.extend(evaluate_cohort_5baselines(df_bcc, "GSE123813_BCC_PreTreatment_FullTME_scRNA"))
-    arena_rows.extend(evaluate_cohort_5baselines(df_nsclc_bk, "GSE207422_NSCLC_PreTreatment_Biopsy_Bulk"))
-    arena_rows.extend(evaluate_cohort_5baselines(df_nsclc_sc, "GSE207422_NSCLC_TME_Validation_scRNA"))
-
+    print("\n>>> [6/6] Compiling 10-Method Calibrated Multi-Cohort Arena Summary & Solid-Tumor Quasi-Potential Landscape...")
     common_cols = [
+        "cohort",
+        "regimen_class",
         "responder",
+        "Tumor",
+        "TAM",
+        "myCAF",
+        "CD8_Exhaustion",
+        "CD8_Effector_Reserve",
+        "raw_icb_remission_prob",
         "simulated_icb_remission_prob",
-        "b1_static_pdl1",
-        "b2_static_tau0",
-        "b3_single_tcell_grn",
-        "b4_static_lr_centrality",
-        "b5_linear_mean",
+        "no_visium_icb_remission_prob",
+        "b1_static_pdl1_prob",
+        "b2_static_tau0_prob",
+        "b3_single_tcell_grn_prob",
+        "b4_static_lr_centrality_prob",
+        "b5_linear_mean_prob",
+        "b6_published_gep18_prob",
+        "b7_published_caf_exclusion_prob",
+        "b8_algebraic_cd8_mycaf_ratio_prob",
         "combo_pd1_plus_mycaf_remission_prob",
         "combo_pd1_plus_tam_remission_prob",
     ]
-    # Strictly pre-treatment baseline biopsies ONLY (zero post-surgery samples!)
-    pooled_pre = pd.concat([df_bcc[common_cols], df_nsclc_bk[common_cols]], axis=0)
-    arena_rows.extend(evaluate_cohort_5baselines(pooled_pre, "Pooled_Strictly_PreTreatment_Biopsies_n32"))
+    pooled_mono_pre = pd.concat([df_bcc[common_cols], df_91061[common_cols], df_78220[common_cols]], axis=0)
+    pooled_all_pre = pd.concat([pooled_mono_pre, df_nsclc_bk[common_cols]], axis=0)
+    pooled_all_pre.to_csv(out_tables / "Table_S5i_Pooled_PreTreatment_107Patients_Master.csv", encoding="utf-8")
+
+    arena_rows = []
+    arena_rows.extend(evaluate_cohort_methods(df_bcc, "GSE123813_BCC_PreTreatment_AntiPD1_Mono_scRNA"))
+    arena_rows.extend(evaluate_cohort_methods(df_91061, "GSE91061_Melanoma_PreTreatment_Nivolumab_Mono"))
+    arena_rows.extend(evaluate_cohort_methods(df_78220, "GSE78220_Melanoma_PreTreatment_Pembrolizumab_Mono"))
+    arena_rows.extend(evaluate_cohort_methods(pooled_mono_pre, f"Pooled_Pure_AntiPD1_Monotherapy_PreTreatment_n{len(pooled_mono_pre)}"))
+    arena_rows.extend(evaluate_cohort_methods(df_nsclc_bk, "GSE207422_NSCLC_PreTreatment_ChemoAntiPD1_Biopsy"))
+    arena_rows.extend(evaluate_cohort_methods(pooled_all_pre, f"Pooled_All_Strictly_PreTreatment_Biopsies_n{len(pooled_all_pre)}"))
+    arena_rows.extend(evaluate_cohort_methods(df_nsclc_sc, "GSE207422_NSCLC_Resected_TME_scRNA"))
 
     arena_df = pd.DataFrame(arena_rows)
     arena_df.to_csv(out_tables / "Table_S5_SolidTumor_ICB_Spatial_Responder_Benchmark.csv", index=False, encoding="utf-8")
-    print("\n=== STAGE II TASK 4 (SOLID TUMOR ANTI-PD-1 SPATIAL & BLIND RESPONDER BENCHMARK) COMPLETE ===")
+    print("\n=== STAGE II v2.2 TASK 4 (MULTI-COHORT SOLID TUMOR ANTI-PD-1 SPATIAL & BLIND RESPONDER BENCHMARK) COMPLETE ===")
     print(arena_df.to_string(index=False))
 
-    solver = LangevinNicheSolver(grammar, t_end=96.0, dt=0.5)
+    solver = LangevinNicheSolver(grammar_visium, t_end=96.0, dt=0.5)
     qp_pd1 = solver.compute_quasi_potential_landscape(
         [InterventionRegimen("CD8_Exhaustion", 0.42, "antibody")],
         "myCAF",
@@ -625,12 +995,19 @@ def main() -> None:
         lock_depth_combo=qp_combo["pathological_lock_depth"],
     )
 
-    non_resp = pooled_pre[pooled_pre["responder"] == 0]
+    non_resp_mono = pooled_mono_pre[pooled_mono_pre["responder"] == 0]
+    non_resp_all = pooled_all_pre[pooled_all_pre["responder"] == 0]
     print(
-        f"\nNon-Responder Rescue Simulation (n={len(non_resp)} strictly pre-treatment resistant biopsies): "
-        f"Anti-PD-1 Mono={non_resp['simulated_icb_remission_prob'].mean():.3f} -> "
-        f"Anti-PD-1 + myCAF/TGFBR1 Barrier Unlock={non_resp['combo_pd1_plus_mycaf_remission_prob'].mean():.3f} | "
-        f"Anti-PD-1 + SPP1/TREM2 TAM Switch={non_resp['combo_pd1_plus_tam_remission_prob'].mean():.3f}"
+        f"\nPure Anti-PD-1 Monotherapy Non-Responder Rescue (n={len(non_resp_mono)} resistant pre-treatment patients): "
+        f"Anti-PD-1 Mono={non_resp_mono['simulated_icb_remission_prob'].mean():.3f} -> "
+        f"Anti-PD-1 + myCAF/TGFBR1 Unlock={non_resp_mono['combo_pd1_plus_mycaf_remission_prob'].mean():.3f} | "
+        f"Anti-PD-1 + SPP1/TREM2 TAM Switch={non_resp_mono['combo_pd1_plus_tam_remission_prob'].mean():.3f}"
+    )
+    print(
+        f"All Pre-Treatment Non-Responder Rescue (n={len(non_resp_all)} resistant pre-treatment biopsies): "
+        f"Anti-PD-1 Mono={non_resp_all['simulated_icb_remission_prob'].mean():.3f} -> "
+        f"Anti-PD-1 + myCAF/TGFBR1 Unlock={non_resp_all['combo_pd1_plus_mycaf_remission_prob'].mean():.3f} | "
+        f"Anti-PD-1 + SPP1/TREM2 TAM Switch={non_resp_all['combo_pd1_plus_tam_remission_prob'].mean():.3f}"
     )
 
 

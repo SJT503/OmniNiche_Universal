@@ -38,14 +38,20 @@ from omniniche.stage2.fibrosis_mash_deconvolution import (
 from omniniche.stage2.pan_disease_drift_law import compute_dynamic_drift_metrics
 
 # Directed biological receptor/nuclear-receptor -> pathogenic effector prior edges for RidgeGRNPerturber
+# Note: GLP1R/GIPR act via systemic metabolic unloading of parenchymal lipotoxicity (no intrahepatic SAMac GLP1R; Jara et al. Nat. Med. 2025)
 FIBROSIS_PRIOR_EDGES: list[tuple[str, str]] = [
-    # Metabolic & nuclear receptors regulating parenchymal stress and myofibroblast activation
+    # Metabolic, incretin & nuclear receptors regulating parenchymal stress and myofibroblast activation
     ("THRB", "GDF15"), ("THRB", "CCL2"), ("THRB", "TGFB2"), ("THRB", "SOX9"),
-    ("GLP1R", "GDF15"), ("GLP1R", "CCL2"), ("GLP1R", "IL1B"), ("GLP1R", "SPP1"),
+    ("GLP1R", "GDF15"), ("GLP1R", "CCL2"), ("GLP1R", "IL1B"),
+    ("GIPR", "GDF15"), ("GIPR", "CCL2"),
+    ("SLC5A2", "GDF15"), ("SLC5A2", "CCL2"), ("SLC5A2", "HAVCR1"), ("SLC5A2", "ICAM1"),
+    ("KLB", "GDF15"), ("KLB", "CCL2"), ("FGFR2", "GDF15"), ("FGFR3", "GDF15"),
     ("PPARA", "GDF15"), ("PPARA", "CCL2"),
     ("PPARD", "CCL2"), ("PPARD", "IL1B"),
     ("PPARG", "ACTA2"), ("PPARG", "COL1A1"), ("PPARG", "COL1A2"), ("PPARG", "POSTN"), ("PPARG", "TGFB1"),
+    ("NR1H4", "CCL2"), ("NR1H4", "TGFB2"),
     ("NR3C2", "SPP1"), ("NR3C2", "TGFB1"), ("NR3C2", "COL1A1"), ("NR3C2", "FN1"), ("NR3C2", "TIMP1"),
+    ("PDE4B", "ACTA2"), ("PDE4B", "COL1A1"), ("PDE4B", "POSTN"), ("PDE4B", "TGFB1"),
     # Receptor tyrosine kinases & TGF-beta axis driving myofibroblast ECM deposition
     ("FGFR1", "COL1A1"), ("FGFR1", "ACTA2"), ("FGFR1", "POSTN"),
     ("PDGFRA", "COL1A1"), ("PDGFRA", "COL3A1"), ("PDGFRA", "ACTA2"), ("PDGFRA", "CTHRC1"),
@@ -58,6 +64,7 @@ FIBROSIS_PRIOR_EDGES: list[tuple[str, str]] = [
     ("SPP1", "COL1A1"), ("SPP1", "POSTN"), ("SPP1", "ACTA2"),
     ("MAP3K5", "GDF15"), ("MAP3K5", "ICAM1"),
     ("CCR2", "IL1B"), ("CCR5", "IL1B"),
+    ("ENPP2", "ACTA2"), ("IL13", "POSTN"), ("APCS", "SPP1"),
     # Terminal ECM cross-linking / matricellular proteins (downstream effectors with minimal upstream TF control)
     ("COL1A1", "LOXL2"), ("TGFB1", "CCN2"),
 ]
@@ -87,8 +94,8 @@ def main() -> None:
     print(f">>> Tracking {len(clinical_genes)} human target & fibrotic niche genes across 3 human organs...")
     tau0_df = pd.read_csv(vault_pb / "hpa_pan_organ_tau0_table.csv", index_col=0)
 
-    print("\n>>> [1/6] Fetching & SHA-256-locking 14 verbatim Phase IIb/III antifibrotic trials (ClinicalTrials.gov API v2)...")
-    verified_ncts = fetch_verbatim_landmark_ncts(vault_ct / "landmark_14_fibrosis_ncts_sha256.json")
+    print("\n>>> [1/6] Fetching & SHA-256-locking 24 verbatim Phase IIb/III antifibrotic trials (ClinicalTrials.gov API v2)...")
+    verified_ncts = fetch_verbatim_landmark_ncts(vault_ct / "landmark_24_fibrosis_ncts_sha256.json")
     print(f"    Verified {len(verified_ncts)} landmark NCT trials with SHA-256 provenance.")
 
     # Organ 1: Pure Human Liver
@@ -258,10 +265,10 @@ def main() -> None:
     # Evaluate realistic clinical partial-occupancy regimens where monotherapies fail to cross the F4 saddle
     s0_locked = np.array([0.85, 0.88, 0.90], dtype=float)
     candidate_arms = [
-        ("THRB_Resmetirom_Parenchyma_SM", InterventionRegimen("Parenchyma_Injury", 0.72, "small_molecule")),
-        ("GLP1R_Semaglutide_Metabolic_Peptide", InterventionRegimen("Parenchyma_Injury", 0.68, "peptide")),
-        ("TGFBR1_PDGFRB_Myofibro_LowDose_SM", InterventionRegimen("Myofibroblast", 0.145, "small_molecule")),
-        ("TREM2_SPP1_SAMac_Modulator_SM", InterventionRegimen("SPP1_SAMac", 0.140, "small_molecule")),
+        ("THRB_Resmetirom_Parenchyma_SM", InterventionRegimen("Parenchyma_Injury", 0.66, "small_molecule")),
+        ("GLP1R_Semaglutide_Metabolic_Peptide", InterventionRegimen("Parenchyma_Injury", 0.60, "peptide")),
+        ("TGFBR1_PDGFRB_Myofibro_LowDose_SM", InterventionRegimen("Myofibroblast", 0.138, "small_molecule")),
+        ("TREM2_SPP1_SAMac_Modulator_SM", InterventionRegimen("SPP1_SAMac", 0.130, "small_molecule")),
         ("LOXL2_Simtuzumab_StericBlocked_mAb", InterventionRegimen("Myofibroblast", 0.004, "antibody")),
         ("CCR2_Cenicriviroc_TargetLost_SM", InterventionRegimen("SPP1_SAMac", 0.005, "small_molecule")),
     ]

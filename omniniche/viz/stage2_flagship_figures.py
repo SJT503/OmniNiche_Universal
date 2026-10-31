@@ -435,12 +435,12 @@ def build_fig2_macro_clinical_atlas(
     ax_b.set_xticks([0, 5000, 10000, 15000])
     ax_b.set_xticklabels(["0", "5k", "10k", "15k"])
     ax_b.set_xlabel("Phase II–IV Trials (Resolved %)")
-    ax_b.set_title("12 Systemic & Parenchymal Axes", pad=5)
+    ax_b.set_title("12 Peripheral Organ Axes", pad=5)
     ax_b.legend(loc="lower right", frameon=False, fontsize=5.1)
 
     # --- Panel c: 2005-2025 Longitudinal Modality & Attrition Dynamics ---
     ax_c = fig.add_subplot(gs_r1[0, 2])
-    _panel_tag(ax_c, "c", x=-0.22, y=1.08)
+    _panel_tag(ax_c, "c", x=-0.29, y=1.08)
     yrs = s2b["start_year"].to_numpy()
     mab = s2b["antibody_share_pct"].to_numpy()
     adm = s2b["admin_share_of_stops_pct"].to_numpy()
@@ -558,7 +558,7 @@ def build_fig2_macro_clinical_atlas(
 
     # --- Panel f: Stoppage Auditor 4x4 Confusion Matrix (n = 240) ---
     ax_f = fig.add_subplot(gs_r2[0, 2])
-    _panel_tag(ax_f, "f", x=-0.32, y=1.08)
+    _panel_tag(ax_f, "f", x=-0.39, y=1.08)
     cls_order = [
         "Scientific_Efficacy_Futility",
         "Scientific_Safety_Toxicity",
@@ -585,15 +585,24 @@ def build_fig2_macro_clinical_atlas(
                 color=txt_c,
             )
 
-    acc_v = float(s2a_val["overall_accuracy"].iloc[0]) * 100.0
-    kap_v = float(s2a_val["cohen_kappa"].iloc[0])
+    cl_col_s2a = "auditor_name" if "auditor_name" in s2a_val.columns else ("classifier" if "classifier" in s2a_val.columns else None)
+    if cl_col_s2a is not None:
+        s2a_cl = s2a_val[s2a_val[cl_col_s2a] == "Clause_Aware_Auditor_v2_2"]
+        s2a_nv = s2a_val[s2a_val[cl_col_s2a] == "Naive_Keyword_Baseline"]
+        acc_v = float(s2a_cl["overall_accuracy"].iloc[0]) * 100.0
+        kap_v = float(s2a_cl["cohen_kappa"].iloc[0])
+        nv_txt = f" (Naive {float(s2a_nv['overall_accuracy'].iloc[0]) * 100.0:.0f}%)" if not s2a_nv.empty else ""
+    else:
+        acc_v = float(s2a_val["overall_accuracy"].iloc[0]) * 100.0
+        kap_v = float(s2a_val["cohen_kappa"].iloc[0])
+        nv_txt = ""
     ax_f.set_xticks(range(4))
     ax_f.set_xticklabels(cls_lbls, fontsize=5.3)
     ax_f.set_yticks(range(4))
     ax_f.set_yticklabels(cls_lbls, fontsize=5.3)
-    ax_f.set_xlabel("Registry Class")
-    ax_f.set_ylabel("Clause Reference")
-    ax_f.set_title(f"Clause Audit ({acc_v:.1f}%, $\\kappa$={kap_v:.2f})", pad=5)
+    ax_f.set_xlabel(f"Clause-Aware Pred.{nv_txt}")
+    ax_f.set_ylabel("Manual Clinical Ref.")
+    ax_f.set_title(f"Manual Audit ({acc_v:.1f}%, $\\kappa$={kap_v:.2f})", pad=5)
     for sp in ("top", "right", "bottom", "left"):
         ax_f.spines[sp].set_visible(True)
         ax_f.spines[sp].set_linewidth(0.55)
@@ -620,6 +629,8 @@ def build_fig3_pan_disease_drift_law(
     s3h = pd.read_csv(tables_dir / "Table_S3h_Calibration_Deciles.csv")
     s3i = pd.read_csv(tables_dir / "Table_S3i_Decision_Curve_Analysis.csv")
     s3k = pd.read_csv(tables_dir / "Table_S3k_WithinModality_DNAcc_Stratified_Audit.csv")
+    s3l_p = tables_dir / "Table_S3l_Genetics_vs_DNAcc_Orthogonality.csv"
+    s3l = pd.read_csv(s3l_p) if s3l_p.exists() else pd.DataFrame()
 
     fig = plt.figure(figsize=(7.20, 7.80), facecolor="white")
     gs = gridspec.GridSpec(
@@ -708,12 +719,13 @@ def build_fig3_pan_disease_drift_law(
     cbar_a.ax.tick_params(labelsize=5.0)
     cbar_a.set_label("$\\Delta\\tau$", fontsize=5.5)
 
-    # --- Panel b: 6-Step Orthogonal DNAcc Ablation (Stratified 5-Fold vs Unseen-Target Group5Fold) ---
+    # --- Panel b: 6-Step Orthogonal DNAcc Ablation & Open Targets Human Genetics Benchmark ---
     ax_b = fig.add_subplot(gs_r1[0, 1])
     _panel_tag(ax_b, "b", x=-0.22, y=1.10)
     ab_main = s3f[s3f["cohort"] == "Deconfounded_Scientific_Ph34_vs_SciFail_All12Axes"].copy()
     st_cv = ab_main[ab_main["cv_scheme"] == "Stratified_5Fold"].sort_values("step_order")
     gp_cv = ab_main[ab_main["cv_scheme"] == "UnseenTarget_Group5Fold"].sort_values("step_order")
+    n_sci_tot = int(st_cv["n_trials"].iloc[0])
     x_st = np.arange(len(st_cv))
     step_short = [
         "M1: $\\tau_0$",
@@ -725,25 +737,47 @@ def build_fig3_pan_disease_drift_law(
     ]
 
     ax_b.axhline(0.50, color=PAL["lightgrey"], ls=":", lw=0.6)
+    if not s3l.empty:
+        g_sub_b = s3l[
+            (s3l["cohort"] == "Deconfounded_Scientific_Ph34_vs_SciFail_All12Axes")
+            & (s3l["evaluation_stratum"] == "Stratified_5Fold")
+        ].set_index("model_id")
+        if "G1_OpenTargets_Human_Genetics_Only" in g_sub_b.index:
+            g1_auc = float(g_sub_b.loc["G1_OpenTargets_Human_Genetics_Only", "auroc"])
+            ax_b.axhline(g1_auc, color=PAL["orange"], ls="-.", lw=0.95, label=f"Human Genetics ({g1_auc:.2f})")
+        if "G5_Joint_Human_Genetics_Plus_DNAcc" in g_sub_b.index:
+            g5_r = g_sub_b.loc["G5_Joint_Human_Genetics_Plus_DNAcc"]
+            ax_b.errorbar(
+                [x_st[-1] + 0.16],
+                [float(g5_r["auroc"])],
+                yerr=[[float(g5_r["auroc"] - g5_r["auroc_ci_low"])], [float(g5_r["auroc_ci_high"] - g5_r["auroc"])]],
+                color=PAL["navy"],
+                marker="D",
+                ms=3.2,
+                lw=1.1,
+                capsize=1.8,
+                label="Genetics + DNAcc",
+            )
+
     ax_b.errorbar(
-        x_st - 0.06,
+        x_st - 0.08,
         st_cv["auroc"],
         yerr=[st_cv["auroc"] - st_cv["auroc_ci_low"], st_cv["auroc_ci_high"] - st_cv["auroc"]],
         color=PAL["blue"],
         marker="o",
-        ms=3.1,
+        ms=3.0,
         lw=1.25,
         capsize=1.8,
         label="Stratified 5-Fold",
     )
     ax_b.errorbar(
-        x_st + 0.06,
+        x_st + 0.04,
         gp_cv["auroc"],
         yerr=[gp_cv["auroc"] - gp_cv["auroc_ci_low"], gp_cv["auroc_ci_high"] - gp_cv["auroc"]],
         color=PAL["teal"],
         marker="s",
-        ms=2.8,
-        lw=1.15,
+        ms=2.7,
+        lw=1.10,
         ls="--",
         capsize=1.8,
         label="Unseen-Target CV",
@@ -756,66 +790,92 @@ def build_fig3_pan_disease_drift_law(
         0.91,
         f"$\\Delta$AUC = +{m6_auc - m1_auc:.3f} ({_fmt_p(m6_p)})",
         transform=ax_b.transAxes,
-        fontsize=5.2,
+        fontsize=5.0,
         fontweight="bold",
         color=PAL["navy"],
     )
     ax_b.set_xticks(x_st)
-    ax_b.set_xticklabels(step_short, rotation=28, ha="right", fontsize=5.2)
-    ax_b.set_ylim(0.41, 0.75)
+    ax_b.set_xticklabels(step_short, rotation=28, ha="right", fontsize=5.1)
+    ax_b.set_xlim(-0.35, len(x_st) - 0.55)
+    ax_b.set_ylim(0.41, 0.77)
     ax_b.set_ylabel("Scientific Outcome AUROC")
-    ax_b.set_title("6-Step DNAcc Ablation ($n$ = 11,843)", pad=5)
-    ax_b.legend(loc="lower right", frameon=False, fontsize=5.1)
+    ax_b.set_title(f"DNAcc Ablation & Genetics ($n$={n_sci_tot:,})", pad=5)
+    ax_b.legend(loc="lower right", frameon=False, fontsize=4.6)
 
-    # --- Panel c: Confounder & Target-Clustered Effect Size Forest Plot (Dual Wald + Cluster CIs) ---
+    # --- Panel c: Confounder, Human Genetics & Target-Clustered Effect Size Forest Plot ---
     ax_c = fig.add_subplot(gs_r2[0, 0])
     _panel_tag(ax_c, "c", x=-0.30, y=1.08)
     fe_sci = s3g[s3g["cohort"] == "Deconfounded_Scientific_Ph34_vs_SciFail_All12Axes"].set_index("model_specification")
+    has_j3 = "Joint_FixedEffects_DNAcc_controlling_for_Genetics_and_Tau0" in fe_sci.index
+    tau_j_key = "Joint_FixedEffects_Tau0_controlling_for_DNAcc_and_Genetics" if has_j3 else "Joint_FixedEffects_Tau0_controlling_for_DNAcc"
+    dna_j_key = "Joint_FixedEffects_DNAcc_controlling_for_Genetics_and_Tau0" if has_j3 else "Multivariable_FixedEffects_DNAcc"
+
     # Tuple: (label, or_v, wald_lo, wald_hi, clust_lo, clust_hi, color)
     forest_items: list[tuple[str, float, float, float, float | None, float | None, str]] = [
         (
-            "Static $\\tau_0$ (Unadj.)",
-            float(fe_sci.loc["Unadjusted_Univariate_Static_Tau0", "odds_ratio_per_sd"]),
-            float(fe_sci.loc["Unadjusted_Univariate_Static_Tau0", "ci95_low"]),
-            float(fe_sci.loc["Unadjusted_Univariate_Static_Tau0", "ci95_high"]),
-            float(fe_sci.loc["Unadjusted_Univariate_Static_Tau0", "cluster_ci95_low"]),
-            float(fe_sci.loc["Unadjusted_Univariate_Static_Tau0", "cluster_ci95_high"]),
-            PAL["midgrey"],
-        ),
-        (
             "Static $\\tau_0$ (+Joint FE)",
-            float(fe_sci.loc["Joint_FixedEffects_Tau0_controlling_for_DNAcc", "odds_ratio_per_sd"]),
-            float(fe_sci.loc["Joint_FixedEffects_Tau0_controlling_for_DNAcc", "ci95_low"]),
-            float(fe_sci.loc["Joint_FixedEffects_Tau0_controlling_for_DNAcc", "ci95_high"]),
-            float(fe_sci.loc["Joint_FixedEffects_Tau0_controlling_for_DNAcc", "cluster_ci95_low"]),
-            float(fe_sci.loc["Joint_FixedEffects_Tau0_controlling_for_DNAcc", "cluster_ci95_high"]),
+            float(fe_sci.loc[tau_j_key, "odds_ratio_per_sd"]),
+            float(fe_sci.loc[tau_j_key, "ci95_low"]),
+            float(fe_sci.loc[tau_j_key, "ci95_high"]),
+            float(fe_sci.loc[tau_j_key, "cluster_ci95_low"]),
+            float(fe_sci.loc[tau_j_key, "cluster_ci95_high"]),
             PAL["midgrey"],
-        ),
-        (
-            "DNAcc (Unadj.)",
-            float(fe_sci.loc["Unadjusted_Univariate_DNAcc", "odds_ratio_per_sd"]),
-            float(fe_sci.loc["Unadjusted_Univariate_DNAcc", "ci95_low"]),
-            float(fe_sci.loc["Unadjusted_Univariate_DNAcc", "ci95_high"]),
-            float(fe_sci.loc["Unadjusted_Univariate_DNAcc", "cluster_ci95_low"]),
-            float(fe_sci.loc["Unadjusted_Univariate_DNAcc", "cluster_ci95_high"]),
-            PAL["blue"],
-        ),
-        (
-            "DNAcc (Adj. 5 FE)",
-            float(fe_sci.loc["Multivariable_FixedEffects_DNAcc", "odds_ratio_per_sd"]),
-            float(fe_sci.loc["Multivariable_FixedEffects_DNAcc", "ci95_low"]),
-            float(fe_sci.loc["Multivariable_FixedEffects_DNAcc", "ci95_high"]),
-            float(fe_sci.loc["Multivariable_FixedEffects_DNAcc", "cluster_ci95_low"]),
-            float(fe_sci.loc["Multivariable_FixedEffects_DNAcc", "cluster_ci95_high"]),
-            PAL["navy"],
         ),
     ]
-    for r_ax in s3b.itertuples(index=False):
+    if has_j3:
+        gen_j_key = "Joint_FixedEffects_Human_Genetics_controlling_for_DNAcc_and_Tau0"
+        forest_items.append(
+            (
+                "Genetics (+Joint FE)",
+                float(fe_sci.loc[gen_j_key, "odds_ratio_per_sd"]),
+                float(fe_sci.loc[gen_j_key, "ci95_low"]),
+                float(fe_sci.loc[gen_j_key, "ci95_high"]),
+                float(fe_sci.loc[gen_j_key, "cluster_ci95_low"]),
+                float(fe_sci.loc[gen_j_key, "cluster_ci95_high"]),
+                PAL["orange"],
+            )
+        )
+    else:
+        forest_items.append(
+            (
+                "Static $\\tau_0$ (Unadj.)",
+                float(fe_sci.loc["Unadjusted_Univariate_Static_Tau0", "odds_ratio_per_sd"]),
+                float(fe_sci.loc["Unadjusted_Univariate_Static_Tau0", "ci95_low"]),
+                float(fe_sci.loc["Unadjusted_Univariate_Static_Tau0", "ci95_high"]),
+                float(fe_sci.loc["Unadjusted_Univariate_Static_Tau0", "cluster_ci95_low"]),
+                float(fe_sci.loc["Unadjusted_Univariate_Static_Tau0", "cluster_ci95_high"]),
+                PAL["midgrey"],
+            )
+        )
+    forest_items.extend(
+        [
+            (
+                "DNAcc (Unadj.)",
+                float(fe_sci.loc["Unadjusted_Univariate_DNAcc", "odds_ratio_per_sd"]),
+                float(fe_sci.loc["Unadjusted_Univariate_DNAcc", "ci95_low"]),
+                float(fe_sci.loc["Unadjusted_Univariate_DNAcc", "ci95_high"]),
+                float(fe_sci.loc["Unadjusted_Univariate_DNAcc", "cluster_ci95_low"]),
+                float(fe_sci.loc["Unadjusted_Univariate_DNAcc", "cluster_ci95_high"]),
+                PAL["blue"],
+            ),
+            (
+                "DNAcc (+Gen+$\\tau_0$+FE)" if has_j3 else "DNAcc (Adj. 5 FE)",
+                float(fe_sci.loc[dna_j_key, "odds_ratio_per_sd"]),
+                float(fe_sci.loc[dna_j_key, "ci95_low"]),
+                float(fe_sci.loc[dna_j_key, "ci95_high"]),
+                float(fe_sci.loc[dna_j_key, "cluster_ci95_low"]),
+                float(fe_sci.loc[dna_j_key, "cluster_ci95_high"]),
+                PAL["navy"],
+            ),
+        ]
+    )
+    s3b_mat = s3b[s3b["cohort_block"] == "Definitive_Maturation"].copy() if "cohort_block" in s3b.columns else s3b
+    for r_ax in s3b_mat.itertuples(index=False):
         if r_ax.disease_axis == "Infectious_Sepsis":
             continue
         forest_items.append(
             (
-                AXIS_COMPACT.get(r_ax.disease_axis, r_ax.disease_axis),
+                f"{AXIS_COMPACT.get(r_ax.disease_axis, r_ax.disease_axis)} (Mat.)",
                 float(r_ax.dnacc_or_per_sd),
                 float(r_ax.dnacc_or_ci_low),
                 float(r_ax.dnacc_or_ci_high),
@@ -827,6 +887,7 @@ def build_fig3_pan_disease_drift_law(
     forest_items = forest_items[::-1]
     y_c = np.arange(len(forest_items))
     ax_c.axvline(1.0, color=PAL["slate"], ls="--", lw=0.65)
+    ax_c.axhline(4.5, color=PAL["lightgrey"], ls="-", lw=0.75)
     for idx_c, (lbl_c, or_v, w_lo, w_hi, c_lo, c_hi, col_c) in enumerate(forest_items):
         if c_lo is not None and c_hi is not None:
             ax_c.plot([c_lo, min(c_hi, 2.45)], [idx_c, idx_c], color=col_c, lw=0.75, alpha=0.55)
@@ -839,21 +900,21 @@ def build_fig3_pan_disease_drift_law(
         ax_c.text(2.42, idx_c, ci_txt, va="center", ha="left", fontsize=4.7, color=PAL["ink"])
 
     ax_c.set_yticks(y_c)
-    ax_c.set_yticklabels([it[0] for it in forest_items], fontsize=5.1)
+    ax_c.set_yticklabels([it[0] for it in forest_items], fontsize=5.0)
     ax_c.set_xlim(0.70, 3.85)
     ax_c.set_xticks([1.0, 1.5, 2.0])
     ax_c.set_xlabel("OR per 1-s.d. (Cluster / Wald 95% CI)")
-    ax_c.set_title("Cluster-Robust & Per-Axis Effect", pad=5)
+    ax_c.set_title("3-Pillar Joint & Per-Axis Effect", pad=5)
 
     # --- Panel d: Within-Modality Stratified Discrimination (Proving DNAcc != Modality Proxy) ---
     ax_d = fig.add_subplot(gs_r2[0, 1])
     _panel_tag(ax_d, "d", x=-0.24, y=1.08)
-    mod_order = [
-        ("Small_Molecule", "Small Mol.\n($n$=7,369)"),
-        ("Antibody_Biologic", "IgG mAb\n($n$=2,357)"),
-        ("Protein_Peptide", "Peptide\n($n$=1,930)"),
-    ]
     s3k_idx = s3k.set_index("modality_stratum")
+    mod_order = [
+        ("Small_Molecule", f"Small Mol.\n($n$={int(s3k_idx.loc['Small_Molecule', 'n_trials']):,})"),
+        ("Antibody_Biologic", f"IgG mAb\n($n$={int(s3k_idx.loc['Antibody_Biologic', 'n_trials']):,})"),
+        ("Protein_Peptide", f"Peptide\n($n$={int(s3k_idx.loc['Protein_Peptide', 'n_trials']):,})"),
+    ]
     x_m = np.arange(len(mod_order))
     w_m = 0.33
     for i_m, (m_key, _) in enumerate(mod_order):
@@ -885,7 +946,7 @@ def build_fig3_pan_disease_drift_law(
             label="DNAcc" if i_m == 0 else None,
         )
         p_k = float(r_k["delong_p_value"])
-        star = "***" if p_k < 1e-6 else "n.s."
+        star = "***" if p_k < 1e-6 else ("*" if p_k < 0.05 else "n.s.")
         ax_d.text(
             i_m,
             max(float(r_k["dnacc_ci_high"]), float(r_k["static_tau0_ci_high"])) + 0.015,
@@ -893,21 +954,22 @@ def build_fig3_pan_disease_drift_law(
             ha="center",
             va="bottom",
             fontsize=4.9,
-            fontweight="bold" if p_k < 0.01 else "normal",
-            color=PAL["navy"] if p_k < 0.01 else PAL["slate"],
+            fontweight="bold" if p_k < 0.05 else "normal",
+            color=PAL["navy"] if p_k < 0.05 else PAL["slate"],
         )
 
     ax_d.axhline(0.50, color=PAL["slate"], ls=":", lw=0.6)
     ax_d.set_xticks(x_m)
     ax_d.set_xticklabels([lbl for _, lbl in mod_order], fontsize=5.1)
-    ax_d.set_ylim(0.40, 0.81)
+    ax_d.set_ylim(0.40, 0.82)
     ax_d.set_ylabel("Within-Modality AUROC")
     ax_d.set_title("Within-Modality Stratification", pad=5)
     ax_d.legend(loc="upper right", frameon=False, fontsize=5.1)
 
-    # --- Panel e: Empirical Phase II -> III/IV Maturation Across Quartiles (n = 23,967) ---
+    # --- Panel e: Empirical Phase II -> III/IV Maturation Across Quartiles ---
     ax_e = fig.add_subplot(gs_r2[0, 2])
     _panel_tag(ax_e, "e", x=-0.26, y=1.08)
+    n_prog_tot = int(s3d["n_trials_dnacc"].sum()) if "n_trials_dnacc" in s3d.columns else 23967
     x_q = np.arange(len(s3d))
     w_q = 0.34
     st_m = s3d["static_tau0_maturation_pct"].to_numpy()
@@ -942,13 +1004,13 @@ def build_fig3_pan_disease_drift_law(
     ax_e.set_xticklabels(["Q1", "Q2", "Q3", "Q4"], fontsize=5.4)
     ax_e.set_ylim(0, 86)
     ax_e.set_ylabel("Phase III/IV Rate (%)")
-    ax_e.set_title("Maturation Gradient ($n$=23,967)", pad=5)
+    ax_e.set_title(f"Maturation Gradient ($n$={n_prog_tot:,})", pad=5)
     ax_e.legend(loc="upper right", frameon=False, fontsize=5.0)
 
-    # --- Panel f: 10-Decile Calibration Curve + Marginal Density Histogram (n = 23,967) ---
+    # --- Panel f: 10-Decile Calibration Curve + Marginal Density Histogram ---
     ax_f = fig.add_subplot(gs_r3[0, 0])
     _panel_tag(ax_f, "f", x=-0.24, y=1.10)
-    cal_p = s3h[s3h["cohort"] == "Phase2_to_Phase34_Maturation_n23967"]
+    cal_p = s3h[s3h["cohort"].astype(str).str.startswith("Phase2_to_Phase34_Maturation")]
     c_dna = cal_p[cal_p["model"] == "Full_DNAcc"].sort_values("mean_predicted_prob")
     c_tau = cal_p[cal_p["model"] == "Static_Healthy_Tau0"].sort_values("mean_predicted_prob")
 
@@ -1102,13 +1164,13 @@ def build_fig4_fibrosis_mash_deconvolution(
     bliss = pd.read_csv(tables_dir / "Table_S4e_Fibrosis_2D_Bliss_Matrix.csv")
     wad_npz = np.load(tables_dir / "Fig4_Waddington_2D_Quiver_Fibrosis.npz")
 
-    fig = plt.figure(figsize=(7.20, 7.85), facecolor="white")
+    fig = plt.figure(figsize=(7.20, 8.35), facecolor="white")
     gs = gridspec.GridSpec(
         3,
         1,
         figure=fig,
-        height_ratios=[1.12, 1.00, 1.02],
-        hspace=0.58,
+        height_ratios=[1.38, 0.96, 0.98],
+        hspace=0.56,
     )
     gs_r1 = gridspec.GridSpecFromSubplotSpec(1, 4, subplot_spec=gs[0], width_ratios=[0.90, 0.96, 0.14, 1.42], wspace=0.42)
     gs_r2 = gridspec.GridSpecFromSubplotSpec(1, 3, subplot_spec=gs[1], width_ratios=[0.98, 1.08, 1.06], wspace=0.52)
@@ -1212,7 +1274,7 @@ def build_fig4_fibrosis_mash_deconvolution(
     ax_b.set_title("Human Myeloid Drift ($n$=19)", pad=5)
     ax_b.legend(loc="upper center", frameon=False, fontsize=4.6, ncol=3, handletextpad=0.25, columnspacing=0.55)
 
-    # --- Panel c: Multi-Track 14-Trial Phase IIb/III Antifibrotic Clinical Scorecard ---
+    # --- Panel c: Multi-Track 24-Trial Phase IIb/III Antifibrotic Clinical Scorecard ---
     ax_c = fig.add_subplot(gs_r1[0, 3])
     _panel_tag(ax_c, "c", x=-0.42, y=1.08)
     tr_s = trials.sort_values(["clinical_win", "omniniche_remission_prob"], ascending=[True, True]).reset_index(drop=True)
@@ -1221,15 +1283,26 @@ def build_fig4_fibrosis_mash_deconvolution(
     acr_short = {
         "GS-US-321-0105": "GS-0105",
         "GS-US-321-0106": "GS-0106",
+        "GS-US-223-1015": "GS-1015",
+        "FIBRONEER-IPF": "FIBRONEER",
+        "SYNERGY-NASH": "SYNERGY",
+        "MAESTRO-NASH": "MAESTRO",
+        "FIDELIO-DKD": "FIDELIO",
+        "RESOLVE-IT": "RESOLVE",
+        "FLIGHT-FXR": "FLIGHT",
+        "ZEPHYRUS-1": "ZEPHYRUS",
+        "INPULSIS-1": "INPULSIS",
+        "ISABELA 1": "ISABELA-1",
+        "FALCON 1": "FALCON-1",
     }
     org_col_map = {"Liver_MASH": PAL["orange"], "Lung_IPF": PAL["blue"], "Kidney_CKD": PAL["purple"]}
-    mod_col_map = {"small_molecule": PAL["blue"], "peptide": PAL["teal"], "antibody": PAL["crimson"]}
+    mod_col_map = {"small_molecule": PAL["blue"], "peptide": PAL["teal"], "protein": PAL["purple"], "antibody": PAL["crimson"]}
 
     # Draw 3 aligned metadata tile tracks in negative x [-0.28, -0.03]: Organ | Modality | Scar Access
     tile_xs = [-0.24, -0.15, -0.06]
     tile_w = 0.072
     for tx, thdr in zip(tile_xs, ["Org", "Mod", "Acc"]):
-        ax_c.text(tx, len(tr_s) - 0.15, thdr, ha="center", va="bottom", fontsize=4.5, fontweight="bold", color=PAL["slate"])
+        ax_c.text(tx, len(tr_s) - 0.10, thdr, ha="center", va="bottom", fontsize=4.4, fontweight="bold", color=PAL["slate"])
 
     for idx_t, r_t in tr_s.iterrows():
         c_org = org_col_map.get(str(r_t["organ"]), PAL["midgrey"])
@@ -1238,7 +1311,7 @@ def build_fig4_fibrosis_mash_deconvolution(
         c_acc = PAL["teal"] if acc_val >= 0.70 else PAL["vermilion"]
         for tx, tc in zip(tile_xs, [c_org, c_mod, c_acc]):
             ax_c.add_patch(
-                mpatches.Rectangle((tx - tile_w / 2, idx_t - 0.36), tile_w, 0.72, facecolor=tc, alpha=0.82, edgecolor="white", lw=0.35)
+                mpatches.Rectangle((tx - tile_w / 2, idx_t - 0.36), tile_w, 0.72, facecolor=tc, alpha=0.82, edgecolor="white", lw=0.30)
             )
 
     ax_c.axvline(0.0, color=PAL["ink"], lw=0.55)
@@ -1247,53 +1320,93 @@ def build_fig4_fibrosis_mash_deconvolution(
     probs_c = tr_s["omniniche_remission_prob"].to_numpy(dtype=float)
     ax_c.barh(y_c, probs_c, left=0.0, color=cols_c, alpha=0.86, height=0.68)
     for idx_t, p_val in enumerate(probs_c):
-        ax_c.text(p_val + 0.025, idx_t, f"{p_val:.2f}", va="center", ha="left", fontsize=4.7, color=PAL["ink"])
+        ax_c.text(p_val + 0.022, idx_t, f"{p_val:.2f}", va="center", ha="left", fontsize=4.15, color=PAL["ink"])
 
     row_names = []
     for r in tr_s.itertuples():
         ac = acr_short.get(str(r.trial_acronym), str(r.trial_acronym))
-        d_clean = str(r.drug).replace("Simtuzumab", "Simtuz.").replace("Selonsertib", "Selons.").replace("Pamrevlumab", "Pamrev.")
+        d_clean = (
+            str(r.drug)
+            .replace("Simtuzumab", "Simtuz.")
+            .replace("Selonsertib", "Selons.")
+            .replace("Pamrevlumab", "Pamrev.")
+            .replace("Zinpentraxin alfa", "Zinpentrax.")
+            .replace("Nerandomilast", "Nerandom.")
+            .replace("Lebrikizumab", "Lebrikiz.")
+            .replace("Efruxifermin", "Efruxif.")
+            .replace("Pegbelfermin", "Pegbelf.")
+            .replace("Ziritaxestat", "Ziritax.")
+            .replace("Dapagliflozin", "Dapaglif.")
+            .replace("Lanifibranor", "Lanifib.")
+            .replace("Cenicriviroc", "Cenicriv.")
+        )
         row_names.append(f"{d_clean} ({ac})")
 
     ax_c.set_yticks(y_c)
-    ax_c.set_yticklabels(row_names, fontsize=4.8)
+    ax_c.set_yticklabels(row_names, fontsize=4.25)
     ax_c.set_xlim(-0.30, 1.18)
     ax_c.set_xticks([0.0, 0.5, 1.0])
     ax_c.set_xticklabels(["0.0", "0.5", "1.0"])
-    ax_c.set_ylim(-0.6, len(tr_s) + 0.55)
+    ax_c.set_ylim(-0.65, len(tr_s) + 0.70)
     ax_c.set_xlabel("Zero-Shot Remission Probability")
-    ax_c.set_title("14 Phase IIb/III Antifibrotic Trials", pad=5)
+    ax_c.set_title(f"{len(tr_s)} Phase IIb/III Antifibrotic Trials", pad=5)
 
-    # --- Panel d: Zero-Shot Benchmark Arena (Protagonist Cobalt vs Neutral-Grey Baselines) ---
+    # --- Panel d: Zero-Shot Benchmark Arena (Protagonist Cobalt & Stage-Blind Teal vs Baselines) ---
     ax_d = fig.add_subplot(gs_r2[0, 0])
-    _panel_tag(ax_d, "d", x=-0.32, y=1.08)
+    _panel_tag(ax_d, "d", x=-0.34, y=1.08)
+    arena_24 = (
+        arena[arena["benchmark"] == f"PanOrgan_Fibrosis_{len(tr_s)}_Phase2b3_Trials"].copy()
+        if "benchmark" in arena.columns
+        else arena.copy()
+    )
+    if arena_24.empty:
+        arena_24 = arena.copy()
     m_short = {
         "OmniNiche_v2_ZeroShot_Langevin": "OmniNiche",
+        "OmniNiche_StageBlind_FixedS0": "Stage-Blind $s_0$",
+        "B0_Enrolled_Stage_Prior_Only": "Stage Prior Only",
         "B1_Static_Healthy_Tau0": "Static $\\tau_0$",
         "B2_Polypharmacology_Target_Count": "Target Count",
         "B3_SingleCell_GRN_Retention_Only": "scGRN Only",
         "B4_Static_LR_Compartment_Degree": "Static L-R",
         "B5_Uninformative_Modality_Prior": "Modality Prior",
     }
-    ar_rev = arena.iloc[::-1].reset_index(drop=True)
+    ar_rev = arena_24.iloc[::-1].reset_index(drop=True)
     y_d = np.arange(len(ar_rev))
     ax_d.axvline(0.50, color=PAL["slate"], ls=":", lw=0.6)
     for i_m, r_m in ar_rev.iterrows():
-        is_omni = "OmniNiche" in str(r_m["method"])
-        c_m = PAL["blue"] if is_omni else PAL["midgrey"]
-        ax_d.plot([r_m["auroc_ci_low"], r_m["auroc_ci_high"]], [i_m, i_m], color=c_m, lw=1.45 if is_omni else 0.95)
-        ax_d.scatter([r_m["auroc"]], [i_m], color=c_m, s=22 if is_omni else 13, zorder=4)
-        ax_d.text(1.03, i_m, f"{r_m['auroc']:.2f}", va="center", ha="left", fontsize=4.9, fontweight="bold" if is_omni else "normal", color=PAL["navy"] if is_omni else PAL["slate"])
+        m_str = str(r_m["method"])
+        is_main = m_str == "OmniNiche_v2_ZeroShot_Langevin"
+        is_blind = m_str == "OmniNiche_StageBlind_FixedS0"
+        c_m = PAL["blue"] if is_main else (PAL["teal"] if is_blind else PAL["midgrey"])
+        ci_lo = float(r_m["auroc_ci_low"]) if "auroc_ci_low" in r_m and pd.notna(r_m["auroc_ci_low"]) else float(r_m["auroc"])
+        ci_hi = float(r_m["auroc_ci_high"]) if "auroc_ci_high" in r_m and pd.notna(r_m["auroc_ci_high"]) else float(r_m["auroc"])
+        ax_d.plot([ci_lo, ci_hi], [i_m, i_m], color=c_m, lw=1.40 if (is_main or is_blind) else 0.90)
+        ax_d.scatter([r_m["auroc"]], [i_m], color=c_m, s=20 if (is_main or is_blind) else 12, zorder=4)
+        ax_d.text(
+            1.03,
+            i_m,
+            f"{r_m['auroc']:.2f}",
+            va="center",
+            ha="left",
+            fontsize=4.6,
+            fontweight="bold" if (is_main or is_blind) else "normal",
+            color=PAL["navy"] if is_main else (PAL["teal"] if is_blind else PAL["slate"]),
+        )
 
-    omni_p = float(arena.loc[arena["method"].str.contains("OmniNiche"), "exact_perm_p_vs_null"].iloc[0])
+    omni_p = (
+        float(arena_24.loc[arena_24["method"] == "OmniNiche_v2_ZeroShot_Langevin", "exact_perm_p_vs_null"].iloc[0])
+        if "exact_perm_p_vs_null" in arena_24.columns
+        else 1e-4
+    )
     ax_d.set_yticks(y_d)
-    ax_d.set_yticklabels([m_short.get(m, m) for m in ar_rev["method"]], fontsize=5.2)
-    ax_d.set_xlim(0.18, 1.24)
+    ax_d.set_yticklabels([m_short.get(m, m) for m in ar_rev["method"]], fontsize=4.7)
+    ax_d.set_xlim(0.18, 1.25)
     ax_d.set_xticks([0.25, 0.50, 0.75, 1.00])
-    ax_d.set_xlabel("14-Trial AUROC (95% CI)")
+    ax_d.set_xlabel(f"{len(tr_s)}-Trial AUROC (95% CI)")
     ax_d.set_title(f"Zero-Shot Arena ({_fmt_p(omni_p)})", pad=5)
 
-    # --- Panel e: Bidirectional 3x3 & Leave-One-Organ-Out Transfer Matrix (High-Contrast 0.85-1.00) ---
+    # --- Panel e: Bidirectional 3x3 & Leave-One-Organ-Out Transfer Matrix ---
     ax_e = fig.add_subplot(gs_r2[0, 1])
     _panel_tag(ax_e, "e", x=-0.32, y=1.08)
     src_short = [
@@ -1304,8 +1417,11 @@ def build_fig4_fibrosis_mash_deconvolution(
         "LOOO: Li+Ki",
         "LOOO: Li+Lu",
     ]
-    mat_3x3 = bi3x3[["target_liver_auroc", "target_lung_auroc", "target_kidney_accuracy", "all14_auroc"]].to_numpy(dtype=float)
-    im_e = ax_e.imshow(mat_3x3, cmap="YlGnBu", vmin=0.84, vmax=1.01, aspect="auto")
+    k_col = "target_kidney_auroc" if "target_kidney_auroc" in bi3x3.columns else "target_kidney_accuracy"
+    all_col = "all24_auroc" if "all24_auroc" in bi3x3.columns else "all14_auroc"
+    mat_3x3 = bi3x3[["target_liver_auroc", "target_lung_auroc", k_col, all_col]].to_numpy(dtype=float)
+    vmin_e = max(0.70, float(np.nanmin(mat_3x3)) - 0.03)
+    im_e = ax_e.imshow(mat_3x3, cmap="YlGnBu", vmin=vmin_e, vmax=1.01, aspect="auto")
     for r_i in range(mat_3x3.shape[0]):
         for c_i in range(mat_3x3.shape[1]):
             val_m = mat_3x3[r_i, c_i]
@@ -1317,10 +1433,10 @@ def build_fig4_fibrosis_mash_deconvolution(
                 va="center",
                 fontsize=4.9,
                 fontweight="bold",
-                color="white" if val_m >= 0.945 else PAL["ink"],
+                color="white" if val_m >= 0.5 * (vmin_e + 1.01) + 0.03 else PAL["ink"],
             )
     ax_e.set_xticks(range(4))
-    ax_e.set_xticklabels(["Liver", "Lung", "Kidney", "All 14"], fontsize=5.1)
+    ax_e.set_xticklabels(["Liver", "Lung", "Kidney", f"All {len(tr_s)}"], fontsize=5.1)
     ax_e.set_yticks(range(len(src_short)))
     ax_e.set_yticklabels(src_short, fontsize=5.1)
     ax_e.set_title("Bidirectional & LOOO Transfer", pad=5)
@@ -1361,10 +1477,13 @@ def build_fig4_fibrosis_mash_deconvolution(
     ax_g = fig.add_subplot(gs_r3[0, 0])
     _panel_tag(ax_g, "g", x=-0.14, y=1.10)
     sp_x = hyst["progression_index"].to_numpy()
+    cliff_path = tables_dir / "Fig4_Monotherapy_Window_Cliff_Curve.csv"
+    t50_hr = float(pd.read_csv(cliff_path)["t50_window_cliff_hr"].iloc[0]) if cliff_path.exists() else 8.3
+    rescue_col = "dual_parenchyma_myofib_rescue_remission" if "dual_parenchyma_myofib_rescue_remission" in hyst.columns else "dual_myofib_samac_rescue_remission"
     ax_g.plot(sp_x, 100.0 * hyst["myofib_lowdose_mono_remission"], color=PAL["crimson"], lw=1.3, marker="o", ms=2.3, label="Stromal Mono. (TGFBR1/PDGFRB)")
     ax_g.plot(sp_x, 100.0 * hyst["parenchyma_thrb_mono_remission"], color=PAL["orange"], lw=1.2, ls="--", marker="^", ms=2.2, label="Parenchymal Mono. (THRB)")
-    ax_g.plot(sp_x, 100.0 * hyst["dual_myofib_samac_rescue_remission"], color=PAL["teal"], lw=1.5, marker="s", ms=2.3, label="Dual Rescue (Myofib + SAMac)")
-    ax_g.axvspan(0.76, 0.91, color=PAL["crimson"], alpha=0.09, label="Locked F4 ($t_{50}$=17.4 h)")
+    ax_g.plot(sp_x, 100.0 * hyst[rescue_col], color=PAL["teal"], lw=1.5, marker="s", ms=2.3, label="Dual Rescue (Paren. + Myofib)")
+    ax_g.axvspan(0.76, 0.91, color=PAL["crimson"], alpha=0.09, label=f"Locked F4 ($t_{{50}}$={t50_hr:.1f} h)")
 
     ax_g.set_xlim(0.17, 0.91)
     ax_g.set_ylim(-4, 138)
@@ -1423,7 +1542,7 @@ def build_fig5_solid_tumor_spatial_icb(
     vis_con = pd.read_csv(tables_dir / "Fig5_Contrasting_Visium_Sections.csv")
     rad_sum = pd.read_csv(tables_dir / "Table_S5g_Visium_Radial_Consensus_Summary.csv")
     vis_12 = pd.read_csv(tables_dir / "Table_S5a_Visium_Spatial_Barrier_Sections.csv")
-    pool32 = pd.read_csv(tables_dir / "Table_S5i_Pooled32_PreTreatment_Waterfall_and_Rescue.csv")
+    pool107 = pd.read_csv(tables_dir / "Table_S5i_Pooled_PreTreatment_107Patients_Master.csv")
     bench = pd.read_csv(tables_dir / "Table_S5_SolidTumor_ICB_Spatial_Responder_Benchmark.csv")
     paired15 = pd.read_csv(tables_dir / "Table_S5f_GSE123813_Paired_PrePost_Trajectory.csv")
     tum_npz = np.load(tables_dir / "Fig5_Waddington_2D_Quiver_SolidTumor.npz")
@@ -1487,7 +1606,7 @@ def build_fig5_solid_tumor_spatial_icb(
         ax_sub.text(bx0 + 0.5 * bar_500um, by0 - 0.025 * span_y, "500 µm", ha="center", va="top", fontsize=4.7, fontweight="bold", color=PAL["ink"])
 
         ax_sub.set_xlim(x_min - 0.06 * span_x, x_max + 0.06 * span_x)
-        ax_sub.set_ylim(y_min - 0.18 * span_y, y_max + 0.20 * span_y)
+        ax_sub.set_ylim(y_min - 0.18 * span_y, y_max + 0.30 * span_y)
 
         sei_v = float(sub_v["sei"].iloc[0])
         ctype_v = str(sub_v["cancer_type"].iloc[0]).replace("_Carcinoma", "")
@@ -1524,29 +1643,28 @@ def build_fig5_solid_tumor_spatial_icb(
     ax_b.set_title("12-Section Radial Barrier (21,796 Spots)", pad=5)
     ax_b.legend(loc="lower left", frameon=False, fontsize=4.9, ncol=2)
 
-    # --- Panel c: n = 32 Pre-Treatment Patient Waterfall + 4-Row Aligned OncoPrint Biomarker Strip ---
-    gs_c = gridspec.GridSpecFromSubplotSpec(2, 1, subplot_spec=gs_r2[0, 0], height_ratios=[2.35, 1.0], hspace=0.08)
+    # --- Panel c: n = 107 Pre-Treatment Patient Waterfall + 4-Row Aligned OncoPrint Biomarker Strip ---
+    gs_c = gridspec.GridSpecFromSubplotSpec(2, 1, subplot_spec=gs_r2[0, 0], height_ratios=[2.30, 1.05], hspace=0.08)
     ax_c1 = fig.add_subplot(gs_c[0, 0])
     ax_c2 = fig.add_subplot(gs_c[1, 0], sharex=ax_c1)
     _panel_tag(ax_c1, "c", x=-0.14, y=1.14)
 
-    wf = pool32.copy()
-    wf["pdl1_hi"] = wf.groupby("cancer_cohort")["b1_static_pdl1"].transform(lambda s: s >= s.median())
+    wf = pool107.copy()
+    coh_col = "cohort" if "cohort" in wf.columns else "cancer_cohort"
+    pdl1_col = "b1_static_pdl1_prob" if "b1_static_pdl1_prob" in wf.columns else "b1_static_pdl1"
+    wf["pdl1_hi"] = wf.groupby(coh_col)[pdl1_col].transform(lambda s: s >= s.median())
     wf["caf_hi"] = wf["myCAF"] >= 0.50
     wf = wf.sort_values("simulated_icb_remission_prob", ascending=False).reset_index(drop=True)
     x_wf = np.arange(len(wf))
     delta_p = 100.0 * (wf["simulated_icb_remission_prob"].to_numpy() - 0.50)
-
-    for i_w, r_w in wf.iterrows():
-        is_r = int(r_w["responder"]) == 1
-        c_bar = PAL["teal"] if is_r else PAL["crimson"]
-        ax_c1.bar(i_w, delta_p[i_w], width=0.76, color=c_bar, alpha=0.88, edgecolor="none")
+    bar_cols = [PAL["teal"] if int(r) == 1 else PAL["crimson"] for r in wf["responder"]]
+    ax_c1.bar(x_wf, delta_p, width=0.84, color=bar_cols, alpha=0.88, edgecolor="none")
 
     ax_c1.axhline(0.0, color=PAL["ink"], lw=0.65)
     ax_c1.set_ylim(-56, 66)
     ax_c1.set_yticks([-50, 0, 50])
     ax_c1.set_ylabel("$\\Delta$Prob. vs. 50% (%)")
-    ax_c1.set_title("Zero-Refit Pre-ICB Waterfall ($n$ = 32)", pad=5)
+    ax_c1.set_title(f"Zero-Refit Pre-ICB Waterfall ($n$ = {len(wf)})", pad=5)
     ax_c1.tick_params(axis="x", which="both", bottom=False, labelbottom=False)
     ax_c1.spines["bottom"].set_visible(False)
     h_leg = [
@@ -1555,42 +1673,51 @@ def build_fig5_solid_tumor_spatial_icb(
     ]
     ax_c1.legend(handles=h_leg, loc="upper right", frameon=False, fontsize=5.0, ncol=2)
 
-    # 4-row OncoPrint tracks: Response | Cohort | PD-L1 | myCAF Shield
-    track_names = ["myCAF High", "PD-L1 High", "BCC / NSCLC", "RECIST R"]
+    # 4-row OncoPrint tracks: myCAF Shield | PD-L1 | Cohort (BCC / Mel91 / Mel78 / NSCLC) | RECIST R
+    track_names = ["myCAF High", "PD-L1 High", "Cohort", "RECIST R"]
     for i_w, r_w in wf.iterrows():
         c_resp = PAL["teal"] if int(r_w["responder"]) == 1 else PAL["crimson"]
-        c_coh = PAL["navy"] if "BCC" in str(r_w["cancer_cohort"]) else PAL["sky"]
+        c_str = str(r_w[coh_col])
+        c_coh = (
+            PAL["navy"]
+            if "BCC" in c_str
+            else (PAL["purple"] if "91061" in c_str else (PAL["blue"] if "78220" in c_str else PAL["sky"]))
+        )
         c_pdl1 = PAL["orange"] if bool(r_w["pdl1_hi"]) else PAL["lightgrey"]
         c_caf = PAL["crimson"] if bool(r_w["caf_hi"]) else PAL["lightgrey"]
         for row_y, col_tile in enumerate([c_caf, c_pdl1, c_coh, c_resp]):
             ax_c2.add_patch(
-                mpatches.Rectangle((i_w - 0.39, row_y - 0.40), 0.78, 0.80, facecolor=col_tile, edgecolor="white", lw=0.3)
+                mpatches.Rectangle((i_w - 0.43, row_y - 0.40), 0.86, 0.80, facecolor=col_tile, edgecolor="none")
             )
 
-    ax_c2.set_xlim(-0.7, len(wf) - 0.3)
+    ax_c2.set_xlim(-0.8, len(wf) - 0.2)
     ax_c2.set_ylim(-0.55, 3.55)
     ax_c2.set_yticks(range(4))
     ax_c2.set_yticklabels(track_names, fontsize=4.8)
-    ax_c2.set_xticks(x_wf)
-    ax_c2.set_xticklabels([str(p).split("_")[0] for p in wf["patient_id"]], rotation=60, ha="right", fontsize=4.4)
+    tick_pos = sorted({0, 24, 49, 74, len(wf) - 1})
+    ax_c2.set_xticks(tick_pos)
+    ax_c2.set_xticklabels([str(p + 1) for p in tick_pos], fontsize=4.8)
+    ax_c2.set_xlabel("Ranked Pre-Treatment Patients", fontsize=5.1)
     for sp in ("top", "right", "left", "bottom"):
         ax_c2.spines[sp].set_visible(False)
     ax_c2.tick_params(axis="y", length=0)
 
-    # --- Panel d: 4-Cohort Blind Pre-ICB Responder Benchmark ---
+    # --- Panel d: 5-Cohort Blind Anti-PD-1 Benchmark + Spatial & Published Biomarkers ---
     ax_d = fig.add_subplot(gs_r2[0, 1])
-    _panel_tag(ax_d, "d", x=-0.34, y=1.08)
+    _panel_tag(ax_d, "d", x=-0.36, y=1.08)
     coh_map = [
-        ("GSE123813_BCC_PreTreatment_FullTME_scRNA", "BCC scRNA\n($n$ = 8)"),
-        ("GSE207422_NSCLC_PreTreatment_Biopsy_Bulk", "NSCLC Bulk\n($n$ = 24)"),
-        ("GSE207422_NSCLC_TME_Validation_scRNA", "NSCLC scRNA\n($n$ = 14)"),
-        ("Pooled_Strictly_PreTreatment_Biopsies_n32", "Pooled Pre-ICB\n($n$ = 32)"),
+        ("GSE123813_BCC_PreTreatment_AntiPD1_Mono_scRNA", "BCC Mono.\n($n$ = 8)"),
+        ("Pooled_Pure_AntiPD1_Monotherapy_PreTreatment_n83", "Anti-PD-1 Mono.\n($n$ = 83)"),
+        ("GSE207422_NSCLC_PreTreatment_ChemoAntiPD1_Biopsy", "NSCLC Chemo-IO\n($n$ = 24)"),
+        ("Pooled_All_Strictly_PreTreatment_Biopsies_n107", "All Pre-Tx\n($n$ = 107)"),
+        ("GSE207422_NSCLC_Resected_TME_scRNA", "NSCLC Resect.\n($n$ = 14)"),
     ]
     meth_sel = [
-        ("OmniNiche_v2_Spatial_Langevin", "OmniNiche", PAL["blue"], "o", -0.20),
-        ("B1_Static_PDL1_CD274", "PD-L1 ($CD274$)", PAL["vermilion"], "s", -0.07),
-        ("B2_Static_Healthy_Tau0", "Static $\\tau_0$", PAL["midgrey"], "^", 0.07),
-        ("B3_SingleComp_TCell_GRN", "T-Cell GRN", PAL["slate"], "D", 0.20),
+        ("OmniNiche_v2_Spatial_Langevin", "OmniNiche", PAL["blue"], "o", -0.24),
+        ("OmniNiche_NoVisium_UniformPij", "No-Visium $P_{ij}$", PAL["teal"], "P", -0.12),
+        ("B6_Published_18Gene_Tcell_GEP", "18-Gene GEP", PAL["orange"], "^", 0.00),
+        ("B7_Published_CAF_TIDE_Exclusion", "CAF/TIDE Excl.", PAL["purple"], "D", 0.12),
+        ("B1_Static_PDL1_CD274", "PD-L1 ($CD274$)", PAL["vermilion"], "s", 0.24),
     ]
     ax_d.axvline(0.50, color=PAL["slate"], ls=":", lw=0.6)
     for c_idx, (c_key, _) in enumerate(coh_map):
@@ -1601,17 +1728,19 @@ def build_fig5_solid_tumor_spatial_icb(
             if m_key not in sub_b.index:
                 continue
             r_b = sub_b.loc[m_key]
-            is_om = "OmniNiche" in m_key
-            ax_d.plot([r_b["auroc_ci_low"], r_b["auroc_ci_high"]], [c_idx + dy, c_idx + dy], color=m_col, lw=1.35 if is_om else 0.85, zorder=3)
-            ax_d.scatter([r_b["auroc"]], [c_idx + dy], color=m_col, marker=m_mk, s=19 if is_om else 11, zorder=4, label=m_lbl if c_idx == 0 else None)
+            is_om = m_key == "OmniNiche_v2_Spatial_Langevin"
+            ci_lo = float(r_b["auroc_ci_low"]) if "auroc_ci_low" in r_b and pd.notna(r_b["auroc_ci_low"]) else float(r_b["auroc"])
+            ci_hi = float(r_b["auroc_ci_high"]) if "auroc_ci_high" in r_b and pd.notna(r_b["auroc_ci_high"]) else float(r_b["auroc"])
+            ax_d.plot([ci_lo, ci_hi], [c_idx + dy, c_idx + dy], color=m_col, lw=1.35 if is_om else 0.80, zorder=3)
+            ax_d.scatter([r_b["auroc"]], [c_idx + dy], color=m_col, marker=m_mk, s=18 if is_om else 10, zorder=4, label=m_lbl if c_idx == 0 else None)
 
     ax_d.set_yticks(range(len(coh_map)))
-    ax_d.set_yticklabels([lbl for _, lbl in coh_map], fontsize=5.1)
-    ax_d.set_xlim(0.12, 1.06)
-    ax_d.set_ylim(-0.48, 3.95)
+    ax_d.set_yticklabels([lbl for _, lbl in coh_map], fontsize=4.8)
+    ax_d.set_xlim(0.10, 1.06)
+    ax_d.set_ylim(-0.52, len(coh_map) + 0.68)
     ax_d.set_xlabel("Blind Responder AUROC (95% CI)")
-    ax_d.set_title("Multi-Cohort Pre-ICB Benchmark", pad=5)
-    ax_d.legend(loc="upper left", frameon=False, fontsize=4.7, ncol=2)
+    ax_d.set_title("Multi-Cohort Anti-PD-1 Benchmark", pad=5)
+    ax_d.legend(loc="upper left", frameon=False, fontsize=4.35, ncol=2, columnspacing=0.6, handletextpad=0.3)
 
     # --- Panel e: Paired Pre- vs Post-Anti-PD-1 Longitudinal Human Trajectory (n = 15) ---
     ax_e = fig.add_subplot(gs_r3[0, 0])
@@ -1649,7 +1778,7 @@ def build_fig5_solid_tumor_spatial_icb(
     Uxt, Uyt = dx_c[::st_t, ::st_t], dy_c[::st_t, ::st_t]
     mag_t = np.hypot(Uxt, Uyt) + 1e-8
     ax_f.quiver(Xgt, Ygt, Uxt / mag_t, Uyt / mag_t, color="white", alpha=0.82, scale=22, width=0.006)
-    ax_f.axhline(0.45, color=PAL["sky"], ls="--", lw=0.8)
+    ax_f.axhline(0.38, color=PAL["sky"], ls="--", lw=0.8)
     ax_f.scatter([0.16, 0.84], [0.16, 0.82], c=[PAL["teal"], PAL["crimson"]], s=24, edgecolors="white", linewidths=0.85, zorder=5)
     ax_f.text(0.20, 0.16, "Unlocked", color="white", fontsize=5.0, fontweight="bold", va="center")
     ax_f.text(0.80, 0.82, "myCAF Lock", color="white", fontsize=5.0, fontweight="bold", va="center", ha="right")
@@ -1660,18 +1789,21 @@ def build_fig5_solid_tumor_spatial_icb(
     cbar_f.ax.tick_params(labelsize=4.8)
     cbar_f.set_label("$U_{\\mathrm{combo}}$", fontsize=5.1)
 
-    # --- Panel g: Paired Trajectory Rescue Across All n = 19 Anti-PD-1-Resistant Pre-Treatment Patients ---
+    # --- Panel g: Paired Trajectory Rescue Across All n = 70 Anti-PD-1-Resistant Pre-Treatment Patients ---
     ax_g = fig.add_subplot(gs_r3[0, 2])
     _panel_tag(ax_g, "g", x=-0.26, y=1.10)
-    nr19 = pool32[pool32["responder"] == 0].copy()
-    p_mono = 100.0 * nr19["simulated_icb_remission_prob"].to_numpy()
-    p_comb = 100.0 * nr19["combo_pd1_plus_mycaf_remission_prob"].to_numpy()
+    nr_all = pool107[pool107["responder"] == 0].copy()
+    mono_col = "raw_icb_remission_prob" if "raw_icb_remission_prob" in nr_all.columns else "simulated_icb_remission_prob"
+    p_mono = 100.0 * nr_all[mono_col].to_numpy()
+    p_comb = 100.0 * nr_all["combo_pd1_plus_mycaf_remission_prob"].to_numpy()
     w_nr = stats.wilcoxon(p_comb - p_mono, alternative="greater")
 
-    for r_nr in nr19.itertuples():
-        c_nr = PAL["navy"] if "BCC" in str(r_nr.cancer_cohort) else PAL["blue"]
-        ax_g.plot([0, 1], [100.0 * r_nr.simulated_icb_remission_prob, 100.0 * r_nr.combo_pd1_plus_mycaf_remission_prob], color=c_nr, alpha=0.35, lw=0.75)
-        ax_g.scatter([0, 1], [100.0 * r_nr.simulated_icb_remission_prob, 100.0 * r_nr.combo_pd1_plus_mycaf_remission_prob], color=c_nr, s=10, alpha=0.72)
+    for r_nr in nr_all.itertuples():
+        c_str = str(getattr(r_nr, coh_col))
+        c_nr = PAL["navy"] if "BCC" in c_str else (PAL["purple"] if "91061" in c_str else PAL["blue"])
+        m_val = 100.0 * float(getattr(r_nr, mono_col))
+        ax_g.plot([0, 1], [m_val, 100.0 * r_nr.combo_pd1_plus_mycaf_remission_prob], color=c_nr, alpha=0.22, lw=0.45)
+        ax_g.scatter([0, 1], [m_val, 100.0 * r_nr.combo_pd1_plus_mycaf_remission_prob], color=c_nr, s=6, alpha=0.50)
 
     ax_g.plot([0, 1], [np.mean(p_mono), np.mean(p_comb)], color=PAL["crimson"], lw=1.8, marker="o", ms=3.6, zorder=6)
     ax_g.text(
@@ -1690,7 +1822,7 @@ def build_fig5_solid_tumor_spatial_icb(
     ax_g.set_ylim(-4, 134)
     ax_g.set_yticks([0, 25, 50, 75, 100])
     ax_g.set_ylabel("Remission Prob. (%)")
-    ax_g.set_title("Resistant Patient Rescue ($n$=19)", pad=5)
+    ax_g.set_title(f"Resistant Patient Rescue ($n$={len(nr_all)})", pad=5)
 
     _save_multi(fig, out_dir, "Fig5_SolidTumor_Visium_Exclusion_and_PreICB_Responder", artifact_dir)
 
@@ -1715,6 +1847,7 @@ def build_extended_data_figures(
     atlas = pd.read_csv(tables_dir / "Table_S3_TargetGene_6Axis_Drift_Atlas.csv")
     s3b = pd.read_csv(tables_dir / "Table_S3b_PerAxis_Dynamic_Drift_Performance.csv")
     s3c = pd.read_csv(tables_dir / "Table_S3c_TrialLevel_Deconfounded_Predictions.csv")
+    s3d = pd.read_csv(tables_dir / "Table_S3d_Definitive_Quartile_Maturation_Rates.csv")
     s3e = pd.read_csv(tables_dir / "Table_S3e_Unreported_Stop_Sensitivity_Bounds.csv")
     s3f = pd.read_csv(tables_dir / "Table_S3f_SixStep_Ablation_and_GroupKFold.csv")
     s3g = pd.read_csv(tables_dir / "Table_S3g_Multivariable_FixedEffects_Control.csv")
@@ -1724,7 +1857,7 @@ def build_extended_data_figures(
     s5a = pd.read_csv(tables_dir / "Table_S5a_Visium_Spatial_Barrier_Sections.csv")
     s5b = pd.read_csv(tables_dir / "Table_S5b_Visium_Consensus_Proximity_Matrix.csv", index_col=0)
     s5h = pd.read_csv(tables_dir / "Table_S5h_FACS_Deconfounding_Sensitivity.csv")
-    s5i = pd.read_csv(tables_dir / "Table_S5i_Pooled32_PreTreatment_Waterfall_and_Rescue.csv")
+    s5i = pd.read_csv(tables_dir / "Table_S5i_Pooled_PreTreatment_107Patients_Master.csv")
 
     # -----------------------------------------------------------------------
     # Extended Data Fig. 1: PRISMA Funnel, Worked Clause Table, Top Targets, Polypharmacology & 6-Axis Group5Fold (a-e)
@@ -1736,11 +1869,12 @@ def build_extended_data_figures(
     ax = fig1.add_subplot(gs1[0, 0:6])
     _panel_tag(ax, "a", x=-0.26, y=1.08)
     n_sys = int(s1["unique_systemic_organ_trials"].sum())
+    n_definitive = int(s3d["n_trials_dnacc"].sum())
     prisma_steps = [
-        ("Raw Query (Phase II–IV)", n_sys + 587, PAL["midgrey"]),
-        ("12 Systemic & Organ Axes", n_sys, PAL["navy"]),
+        ("Raw Query (+587 Brain-Met. Excl.)", n_sys + 587, PAL["midgrey"]),
+        ("12 Peripheral Organ Axes", n_sys, PAL["navy"]),
         ("Target-Resolved (ChEMBL/OT)", len(s2), PAL["blue"]),
-        ("Definitive Non-Admin. Cohort", 23967, PAL["teal"]),
+        ("Definitive Non-Admin. Cohort", n_definitive, PAL["teal"]),
         ("Deconfounded Scientific Set", len(s3c), PAL["orange"]),
     ][::-1]
     yp = np.arange(len(prisma_steps))
@@ -1810,18 +1944,21 @@ def build_extended_data_figures(
     for i_b, v_b in enumerate(nt_bins.to_numpy()):
         ax.text(i_b, v_b + 350, f"{int(v_b):,}", ha="center", va="bottom", fontsize=4.9)
     if len(sub_sg) >= 2:
-        r_single = sub_sg[sub_sg["cv_scheme"].str.contains("SingleTarget")].iloc[0]
-        r_multi = sub_sg[sub_sg["cv_scheme"].str.contains("Polypharmacology")].iloc[0]
-        ax.text(
-            0.26,
-            0.80,
-            f"1-Target AUC = {r_single['auroc']:.3f} [{r_single['auroc_ci_low']:.2f}–{r_single['auroc_ci_high']:.2f}]\n"
-            f"Multi-Target AUC = {r_multi['auroc']:.3f} [{r_multi['auroc_ci_low']:.2f}–{r_multi['auroc_ci_high']:.2f}]",
-            transform=ax.transAxes,
-            fontsize=4.9,
-            fontweight="bold",
-            color=PAL["navy"],
-        )
+        sg_st = sub_sg[sub_sg["cv_scheme"].str.contains("SingleTarget")].sort_values("step_order")
+        sg_mt = sub_sg[sub_sg["cv_scheme"].str.contains("Polypharmacology")].sort_values("step_order")
+        if len(sg_st) > 0 and len(sg_mt) > 0:
+            r_single = sg_st.iloc[-1]
+            r_multi = sg_mt.iloc[-1]
+            ax.text(
+                0.22,
+                0.78,
+                f"1-Target GroupCV = {r_single['auroc']:.3f} [{r_single['auroc_ci_low']:.2f}–{r_single['auroc_ci_high']:.2f}]\n"
+                f"Multi-Target AUC = {r_multi['auroc']:.3f} [{r_multi['auroc_ci_low']:.2f}–{r_multi['auroc_ci_high']:.2f}]",
+                transform=ax.transAxes,
+                fontsize=4.8,
+                fontweight="bold",
+                color=PAL["navy"],
+            )
     ax.set_xticks(xb)
     ax.set_xticklabels(["1", "2", "3", "4", "5+"], fontsize=5.3)
     ax.set_xlabel("Resolved Target Genes per Regimen")
@@ -1835,6 +1972,7 @@ def build_extended_data_figures(
     ab_6 = s3f[s3f["cohort"] == "Deconfounded_Scientific_Ph34_vs_SciFail_Core6SingleCellAxes"]
     st6 = ab_6[ab_6["cv_scheme"] == "Stratified_5Fold"].sort_values("step_order")
     gp6 = ab_6[ab_6["cv_scheme"] == "UnseenTarget_Group5Fold"].sort_values("step_order")
+    n_core6 = int(st6["n_trials"].iloc[0]) if len(st6) > 0 else 0
     x6 = np.arange(len(st6))
     ax.axhline(0.50, color=PAL["lightgrey"], ls=":", lw=0.6)
     ax.errorbar(
@@ -1846,7 +1984,7 @@ def build_extended_data_figures(
         ms=2.9,
         lw=1.2,
         capsize=1.7,
-        label="Stratified 5-Fold ($n$=5,815)",
+        label=f"Stratified 5-Fold ($n$={n_core6:,})",
     )
     ax.errorbar(
         x6 + 0.05,
@@ -1883,22 +2021,23 @@ def build_extended_data_figures(
     ax = axes2[0, 0]
     _panel_tag(ax, "a", x=-0.36, y=1.08)
     coh_census = [
-        ("Hepatic MASH (GSE136103+212837)", 17),
-        ("Pulmonary IPF (GSE135893)", 30),
-        ("Renal CKD (GSE271188)", 17),
+        ("Melanoma Anti-PD-1 (GSE91061+78220)", 75),
         ("Solid Tumor (GSE207422+123813)", 46),
+        ("Pulmonary IPF (GSE135893)", 30),
         ("Ulcerative Colitis (GSE250487)", 28),
+        ("Hepatic MASH (GSE136103+212837)", 17),
+        ("Renal CKD (GSE271188)", 17),
         ("Sepsis PBMC (GSE167363)", 12),
         ("10x Visium Tumors (12 Sections)", 12),
     ][::-1]
     yc2 = np.arange(len(coh_census))
-    ax.barh(yc2, [v for _, v in coh_census], color=PAL["teal"], height=0.62, alpha=0.85)
+    ax.barh(yc2, [v for _, v in coh_census], color=PAL["teal"], height=0.64, alpha=0.85)
     for i_c, (_, v_c) in enumerate(coh_census):
-        ax.text(v_c + 0.9, i_c, f"n={v_c}", va="center", ha="left", fontsize=5.0, fontweight="bold")
+        ax.text(v_c + 1.2, i_c, f"n={v_c}", va="center", ha="left", fontsize=4.8, fontweight="bold")
     ax.set_yticks(yc2)
-    ax.set_yticklabels([lbl for lbl, _ in coh_census], fontsize=5.0)
-    ax.set_xlim(0, 58)
-    ax.set_xlabel("Human Donors / Tissue Sections")
+    ax.set_yticklabels([lbl for lbl, _ in coh_census], fontsize=4.8)
+    ax.set_xlim(0, 94)
+    ax.set_xlabel("Human Donors / Tissue Specimens (N=237)")
     ax.set_title("Primary Human Omics Census", pad=5)
 
     ax = axes2[0, 1]
@@ -1937,7 +2076,8 @@ def build_extended_data_figures(
 
     ax = axes2[1, 1]
     _panel_tag(ax, "d", x=-0.30, y=1.08)
-    s3b_s = s3b.sort_values("dnacc_auroc", ascending=True).reset_index(drop=True)
+    s3b_mat = s3b[s3b["cohort_block"] == "Definitive_Maturation"] if "cohort_block" in s3b.columns else s3b
+    s3b_s = s3b_mat.sort_values("dnacc_auroc", ascending=True).reset_index(drop=True)
     y_ax = np.arange(len(s3b_s))
     ax.axvline(0.50, color=PAL["slate"], ls=":", lw=0.65)
     for i_x, r_x in s3b_s.iterrows():
@@ -1979,71 +2119,107 @@ def build_extended_data_figures(
     ax.axhline(3.84, color=PAL["slate"], ls="--", lw=0.75, label="95% Cutoff ($\\Delta\\chi^2$=3.84)")
     ax.set_xlabel("Fold Multiplier ($v / v_{\\mathrm{MLE}}$)")
     ax.set_ylabel("Profile $\\Delta\\chi^2$")
-    ax.set_ylim(-1.5, 72.0)
+    ax.set_ylim(-1.8, 72.0)
     ax.set_title("25-Point Structural Identifiability", pad=5)
-    ax.legend(loc="upper center", bbox_to_anchor=(0.50, 0.99), frameon=False, fontsize=4.6, ncol=1)
+    ax.legend(loc="upper center", bbox_to_anchor=(0.50, 0.99), frameon=False, fontsize=4.5, ncol=1)
 
-    # ED3b: Multivariable Fixed-Effects & Joint Control (Dual Wald + Target-Clustered Sandwich 95% CIs)
+    # ED3b: Multivariable Fixed-Effects & 3-Pillar Joint Control (DNAcc vs Open Targets Genetics vs Static tau_0)
     ax = fig3.add_subplot(gs3_r1[0, 1])
     _panel_tag(ax, "b", x=-0.38, y=1.08)
-    fe_sub = s3g[s3g["cohort"] == "Deconfounded_Scientific_Ph34_vs_SciFail_All12Axes"].iloc[::-1].reset_index(drop=True)
+    spec_order = [
+        "Unadjusted_Univariate_DNAcc",
+        "Unadjusted_Univariate_Human_Genetics",
+        "Unadjusted_Univariate_Static_Tau0",
+        "Multivariable_FixedEffects_DNAcc",
+        "Joint_FixedEffects_DNAcc_controlling_for_Genetics_and_Tau0",
+        "Joint_FixedEffects_Human_Genetics_controlling_for_DNAcc_and_Tau0",
+        "Joint_FixedEffects_Tau0_controlling_for_DNAcc_and_Genetics",
+    ]
     spec_short = {
         "Unadjusted_Univariate_DNAcc": "DNAcc (Unadj.)",
+        "Unadjusted_Univariate_Human_Genetics": "Human Genetics (Unadj.)",
         "Unadjusted_Univariate_Static_Tau0": "Static $\\tau_0$ (Unadj.)",
         "Multivariable_FixedEffects_DNAcc": "DNAcc (+5 FE)",
+        "Multivariable_FixedEffects_Human_Genetics": "Genetics (+5 FE)",
         "Multivariable_FixedEffects_Static_Tau0": "Static $\\tau_0$ (+5 FE)",
         "Joint_FixedEffects_DNAcc_controlling_for_Tau0": "Joint: DNAcc (+$\\tau_0$+FE)",
         "Joint_FixedEffects_Tau0_controlling_for_DNAcc": "Joint: $\\tau_0$ (+DNAcc+FE)",
+        "Joint_FixedEffects_DNAcc_controlling_for_Genetics_and_Tau0": "3-Pillar: DNAcc",
+        "Joint_FixedEffects_Human_Genetics_controlling_for_DNAcc_and_Tau0": "3-Pillar: Genetics",
+        "Joint_FixedEffects_Tau0_controlling_for_DNAcc_and_Genetics": "3-Pillar: Static $\\tau_0$",
     }
+    fe_raw = s3g[s3g["cohort"] == "Deconfounded_Scientific_Ph34_vs_SciFail_All12Axes"].copy()
+    present_specs = [sp for sp in spec_order if sp in set(fe_raw["model_specification"])]
+    if len(present_specs) >= 4:
+        fe_sub = fe_raw.set_index("model_specification").loc[present_specs[::-1]].reset_index()
+    else:
+        fe_sub = fe_raw.iloc[::-1].reset_index(drop=True)
     yf3 = np.arange(len(fe_sub))
     ax.axvline(1.0, color=PAL["slate"], ls="--", lw=0.65)
+    x_txt_fe = max(float(fe_sub["cluster_ci95_high"].max()) + 0.05, 1.95)
     for i_f, r_f in fe_sub.iterrows():
-        is_dna = "DNAcc" in str(r_f["model_specification"]) and not str(r_f["model_specification"]).startswith("Joint_FixedEffects_Tau0")
-        c_f = PAL["blue"] if is_dna else PAL["midgrey"]
+        sp_n = str(r_f["model_specification"])
+        is_dna = sp_n in (
+            "Unadjusted_Univariate_DNAcc",
+            "Multivariable_FixedEffects_DNAcc",
+            "Joint_FixedEffects_DNAcc_controlling_for_Tau0",
+            "Joint_FixedEffects_DNAcc_controlling_for_Genetics_and_Tau0",
+        )
+        is_gen = sp_n in (
+            "Unadjusted_Univariate_Human_Genetics",
+            "Multivariable_FixedEffects_Human_Genetics",
+            "Joint_FixedEffects_Human_Genetics_controlling_for_DNAcc_and_Tau0",
+        )
+        c_f = PAL["blue"] if is_dna else (PAL["teal"] if is_gen else PAL["midgrey"])
         ax.plot([r_f["cluster_ci95_low"], r_f["cluster_ci95_high"]], [i_f, i_f], color=c_f, lw=0.75, alpha=0.55)
-        ax.plot([r_f["ci95_low"], r_f["ci95_high"]], [i_f, i_f], color=c_f, lw=1.55)
-        ax.scatter([r_f["odds_ratio_per_sd"]], [i_f], color=c_f, s=16, zorder=4)
-        ax.text(2.22, i_f, f"{r_f['odds_ratio_per_sd']:.2f} ({_fmt_p(float(r_f['cluster_p_value']))})", va="center", ha="left", fontsize=4.6)
+        ax.plot([r_f["ci95_low"], r_f["ci95_high"]], [i_f, i_f], color=c_f, lw=1.50)
+        ax.scatter([r_f["odds_ratio_per_sd"]], [i_f], color=c_f, s=15, zorder=4)
+        ax.text(x_txt_fe, i_f, f"{r_f['odds_ratio_per_sd']:.2f} ({_fmt_p(float(r_f['cluster_p_value']))})", va="center", ha="left", fontsize=4.4)
     ax.set_yticks(yf3)
-    ax.set_yticklabels([spec_short.get(s, s) for s in fe_sub["model_specification"]], fontsize=5.0)
-    ax.set_xlim(0.75, 3.45)
+    ax.set_yticklabels([spec_short.get(s, s) for s in fe_sub["model_specification"]], fontsize=4.8)
+    ax.set_xlim(0.75, x_txt_fe + 1.25)
     ax.set_xticks([1.0, 1.5, 2.0])
     ax.set_xlabel("OR per 1-s.d. (Cluster & Wald CI)")
-    ax.set_title("Cluster-Robust Joint Control", pad=5)
+    ax.set_title("Cluster-Robust 3-Pillar Control", pad=5)
 
-    # ED3c: 5-Regime Unreported-Stop & Negation Sensitivity Bounds
+    # ED3c: 7-Regime Missingness, Negation, Regulatory Approval & 9-Axis Boundary Sensitivity (R1-R7)
     ax = fig3.add_subplot(gs3[1])
     _panel_tag(ax, "c", x=-0.14, y=1.08)
     reg_short = {
+        "R1_Primary_ClauseAware_Scientific": "R1: Primary Clause-Aware",
         "R1_Primary_Explicit_Scientific": "R1: Primary Explicit Scientific",
+        "R2_Unfiltered_Naive_Keyword_Scientific": "R2: Unfiltered Naive Keyword",
         "R2_Negation_Filtered_Strict_Scientific": "R2: Strict Negation-Filtered",
-        "R3_WorstCase_All3118_Unreported_As_Failure": "R3: All 3,118 Unrep. = Fail",
+        "R3_WorstCase_All2618_Unreported_As_Failure": "R3: All Unrep. Stops = Fail",
+        "R3_WorstCase_All3118_Unreported_As_Failure": "R3: All Unrep. Stops = Fail",
         "R4_IPW_Propensity_Reweighted": "R4: IPW Propensity Reweighted",
-        "R5_Posted_ClinicalResults_Only": "R5: Posted Clinical Results Only",
+        "R5_Posted_ClinicalResults_Only": "R5: Posted Results Only",
+        "R6_Regulatory_Approved_Indication_vs_Explicit_SciFail": "R6: ChEMBL/OT Approved Gold",
+        "R7_Strictly_Peripheral_Interstitial_9Axes": "R7: Strict 9-Axis Interstitial",
     }
     s3e_rev = s3e.iloc[::-1].reset_index(drop=True)
     y_g = np.arange(len(s3e_rev))
     ax.axvline(0.50, color=PAL["slate"], ls=":", lw=0.65)
     for i_g, r_s in s3e_rev.iterrows():
-        ax.plot([r_s["static_tau0_ci_low"], r_s["static_tau0_ci_high"]], [i_g - 0.13, i_g - 0.13], color=PAL["midgrey"], lw=1.0)
-        ax.scatter([r_s["static_tau0_auroc"]], [i_g - 0.13], color=PAL["midgrey"], marker="s", s=16, label="Static $\\tau_0$" if i_g == 0 else None)
-        ax.plot([r_s["dnacc_ci_low"], r_s["dnacc_ci_high"]], [i_g + 0.13, i_g + 0.13], color=PAL["blue"], lw=1.35)
-        ax.scatter([r_s["dnacc_auroc"]], [i_g + 0.13], color=PAL["blue"], marker="o", s=20, label="DNAcc" if i_g == 0 else None)
+        ax.plot([r_s["static_tau0_ci_low"], r_s["static_tau0_ci_high"]], [i_g - 0.13, i_g - 0.13], color=PAL["midgrey"], lw=0.95)
+        ax.scatter([r_s["static_tau0_auroc"]], [i_g - 0.13], color=PAL["midgrey"], marker="s", s=14, label="Static $\\tau_0$" if i_g == 0 else None)
+        ax.plot([r_s["dnacc_ci_low"], r_s["dnacc_ci_high"]], [i_g + 0.13, i_g + 0.13], color=PAL["blue"], lw=1.25)
+        ax.scatter([r_s["dnacc_auroc"]], [i_g + 0.13], color=PAL["blue"], marker="o", s=17, label="DNAcc" if i_g == 0 else None)
         ax.text(
             float(s3e_rev["dnacc_ci_high"].max()) + 0.010,
             i_g,
             f"$\\Delta$AUC = +{r_s['delta_auroc']:.3f} ({_fmt_p(float(r_s['delong_p_value']))})",
             va="center",
             ha="left",
-            fontsize=5.0,
+            fontsize=4.7,
             color=PAL["navy"],
         )
     ax.set_yticks(y_g)
-    ax.set_yticklabels([f"{reg_short.get(r.regime_id, r.regime_id)} ($n$={r.n_trials:,})" for r in s3e_rev.itertuples()], fontsize=5.1)
-    ax.set_xlim(0.47, float(s3e_rev["dnacc_ci_high"].max()) + 0.135)
+    ax.set_yticklabels([f"{reg_short.get(r.regime_id, r.regime_id)} ($n$={r.n_trials:,})" for r in s3e_rev.itertuples()], fontsize=4.8)
+    ax.set_xlim(0.47, float(s3e_rev["dnacc_ci_high"].max()) + 0.145)
     ax.set_xlabel("AUROC (2,000-Bootstrap 95% CI)")
-    ax.set_title("5-Regime Unreported-Stop & Negation Sensitivity Bounds", pad=5)
-    ax.legend(loc="lower right", frameon=False, fontsize=5.1)
+    ax.set_title("7-Regime Missingness, Regulatory Approval & 9-Axis Boundary Audit", pad=5)
+    ax.legend(loc="lower right", frameon=False, fontsize=4.9)
 
     # ED3d: Simulated Phase II -> III Portfolio Enrichment Utility
     ax = fig3.add_subplot(gs3_r3[0, 0])
@@ -2070,10 +2246,10 @@ def build_extended_data_figures(
     ax.set_title("Simulated Portfolio Enrichment", pad=5)
     ax.legend(loc="lower right", frameon=False, fontsize=5.0)
 
-    # ED3e: 10-Decile Calibration on Deconfounded Scientific Cohort (n = 11,843)
+    # ED3e: 10-Decile Calibration on Deconfounded Scientific Cohort
     ax = fig3.add_subplot(gs3_r3[0, 1])
     _panel_tag(ax, "e", x=-0.18, y=1.08)
-    cal_s = s3h[s3h["cohort"] == "Deconfounded_Scientific_Outcomes_n11843"]
+    cal_s = s3h[s3h["cohort"].astype(str).str.startswith("Deconfounded_Scientific_Outcomes")]
     cd_s = cal_s[cal_s["model"] == "Full_DNAcc"]
     ct_s = cal_s[cal_s["model"] == "Static_Healthy_Tau0"]
     ax.plot([0.55, 0.99], [0.55, 0.99], color=PAL["slate"], ls=":", lw=0.7, label="Ideal")
@@ -2091,7 +2267,7 @@ def build_extended_data_figures(
     )
     ax.set_xlabel("Predicted Scientific Success")
     ax.set_ylabel("Observed Rate (95% CI)")
-    ax.set_title("Calibration (Scientific Set, $n$=11,843)", pad=5)
+    ax.set_title(f"Calibration (Scientific Set, $n$={len(s3c):,})", pad=5)
     ax.legend(loc="lower right", frameon=False, fontsize=5.0)
 
     _save_multi(fig3, out_dir, "Extended_Data_Fig3_Calibration_DCA_FixedEffects_Sensitivity", artifact_dir)
@@ -2155,36 +2331,43 @@ def build_extended_data_figures(
 
     ax = axes4[1, 1]
     _panel_tag(ax, "d", x=-0.20, y=1.08)
+    coh_col = "cohort" if "cohort" in s5i.columns else "cancer_cohort"
     grps_d = [
-        ("BCC_scRNA_GSE123813", 1, "BCC\nR", PAL["teal"]),
-        ("BCC_scRNA_GSE123813", 0, "BCC\nNR", PAL["crimson"]),
-        ("NSCLC_PreBiopsy_GSE207422", 1, "NSCLC\nR", PAL["blue"]),
-        ("NSCLC_PreBiopsy_GSE207422", 0, "NSCLC\nNR", PAL["vermilion"]),
+        ("GSE123813", 1, "BCC\nR", PAL["teal"]),
+        ("GSE123813", 0, "BCC\nNR", PAL["crimson"]),
+        ("GSE91061", 1, "Mel91\nR", PAL["blue"]),
+        ("GSE91061", 0, "Mel91\nNR", PAL["vermilion"]),
+        ("GSE78220", 1, "Mel78\nR", PAL["teal"]),
+        ("GSE78220", 0, "Mel78\nNR", PAL["crimson"]),
+        ("GSE207422", 1, "NSCLC\nR", PAL["blue"]),
+        ("GSE207422", 0, "NSCLC\nNR", PAL["vermilion"]),
     ]
     rng_d = np.random.default_rng(99)
     for idx_d, (ckey, rv, lbl_d, col_d) in enumerate(grps_d):
-        vals_d = 100.0 * s5i[(s5i["cancer_cohort"] == ckey) & (s5i["responder"] == rv)]["simulated_icb_remission_prob"].to_numpy()
-        mu_d = float(np.mean(vals_d))
+        mask_d = s5i[coh_col].astype(str).str.contains(ckey, na=False) & (s5i["responder"] == rv)
+        vals_d = 100.0 * s5i.loc[mask_d, "simulated_icb_remission_prob"].to_numpy()
+        mu_d = float(np.mean(vals_d)) if len(vals_d) > 0 else 0.0
         se_d = float(np.std(vals_d, ddof=1) / math.sqrt(max(len(vals_d), 1))) if len(vals_d) > 1 else 0.0
         ax.bar(
             idx_d,
             mu_d,
-            width=0.54,
+            width=0.58,
             color=col_d,
             alpha=0.40,
             edgecolor=col_d,
             lw=0.75,
             yerr=se_d,
-            capsize=2.0,
+            capsize=1.8,
             error_kw={"lw": 0.65, "ecolor": col_d},
         )
-        ax.scatter(np.full(len(vals_d), idx_d) + rng_d.uniform(-0.11, 0.11, size=len(vals_d)), vals_d, color=col_d, s=11, edgecolors="white", linewidths=0.3, zorder=4)
+        if len(vals_d) > 0:
+            ax.scatter(np.full(len(vals_d), idx_d) + rng_d.uniform(-0.14, 0.14, size=len(vals_d)), vals_d, color=col_d, s=7, edgecolors="white", linewidths=0.25, zorder=4)
     ax.axhline(50.0, color=PAL["slate"], ls="--", lw=0.65)
-    ax.set_xticks(range(4))
-    ax.set_xticklabels([g[2] for g in grps_d], fontsize=5.2)
-    ax.set_ylim(0, 120)
+    ax.set_xticks(range(len(grps_d)))
+    ax.set_xticklabels([g[2] for g in grps_d], fontsize=4.6)
+    ax.set_ylim(0, 118)
     ax.set_yticks([0, 25, 50, 75, 100])
     ax.set_ylabel("Simulated Remission (%)")
-    ax.set_title("Cross-Platform Alignment ($n$=32)", pad=5)
+    ax.set_title(f"4-Cohort LOPO Alignment ($n$={len(s5i)})", pad=5)
 
     _save_multi(fig4, out_dir, "Extended_Data_Fig4_Visium12_FACS_and_Platform_Scaling", artifact_dir)

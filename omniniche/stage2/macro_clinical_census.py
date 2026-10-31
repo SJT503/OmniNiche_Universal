@@ -185,15 +185,14 @@ def is_cns_excluded_trial(conditions: list[str], title: str) -> bool:
     return bool(CNS_EXCLUSION_REGEX.search(blob))
 
 
-def classify_trial_stop_deconvolution(overall_status: str, why_stopped: str) -> str:
-    """Deconvolve terminated/withdrawn trials into scientific efficacy, safety, or administrative reasons."""
+def classify_trial_stop_deconvolution_naive_keyword(overall_status: str, why_stopped: str) -> str:
+    """Legacy naive keyword baseline (without clause negation or proper-noun sanitization) retained strictly for NLP benchmarking."""
     status = (overall_status or "").upper().strip()
     if status == "COMPLETED":
         return "Completed"
     reason = (why_stopped or "").strip()
     if not reason:
         return "Unreported_Stop_Reason"
-    # Check scientific safety first if explicit toxicity/SAE caused termination
     has_eff = bool(EFFICACY_FUTILITY_REGEX.search(reason))
     has_saf = bool(SAFETY_TOXICITY_REGEX.search(reason))
     has_adm = bool(ADMIN_ENROLLMENT_REGEX.search(reason))
@@ -206,6 +205,145 @@ def classify_trial_stop_deconvolution(overall_status: str, why_stopped: str) -> 
     if has_adm:
         return "Administrative_Commercial_Enrollment"
     return "Other_Unclassified_Stop"
+
+
+BENIGN_OR_NEGATED_CLAUSE_REGEX = re.compile(
+    r"(?:"
+    r"\bministry\s+of\s+food\s+and\s+drug\s+safety\b"
+    r"|"
+    r"\b(?:data\s+(?:and\s+)?safety\s+monitoring\s+(?:board|committee)|safety\s+monitoring\s+(?:board|committee)|data\s+safety\s+committee|safety\s+committee)\b"
+    r"|"
+    r"\bsafety\s+(?:f-?up|follow[- ]?up)\b"
+    r"|"
+    r"\bevaluate\s+the\s+(?:long[- ]term\s+)?safety\s+of\b"
+    r"|"
+    r"\bsafety\s+profile\b[^.;]{0,55}?\b(?:consistent|benign|acceptable|favorable|expected)\b"
+    r"|"
+    r"\b\d+%\s+of\s+deaths\b[^.;]{0,65}?\b(?:initial\s+analysis|primary\s+endpoint|interim\s+analysis)\b"
+    r"|"
+    r"\b(?:not|no|neither|never|without|unrelated\s+to|independent\s+of|free\s+of|absence\s+of|non-)\b"
+    r"[^.;]{0,105}?"
+    r"\b(?:safety|toxicit\w*|adverse\s+event\w*|tolerabilit\w*|futility|efficacy|effectiveness|benefit[-/]risk|risk[-/]benefit|medical\s+problem\w*)"
+    r"(?:\s*(?:,|/|\bor\b|\band\b|\bnor\b)\s*(?:any\s+|other\s+)?(?:safety(?:\s+\w+)?|toxicit\w*|adverse\s+event\w*|futility|efficacy|effectiveness|regulatory\s+\w+|finding\w*|concern\w*|\w+\s+concern\w*|\w+\s+finding\w*))*"
+    r")",
+    re.IGNORECASE,
+)
+
+CLAUSE_EFFICACY_V22_REGEX = re.compile(
+    r"(?:"
+    r"lack\s+of\s+(?:\w+\s+){0,2}(?:efficacy|effect\b|activity)|inefficacy|futility|futil\w+|insufficient\s+(?:efficacy|clinical\s+activity|activity)"
+    r"|"
+    r"\bno\s+(?:clinical\s+|treatment\s+|meaningful\s+|objective\s+)?(?:efficacy|benefit|response\b)"
+    r"|"
+    r"(?:primary|key)\s+endpoint\w*\s+(?:was\s+|were\s+)?not\s+met|not\s+reached\s+the\s+primary\s+endpoint"
+    r"|"
+    r"\bno\s+patients\s+exhibited\b[^.;]{0,60}?\bprimary\s+endpoint"
+    r"|"
+    r"did\s+not\s+(?:meet|achieve|demonstrate|show)\s+(?:its\s+|the\s+|key\s+|meaningful\s+|sufficient\s+)?(?:primary|key\s+endpoint|clinical\s+benefit|efficacy|endpoint)"
+    r"|"
+    r"failed\s+to\s+(?:meet|demonstrate|show|achieve)"
+    r"|"
+    r"(?:unfavorable|adverse\s+change\s+in|unacceptable|negative)\s+(?:the\s+)?(?:risk[-/\s]+to[-/\s]+benefit|risk[-/]benefit|benefit[-/]risk)"
+    r"|"
+    r"(?:risk[-/\s]+to[-/\s]+benefit|risk[-/]benefit|benefit[-/]risk)\s+(?:ratio\s+)?(?:is\s+|was\s+)?(?:not\s+acceptable|unfavorable|negative)"
+    r"|"
+    r"negative\s+results\s+in\s+a\s+(?:similar|related)\s+study"
+    r"|"
+    r"suboptimal\s+efficacy|low\s+response\s+rate|inferior\s+efficacy|low\s+conditional\s+power"
+    r"|"
+    r"(?:due\s+to|for|based\s+on)\s+efficacy(?:/effectiveness)?\s+reason\w*"
+    r")",
+    re.IGNORECASE,
+)
+
+CLAUSE_SAFETY_V22_REGEX = re.compile(
+    r"(?:"
+    r"toxicit\w*|adverse\s+event\w*|\bsafety\b|hepatotox\w*|cardiotox\w*|nephrotox\w*|pneumonitis"
+    r"|"
+    r"dose[- ]limiting|\bdlt\b|mortality\s+imbalance|increased\s+mortality|\bdeath\w*|\bfatal\w*"
+    r"|"
+    r"not\s+tolerable|poor\s+tolerability|intoleran\w*|unacceptable\s+tolerability"
+    r"|"
+    r"clinical\s+hold|fda\s+hold|\bsae\b|serious\s+adverse"
+    r")",
+    re.IGNORECASE,
+)
+
+CLAUSE_ADMIN_V22_REGEX = re.compile(
+    r"(?:"
+    r"accrual|recruit\w*|enrol+ment|\benrol+ed\b|\benrol+ing\b"
+    r"|"
+    r"inadequate\s+number\s+of\s+eligible|no\s+(?:patients|participants)\s+(?:were\s+)?(?:enrolled|identified)"
+    r"|"
+    r"<\s*\d+%\s*participation|did\s+not\s+meet\s+criteria\s+to\s+start"
+    r"|"
+    r"business|strategic|\bstrategy\b|commercial|portfolio|prioriti[sz]\w*|reprioriti[sz]\w*"
+    r"|"
+    r"sponsor(?:'s)?\s+(?:decision|request|termination|closed|halted|stopped|discontinued)"
+    r"|"
+    r"(?:company|pharmaceutical\s+company|novartis|az)\s+(?:decision|decided|discontinued|ended|closed|halted)"
+    r"|"
+    r"(?:discontinue[d]?|ended|terminated)\s+(?:all\s+studies|further\s+development|the\s+development|development|the\s+study\s+drug|utilizing)"
+    r"|"
+    r"development\s+program\s+has\s+been\s+terminated|not\s+to\s+pursue"
+    r"|"
+    r"funding|financial|budget|lack\s+of\s+support|resource\w*|covid[- ]?19|pandemic|sars-cov-2"
+    r"|"
+    r"supply|manufactur\w*|drug\s+(?:availability|shortage|no\s+longer\s+available)|lack\s+of\s+study\s+product"
+    r"|"
+    r"(?:investigator|\bpi\b|staff)\s+(?:that\s+was\s+required\s+)?(?:left|relocated|departed)|cancelled\s+by\s+pi"
+    r"|"
+    r"site\s+closure|finding\s+sites|administrative|operational|logistical|feasibility"
+    r"|"
+    r"protocol\s+(?:redesign|is\s+going\s+to\s+be\s+modif)|replaced\s+by\s+another|post\s*marketing\s+commitment"
+    r"|"
+    r"changes?\s+(?:in|of)\s+(?:soc\b|standard\s+of\s+care)|treatment\s+became\s+standard|superior\s+clomiphene"
+    r"|"
+    r"committee\s+has\s+denied|unwilling\s+to\s+comply|completed\s+as\s+pre-?specified|adequate\w*\s+evaluated\s+in\s+other\s+studies"
+    r"|"
+    r"meeting\s+enrollment\s+targets|provided\s+adequate\s+data\s+for\s+decision"
+    r")",
+    re.IGNORECASE,
+)
+
+
+def adjudicate_stoppage_clause_aware(overall_status: str, why_stopped: str) -> str:
+    """Unified Clause-Level Negation- and Entity-Aware Clinical Trial Stoppage Adjudicator (Stage II v2.2)."""
+    status = (overall_status or "").upper().strip()
+    if status == "COMPLETED":
+        return "Completed"
+    raw = (why_stopped or "").strip()
+    if not raw:
+        return "Unreported_Stop_Reason"
+    cleaned = BENIGN_OR_NEGATED_CLAUSE_REGEX.sub(" ", raw)
+    eff_m = CLAUSE_EFFICACY_V22_REGEX.search(cleaned)
+    saf_m = CLAUSE_SAFETY_V22_REGEX.search(cleaned)
+    has_eff = bool(eff_m)
+    has_saf = bool(saf_m)
+    has_adm = bool(CLAUSE_ADMIN_V22_REGEX.search(raw))
+
+    if has_eff and not has_saf:
+        return "Scientific_Efficacy_Futility"
+    if has_saf and not has_eff:
+        return "Scientific_Safety_Toxicity"
+    if has_eff and has_saf:
+        # When both appear, explicit lack-of-efficacy/futility dominates unless toxicity/safety is the primary stated driver
+        low_c = cleaned.lower()
+        explicit_lack_eff = bool(re.search(r"\b(?:lack\s+of\s+efficacy|futility|futil\w+)\b", low_c))
+        if not explicit_lack_eff:
+            return "Scientific_Safety_Toxicity"
+        assert eff_m is not None and saf_m is not None
+        if saf_m.start() < eff_m.start() and ("toxicit" in low_c or "safety concern" in low_c or "safety risk" in low_c):
+            return "Scientific_Safety_Toxicity"
+        return "Scientific_Efficacy_Futility"
+    if has_adm:
+        return "Administrative_Commercial_Enrollment"
+    return "Other_Unclassified_Stop"
+
+
+def classify_trial_stop_deconvolution(overall_status: str, why_stopped: str) -> str:
+    """Unified primary stoppage deconvolution entry point across the entire OmniNiche pipeline."""
+    return adjudicate_stoppage_clause_aware(overall_status, why_stopped)
 
 
 def normalize_intervention_drug_name(raw_name: str) -> str:

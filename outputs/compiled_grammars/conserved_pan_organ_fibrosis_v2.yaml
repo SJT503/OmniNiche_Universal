@@ -1,25 +1,31 @@
-grammar_id: conserved_pan_organ_fibrosis_v2
+grammar_id: conserved_pan_organ_fibrosis_v22
 source_pack_id: fibrosis_ckm_ipf
 organ_context: Human Liver Fibrosis (Zero-Shot Transferable to Lung IPF & Kidney CKD)
 compartments:
 - name: Parenchyma_Injury
-  baseline_production: 0.008
+  baseline_production: 0.012
   decay_rate: 0.18
   noise_sigma: 0.035
   marker_genes:
   - ALB
   - CCL2
   - EPCAM
+  - FGFR2
+  - FGFR3
+  - FGFR4
   - GDF15
   - HAVCR1
   - ICAM1
+  - KLB
   - KRT17
   - KRT18
   - KRT19
   - KRT8
   - MAP3K5
+  - NR1H4
   - PPARA
   - SFTPC
+  - SLC5A2
   - SOX9
   - TGFB2
   - THRB
@@ -29,6 +35,7 @@ compartments:
   decay_rate: 0.18
   noise_sigma: 0.035
   marker_genes:
+  - APCS
   - APOE
   - C1QA
   - C1QB
@@ -39,7 +46,6 @@ compartments:
   - CD68
   - CD9
   - FABP5
-  - GLP1R
   - GPNMB
   - IL1B
   - NR3C2
@@ -58,10 +64,13 @@ compartments:
   - COL1A2
   - COL3A1
   - CTHRC1
+  - ENPP2
   - FGFR1
   - FN1
+  - IL13
   - KDR
   - LOXL2
+  - PDE4B
   - PDGFRA
   - PDGFRB
   - POSTN
@@ -74,46 +83,46 @@ edges:
 - source: Parenchyma_Injury
   target: SPP1_SAMac
   interaction_type: activation
-  weight_v: 0.3508
-  half_max_k: 0.44
-  hill_n: 2.4
+  weight_v: 0.4078
+  half_max_k: 0.42
+  hill_n: 2.6
   ligand_gene: GDF15/CCL2
   receptor_gene: TREM2/CCR2
   effector_tf: SPP1
-  partial_corr_gain: 0.35
+  partial_corr_gain: 0.6115
   spatial_proximity_weight: 1.0
 - source: SPP1_SAMac
   target: Myofibroblast
   interaction_type: activation
-  weight_v: 0.5358
+  weight_v: 0.5721
   half_max_k: 0.62
   hill_n: 3.6
   ligand_gene: SPP1/TGFB1/PDGFB
   receptor_gene: CD44/TGFBR1/PDGFRA
   effector_tf: SMAD3
-  partial_corr_gain: 0.45
+  partial_corr_gain: 0.6164
   spatial_proximity_weight: 1.0
 - source: Myofibroblast
   target: SPP1_SAMac
   interaction_type: activation
-  weight_v: 0.5308
+  weight_v: 0.5621
   half_max_k: 0.62
   hill_n: 3.6
   ligand_gene: COL1A1/POSTN/CSF1
   receptor_gene: CD44/ITGAV/CSF1R
   effector_tf: NFKB1
-  partial_corr_gain: 0.45
+  partial_corr_gain: 0.6164
   spatial_proximity_weight: 1.0
 - source: Myofibroblast
   target: Parenchyma_Injury
   interaction_type: activation
-  weight_v: 0.3413
+  weight_v: 0.3876
   half_max_k: 0.6
   hill_n: 3.0
   ligand_gene: TGFB1/ECM_Stiffness
   receptor_gene: ITGB6/YAP1
   effector_tf: SOX9
-  partial_corr_gain: 0.4742
+  partial_corr_gain: 0.8554
   spatial_proximity_weight: 1.0
 remission_compartment: Myofibroblast
 remission_threshold: 0.36

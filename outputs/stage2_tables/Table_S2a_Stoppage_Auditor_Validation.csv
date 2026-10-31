@@ -1,5 +1,9 @@
-stoppage_class,n_reference,n_predicted,true_positives,precision,recall,f1_score,overall_accuracy,cohen_kappa
-Scientific_Efficacy_Futility,60,54,54,1.0,0.9,0.9474,0.8833,0.8444
-Scientific_Safety_Toxicity,60,64,57,0.8906,0.95,0.9194,0.8833,0.8444
-Administrative_Commercial_Enrollment,60,45,43,0.9556,0.7167,0.819,0.8833,0.8444
-Other_or_Unreported,60,77,58,0.7532,0.9667,0.8467,0.8833,0.8444
+classifier,reference_standard,stoppage_class,n_manual_reference,n_predicted,true_positives,precision,recall,f1_score,overall_accuracy,accuracy_wilson_ci95_low,accuracy_wilson_ci95_high,cohen_kappa
+Clause_Aware_Auditor_v2_2,Manual_Clinical_Adjudication_240,Scientific_Efficacy_Futility,64,61,60,0.9836,0.9375,0.96,0.9583,0.925,0.9772,0.9413
+Clause_Aware_Auditor_v2_2,Manual_Clinical_Adjudication_240,Scientific_Safety_Toxicity,54,54,53,0.9815,0.9815,0.9815,0.9583,0.925,0.9772,0.9413
+Clause_Aware_Auditor_v2_2,Manual_Clinical_Adjudication_240,Administrative_Commercial_Enrollment,96,95,92,0.9684,0.9583,0.9634,0.9583,0.925,0.9772,0.9413
+Clause_Aware_Auditor_v2_2,Manual_Clinical_Adjudication_240,Other_or_Unreported,26,30,25,0.8333,0.9615,0.8929,0.9583,0.925,0.9772,0.9413
+Naive_Keyword_Baseline,Manual_Clinical_Adjudication_240,Scientific_Efficacy_Futility,64,54,52,0.963,0.8125,0.8814,0.7,0.6392,0.7545,0.6105
+Naive_Keyword_Baseline,Manual_Clinical_Adjudication_240,Scientific_Safety_Toxicity,54,64,49,0.7656,0.9074,0.8305,0.7,0.6392,0.7545,0.6105
+Naive_Keyword_Baseline,Manual_Clinical_Adjudication_240,Administrative_Commercial_Enrollment,96,45,42,0.9333,0.4375,0.5957,0.7,0.6392,0.7545,0.6105
+Naive_Keyword_Baseline,Manual_Clinical_Adjudication_240,Other_or_Unreported,26,77,25,0.3247,0.9615,0.4854,0.7,0.6392,0.7545,0.6105

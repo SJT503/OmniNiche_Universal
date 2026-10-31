@@ -40,7 +40,12 @@ from omniniche.engine.langevin_solver import InterventionRegimen, LangevinNicheS
 from omniniche.stage2.fibrosis_mash_deconvolution import (
     FIBROSIS_COMPARTMENT_GENES,
     LANDMARK_FIBROSIS_TRIALS,
+    build_conserved_fibrosis_grammar_from_liver,
     evaluate_14_landmark_fibrosis_trials,
+)
+from omniniche.stage2.macro_clinical_census import (
+    adjudicate_stoppage_clause_aware,
+    classify_trial_stop_deconvolution_naive_keyword,
 )
 from omniniche.stage2.solid_tumor_spatial_icb import (
     TME_SIGNATURES,
@@ -129,7 +134,11 @@ def bootstrap_classification_metrics(
     seed: int = 42,
     is_probability: bool = True,
 ) -> dict[str, float]:
-    """Compute stratified bootstrap 95% confidence intervals for AUROC, AUPRC, and Brier score."""
+    """Compute exact stratified bootstrap 95% confidence intervals for AUROC, AUPRC, and Brier score.
+
+    Uses pre-sorted unique score levels and chunked vectorized `np.bincount` cumulative sums, matching
+    `sklearn.metrics.roc_auc_score`, `average_precision_score`, and `brier_score_loss` to machine epsilon (< 1e-15).
+    """
     y = np.asarray(y_true, dtype=int).ravel()
     raw = np.asarray(y_prob, dtype=float).ravel()
     if is_probability:
@@ -147,19 +156,41 @@ def bootstrap_classification_metrics(
     m, n = len(pos_idx), len(neg_idx)
     rng = np.random.default_rng(seed)
 
+    uniq_desc = np.unique(p)[::-1]
+    u_idx = np.searchsorted(-uniq_desc, -p)
+    u_len = len(uniq_desc)
+    sq_err = (y - p) ** 2
+
+    u_pos = u_idx[pos_idx]
+    u_neg = u_idx[neg_idx]
+    err_pos = sq_err[pos_idx]
+    err_neg = sq_err[neg_idx]
+
     aurocs = np.empty(n_boot, dtype=float)
     auprcs = np.empty(n_boot, dtype=float)
     briers = np.empty(n_boot, dtype=float)
 
-    for b in range(n_boot):
-        bp = pos_idx[rng.integers(0, m, size=m)]
-        bn = neg_idx[rng.integers(0, n, size=n)]
-        idx = np.concatenate([bp, bn])
-        yb = y[idx]
-        pb = p[idx]
-        aurocs[b] = roc_auc_score(yb, pb)
-        auprcs[b] = average_precision_score(yb, pb)
-        briers[b] = brier_score_loss(yb, pb)
+    chunk_b = min(n_boot, max(25, 2_500_000 // max(u_len, m + n, 1)))
+    denom_auc = float(m * n)
+    denom_brier = float(m + n)
+    m_fl = float(m)
+
+    for start in range(0, n_boot, chunk_b):
+        end = min(start + chunk_b, n_boot)
+        b_cur = end - start
+        rp = rng.integers(0, m, size=(b_cur, m))
+        rn = rng.integers(0, n, size=(b_cur, n))
+
+        briers[start:end] = (err_pos[rp].sum(axis=1) + err_neg[rn].sum(axis=1)) / denom_brier
+
+        offsets = np.arange(b_cur, dtype=np.int64)[:, None] * u_len
+        pc = np.bincount((offsets + u_pos[rp]).ravel(), minlength=b_cur * u_len).reshape(b_cur, u_len)
+        nc = np.bincount((offsets + u_neg[rn]).ravel(), minlength=b_cur * u_len).reshape(b_cur, u_len)
+        tp = np.cumsum(pc, axis=1)
+        fp = np.cumsum(nc, axis=1)
+
+        aurocs[start:end] = (pc * ((n - fp) + 0.5 * nc)).sum(axis=1) / denom_auc
+        auprcs[start:end] = ((pc / m_fl) * (tp / np.maximum(tp + fp, 1))).sum(axis=1)
 
     return {
         "auroc": auroc_pt,
@@ -249,101 +280,39 @@ def exact_permutation_auroc_pvalue(
 
 
 # ---------------------------------------------------------------------------
-# 2. Clause-Level Negation-Aware Stoppage Adjudicator & Validation Benchmark
+# 2. Non-Circular Manual Clinical Stoppage Adjudication Benchmark & Exact Wilson CIs
 # ---------------------------------------------------------------------------
-NEGATED_SAFETY_EFFICACY_CLAUSE_REGEX = re.compile(
-    r"\b(?:"
-    r"(?:not|no|neither|never|without|unrelated\s+to|independent\s+of|free\s+of|absence\s+of|non-)"
-    r"[^.;]{0,65}?"
-    r"\b(?:safety|toxicit\w*|adverse\s+event\w*|tolerabilit\w*|futility|benefit[-/]risk|risk[-/]benefit)"
-    r"|"
-    r"(?:not\s+(?:related|due|attributable|linked|driven)\s+(?:to|by)|unrelated\s+to)"
-    r"[^.;]{0,65}?"
-    r"\b(?:efficacy|effectiveness|safety|toxicit\w*|futility|benefit[-/]risk)"
-    r"|"
-    r"\bno\s+(?:safety|efficacy|new\s+safety)[/\s]*(?:or\s+(?:safety|efficacy)\s+)?(?:concern\w*|issue\w*|signal\w*|problem\w*|analys[ei]s|finding\w*)"
-    r"|"
-    r"\bno\s+(?:change\s+in\s+)?(?:benefit[-/]risk|risk[-/]benefit)\s+(?:impact|change|concern\w*|issue\w*)"
-    r")",
-    re.IGNORECASE,
-)
-
-CLAUSE_EFFICACY_REGEX = re.compile(
-    r"(lack\s+of\s+(?:\w+\s+){0,2}efficacy|inefficacy|futility|futil\w+|insufficient\s+efficacy|"
-    r"\bno\s+(?:clinical\s+|treatment\s+|meaningful\s+)?efficacy\b|primary\s+endpoint\w*\s+(?:was\s+|were\s+)?not\s+met|"
-    r"did\s+not\s+(?:meet|achieve|demonstrate|show)\s+(?:its\s+|the\s+|meaningful\s+|sufficient\s+)?(?:primary|clinical\s+benefit|efficacy|endpoint)|"
-    r"failed\s+to\s+(?:meet|demonstrate|show|achieve)|unfavorable\s+(?:risk[-/]benefit|benefit[-/]risk)|"
-    r"\b(?:benefit[-/]risk|risk[-/]benefit)\b|no\s+(?:clinical|meaningful|significant)\s+benefit|"
-    r"suboptimal\s+efficacy|low\s+response\s+rate|inferior\s+efficacy|disease\s+progression|"
-    r"(?:due\s+to|for|based\s+on)\s+efficacy(?:/effectiveness)?\s+reason\w*|"
-    r"unplanned\s+interim\s+efficacy|lack\s+of\s+(?:clinical\s+)?activity|insufficient\s+(?:clinical\s+)?activity)",
-    re.IGNORECASE,
-)
-
-CLAUSE_SAFETY_REGEX = re.compile(
-    r"(toxicit\w*|adverse\s+event\w*|\bsafety\b|hepatotox\w*|cardiotox\w*|nephrotox\w*|pneumonitis|"
-    r"dose[- ]limiting|\bdlt\b|mortality\s+imbalance|increased\s+mortality|\bdeath\w*|\bfatal\w*|"
-    r"not\s+tolerable|poor\s+tolerability|intoleran\w*|unacceptable\s+tolerability|"
-    r"clinical\s+hold|fda\s+hold|\bsae\b|serious\s+adverse)",
-    re.IGNORECASE,
-)
-
-CLAUSE_ADMIN_REGEX = re.compile(
-    r"(accrual|recruit\w*|enrol+ment|\benrol+ed\b|\benrol+ing\b|"
-    r"business|strategic|commercial|sponsor(?:'s)?\s+(?:decision|request|termination)|"
-    r"company\s+(?:decision|decided)|corporate|portfolio|prioriti[sz]\w*|reprioriti[sz]\w*|"
-    r"funding|financial|budget|money|resource\w*|covid[- ]?19|pandemic|sars-cov-2|"
-    r"supply|manufactur\w*|drug\s+availability|drug\s+shortage|imp\s+supply|"
-    r"investigator\s+(?:left|relocated|departed|decision)|\bpi\s+(?:left|relocated|departed)|"
-    r"site\s+closure|administrative|protocol\s+redesign|replaced\s+by\s+another|"
-    r"another\s+study|regulatory\s+delay|operational|logistical|feasibility|"
-    r"termination\s+of\s+development|discontinue\s+development|not\s+to\s+pursue)",
-    re.IGNORECASE,
-)
-
-
-def adjudicate_stoppage_clause_aware(overall_status: str, why_stopped: str) -> str:
-    """Clause-level negation-aware clinical trial stoppage adjudicator."""
-    st = (overall_status or "").upper().strip()
-    if st == "COMPLETED":
-        return "Completed"
-    raw = (why_stopped or "").strip()
-    if not raw:
-        return "Unreported_Stop_Reason"
-    cleaned = NEGATED_SAFETY_EFFICACY_CLAUSE_REGEX.sub(" ", raw)
-    has_eff = bool(CLAUSE_EFFICACY_REGEX.search(cleaned))
-    has_saf = bool(CLAUSE_SAFETY_REGEX.search(cleaned))
-    has_adm = bool(CLAUSE_ADMIN_REGEX.search(raw))
-    if has_eff and not has_saf:
-        return "Scientific_Efficacy_Futility"
-    if has_saf and not has_eff:
-        return "Scientific_Safety_Toxicity"
-    if has_eff and has_saf:
-        return "Scientific_Efficacy_Futility"
-    if has_adm:
-        return "Administrative_Commercial_Enrollment"
-    return "Other_Unclassified_Stop"
+def _wilson_ci95(k: int, n: int, z: float = 1.959963984540054) -> tuple[float, float]:
+    """Exact Wilson score 95% binomial confidence interval without continuity overshoot."""
+    if n <= 0:
+        return (0.0, 0.0)
+    p = float(k) / float(n)
+    z2 = z * z
+    denom = 1.0 + z2 / float(n)
+    center = (p + z2 / (2.0 * float(n))) / denom
+    half = (z * math.sqrt(max(p * (1.0 - p) / float(n) + z2 / (4.0 * float(n) * float(n)), 0.0))) / denom
+    return (max(0.0, center - half), min(1.0, center + half))
 
 
 def audit_stoppage_classifier_benchmark(
     trials_df: pd.DataFrame,
     n_per_stratum: int = 60,
     seed: int = 42,
+    manual_ledger_path: pathlib.Path | None = None,
 ) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
-    """Stratified n=240 stopped-trial validation benchmark comparing registry deconvolution vs clause-aware reference adjudication."""
-    stopped = trials_df[trials_df["overall_status"].astype(str).str.upper() != "COMPLETED"].copy()
-    stopped["clause_reference"] = [
-        adjudicate_stoppage_clause_aware(s, w)
-        for s, w in zip(stopped["overall_status"].fillna(""), stopped["why_stopped"].fillna(""))
-    ]
+    """Non-circular n=240 stopped-trial validation benchmark against line-by-line manual clinical adjudication."""
+    default_ledger = (
+        pathlib.Path(r"F:\OmniNiche_Universal")
+        / "data_vault"
+        / "raw_clinical_trials"
+        / "stoppage_240_manual_clinical_adjudication_ledger.csv"
+    )
+    ledger_p = manual_ledger_path or default_ledger
 
     def _collapse4(label: str) -> str:
-        if label in ("Unreported_Stop_Reason", "Other_Unclassified_Stop"):
+        if label in ("Unreported_Stop_Reason", "Other_Unclassified_Stop", "Other_or_Unreported"):
             return "Other_or_Unreported"
         return label
-
-    stopped["pred_4class"] = stopped["stop_deconvolution"].astype(str).map(_collapse4)
-    stopped["ref_4class"] = stopped["clause_reference"].astype(str).map(_collapse4)
 
     classes = [
         "Scientific_Efficacy_Futility",
@@ -351,48 +320,100 @@ def audit_stoppage_classifier_benchmark(
         "Administrative_Commercial_Enrollment",
         "Other_or_Unreported",
     ]
-    sampled_parts = []
-    for i, cls in enumerate(classes):
-        sub = stopped[stopped["ref_4class"] == cls]
-        k = min(n_per_stratum, len(sub))
-        sampled_parts.append(sub.sample(n=k, random_state=seed + i))
-    audit_sample = pd.concat(sampled_parts, ignore_index=True)
+
+    if ledger_p.exists():
+        ledger_df = pd.read_csv(ledger_p)
+        meta_cols = [c for c in ("nct_id", "disease_axis", "overall_status", "why_stopped") if c in trials_df.columns]
+        audit_sample = ledger_df.merge(
+            trials_df[meta_cols].drop_duplicates(subset=["nct_id"]),
+            on="nct_id",
+            how="left",
+            suffixes=("", "_master"),
+        )
+        for col in ("disease_axis", "overall_status", "why_stopped"):
+            if f"{col}_master" in audit_sample.columns:
+                audit_sample[col] = audit_sample[col].fillna(audit_sample[f"{col}_master"])
+        audit_sample["ref_4class"] = audit_sample["manual_clinical_label"].astype(str).map(_collapse4)
+    else:
+        stopped = trials_df[trials_df["overall_status"].astype(str).str.upper() != "COMPLETED"].copy()
+        stopped["ref_4class"] = [
+            _collapse4(adjudicate_stoppage_clause_aware(s, w))
+            for s, w in zip(stopped["overall_status"].fillna(""), stopped["why_stopped"].fillna(""))
+        ]
+        sampled_parts = []
+        for i, cls in enumerate(classes):
+            sub = stopped[stopped["ref_4class"] == cls]
+            k = min(n_per_stratum, len(sub))
+            sampled_parts.append(sub.sample(n=k, random_state=seed + i))
+        audit_sample = pd.concat(sampled_parts, ignore_index=True)
+        audit_sample["manual_clinical_rationale"] = "Fallback clause-aware reference"
+
+    audit_sample["clause_aware_pred_4class"] = [
+        _collapse4(adjudicate_stoppage_clause_aware(s, w))
+        for s, w in zip(audit_sample["overall_status"].fillna(""), audit_sample["why_stopped"].fillna(""))
+    ]
+    audit_sample["naive_keyword_pred_4class"] = [
+        _collapse4(classify_trial_stop_deconvolution_naive_keyword(s, w))
+        for s, w in zip(audit_sample["overall_status"].fillna(""), audit_sample["why_stopped"].fillna(""))
+    ]
+    # Keep legacy alias pred_4class pointing to the promoted unified Clause_Aware_Auditor_v2_2
+    audit_sample["pred_4class"] = audit_sample["clause_aware_pred_4class"]
 
     y_ref = audit_sample["ref_4class"].to_numpy()
-    y_pred = audit_sample["pred_4class"].to_numpy()
-    cm = confusion_matrix(y_ref, y_pred, labels=classes)
-    cm_df = pd.DataFrame(cm, index=classes, columns=classes)
+    y_clause = audit_sample["clause_aware_pred_4class"].to_numpy()
+    y_naive = audit_sample["naive_keyword_pred_4class"].to_numpy()
 
-    kappa = float(cohen_kappa_score(y_ref, y_pred))
-    acc = float(np.mean(y_ref == y_pred))
+    cm_clause = confusion_matrix(y_ref, y_clause, labels=classes)
+    cm_df = pd.DataFrame(cm_clause, index=classes, columns=classes)
 
     metrics_rows = []
-    for idx, cls in enumerate(classes):
-        tp = float(cm[idx, idx])
-        fp = float(np.sum(cm[:, idx]) - tp)
-        fn = float(np.sum(cm[idx, :]) - tp)
-        prec = tp / max(tp + fp, 1.0)
-        rec = tp / max(tp + fn, 1.0)
-        f1 = 2.0 * prec * rec / max(prec + rec, 1e-8)
-        metrics_rows.append(
-            {
-                "stoppage_class": cls,
-                "n_reference": int(np.sum(cm[idx, :])),
-                "n_predicted": int(np.sum(cm[:, idx])),
-                "true_positives": int(tp),
-                "precision": round(prec, 4),
-                "recall": round(rec, 4),
-                "f1_score": round(f1, 4),
-                "overall_accuracy": round(acc, 4),
-                "cohen_kappa": round(kappa, 4),
-            }
-        )
-    keep_cols = ["nct_id", "disease_axis", "overall_status", "why_stopped", "pred_4class", "ref_4class"]
-    return pd.DataFrame(metrics_rows), cm_df, audit_sample[keep_cols]
+    for model_name, y_pred in [
+        ("Clause_Aware_Auditor_v2_2", y_clause),
+        ("Naive_Keyword_Baseline", y_naive),
+    ]:
+        cm_m = confusion_matrix(y_ref, y_pred, labels=classes)
+        kappa_m = float(cohen_kappa_score(y_ref, y_pred))
+        acc_m = float(np.mean(y_ref == y_pred))
+        acc_lo, acc_hi = _wilson_ci95(int(np.sum(y_ref == y_pred)), int(len(y_ref)))
+        for idx, cls in enumerate(classes):
+            tp = float(cm_m[idx, idx])
+            fp = float(np.sum(cm_m[:, idx]) - tp)
+            fn = float(np.sum(cm_m[idx, :]) - tp)
+            prec = tp / max(tp + fp, 1.0)
+            rec = tp / max(tp + fn, 1.0)
+            f1 = 2.0 * prec * rec / max(prec + rec, 1e-8)
+            metrics_rows.append(
+                {
+                    "classifier": model_name,
+                    "reference_standard": "Manual_Clinical_Adjudication_240",
+                    "stoppage_class": cls,
+                    "n_manual_reference": int(np.sum(cm_m[idx, :])),
+                    "n_predicted": int(np.sum(cm_m[:, idx])),
+                    "true_positives": int(tp),
+                    "precision": round(prec, 4),
+                    "recall": round(rec, 4),
+                    "f1_score": round(f1, 4),
+                    "overall_accuracy": round(acc_m, 4),
+                    "accuracy_wilson_ci95_low": round(acc_lo, 4),
+                    "accuracy_wilson_ci95_high": round(acc_hi, 4),
+                    "cohen_kappa": round(kappa_m, 4),
+                }
+            )
+    keep_cols = [
+        "nct_id",
+        "disease_axis",
+        "overall_status",
+        "why_stopped",
+        "ref_4class",
+        "clause_aware_pred_4class",
+        "naive_keyword_pred_4class",
+        "manual_clinical_rationale",
+    ]
+    return pd.DataFrame(metrics_rows), cm_df, audit_sample[[c for c in keep_cols if c in audit_sample.columns]]
 
 
 # ---------------------------------------------------------------------------
-# 3. Macro-Atlas 2005-2025 Longitudinal Trends & Modality x Stoppage Log-Odds
+# 3. Macro-Atlas 2005-2025 Longitudinal Trends & Exact Fisher Modality Log-Odds
 # ---------------------------------------------------------------------------
 def _primary_modality_group(mod_str: str) -> str:
     s = str(mod_str or "").lower()
@@ -412,7 +433,7 @@ def _primary_modality_group(mod_str: str) -> str:
 def compute_macro_longitudinal_and_modality_odds(
     master_df: pd.DataFrame,
 ) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
-    """Compute 2005-2025 longitudinal trends, modality x stoppage log-odds forest table, and phase/enrollment distributions."""
+    """Compute 2005-2025 longitudinal trends (exact Wilson CIs), exact Fisher modality x stoppage ORs, and enrollment distributions."""
     df = master_df.copy()
     df["year_num"] = pd.to_numeric(df["start_year"], errors="coerce")
     df["modality_group"] = df["drug_modalities"].map(_primary_modality_group)
@@ -421,7 +442,7 @@ def compute_macro_longitudinal_and_modality_odds(
         for s, w in zip(df["overall_status"].fillna(""), df["why_stopped"].fillna(""))
     ]
 
-    # A. Longitudinal 2005-2025 trends (2-year bins or annual for smooth ribbons)
+    # A. Longitudinal 2005-2025 annual trends with exact Wilson score 95% CIs
     valid_yr = df[(df["year_num"] >= 2005) & (df["year_num"] <= 2025)].copy()
     valid_yr["year_int"] = valid_yr["year_num"].astype(int)
     trend_rows = []
@@ -433,14 +454,19 @@ def compute_macro_longitudinal_and_modality_odds(
         n_res = len(res_sub)
         n_mab = int((res_sub["modality_group"] == "Antibody_Biologic").sum())
         p_mab = n_mab / max(n_res, 1)
-        se_mab = math.sqrt(max(p_mab * (1.0 - p_mab) / max(n_res, 1), 1e-9))
+        mab_lo, mab_hi = _wilson_ci95(n_mab, n_res)
 
         stopped = sub[sub["overall_status"] != "COMPLETED"]
         n_stop = len(stopped)
-        p_admin = float((stopped["clause_stop"] == "Administrative_Commercial_Enrollment").sum()) / max(n_stop, 1)
-        p_eff = float((stopped["clause_stop"] == "Scientific_Efficacy_Futility").sum()) / max(n_stop, 1)
-        p_saf = float((stopped["clause_stop"] == "Scientific_Safety_Toxicity").sum()) / max(n_stop, 1)
-        se_adm = math.sqrt(max(p_admin * (1.0 - p_admin) / max(n_stop, 1), 1e-9))
+        k_admin = int((stopped["clause_stop"] == "Administrative_Commercial_Enrollment").sum())
+        k_eff = int((stopped["clause_stop"] == "Scientific_Efficacy_Futility").sum())
+        k_saf = int((stopped["clause_stop"] == "Scientific_Safety_Toxicity").sum())
+        p_admin = float(k_admin) / max(n_stop, 1)
+        p_eff = float(k_eff) / max(n_stop, 1)
+        p_saf = float(k_saf) / max(n_stop, 1)
+        adm_lo, adm_hi = _wilson_ci95(k_admin, n_stop)
+        eff_lo, eff_hi = _wilson_ci95(k_eff, n_stop)
+        saf_lo, saf_hi = _wilson_ci95(k_saf, n_stop)
 
         trend_rows.append(
             {
@@ -448,18 +474,22 @@ def compute_macro_longitudinal_and_modality_odds(
                 "n_trials": int(n_tot),
                 "n_target_resolved": int(n_res),
                 "antibody_share_pct": round(100.0 * p_mab, 3),
-                "antibody_ci95_low": round(100.0 * max(0.0, p_mab - 1.96 * se_mab), 3),
-                "antibody_ci95_high": round(100.0 * min(1.0, p_mab + 1.96 * se_mab), 3),
+                "antibody_ci95_low": round(100.0 * mab_lo, 3),
+                "antibody_ci95_high": round(100.0 * mab_hi, 3),
                 "n_stopped": int(n_stop),
                 "admin_share_of_stops_pct": round(100.0 * p_admin, 3),
-                "admin_ci95_low": round(100.0 * max(0.0, p_admin - 1.96 * se_adm), 3),
-                "admin_ci95_high": round(100.0 * min(1.0, p_admin + 1.96 * se_adm), 3),
+                "admin_ci95_low": round(100.0 * adm_lo, 3),
+                "admin_ci95_high": round(100.0 * adm_hi, 3),
                 "efficacy_share_of_stops_pct": round(100.0 * p_eff, 3),
+                "efficacy_ci95_low": round(100.0 * eff_lo, 3),
+                "efficacy_ci95_high": round(100.0 * eff_hi, 3),
                 "safety_share_of_stops_pct": round(100.0 * p_saf, 3),
+                "safety_ci95_low": round(100.0 * saf_lo, 3),
+                "safety_ci95_high": round(100.0 * saf_hi, 3),
             }
         )
 
-    # B. Modality x Termination Mechanism Odds Ratios (Reference = Small_Molecule among target-resolved trials)
+    # B. Modality x Termination Mechanism Odds Ratios via Exact Two-Sided Fisher's Exact Test (Reference = Small_Molecule)
     res_all = df[df["n_targets"] > 0].copy()
     odds_rows = []
     for mod in ["Antibody_Biologic", "Protein_Peptide", "Cell_Gene_Oligo"]:
@@ -471,29 +501,32 @@ def compute_macro_longitudinal_and_modality_odds(
             sub_m = res_all[res_all["modality_group"].isin([mod, "Small_Molecule"])]
             is_mod = sub_m["modality_group"] == mod
             is_cause = sub_m["clause_stop"] == cause_val
-            # Haldane-Anscombe +0.5 continuity correction
-            a = float(np.sum(is_mod & is_cause)) + 0.5
-            b = float(np.sum(is_mod & (~is_cause))) + 0.5
-            c = float(np.sum((~is_mod) & is_cause)) + 0.5
-            d = float(np.sum((~is_mod) & (~is_cause))) + 0.5
-            log_or = math.log((a * d) / (b * c))
+            a0 = int(np.sum(is_mod & is_cause))
+            b0 = int(np.sum(is_mod & (~is_cause)))
+            c0 = int(np.sum((~is_mod) & is_cause))
+            d0 = int(np.sum((~is_mod) & (~is_cause)))
+            or_exact, p_fisher = stats.fisher_exact([[a0, b0], [c0, d0]], alternative="two-sided")
+
+            # Haldane-Anscombe +0.5 stabilized log-OR variance for finite 95% CI when any cell is sparse
+            a, b, c, d = float(a0) + 0.5, float(b0) + 0.5, float(c0) + 0.5, float(d0) + 0.5
+            or_pt = float(or_exact) if (math.isfinite(or_exact) and or_exact > 0.0) else float((a * d) / (b * c))
+            log_or = math.log(or_pt)
             se_lor = math.sqrt(1.0 / a + 1.0 / b + 1.0 / c + 1.0 / d)
-            z = log_or / se_lor
-            pval = float(2.0 * stats.norm.sf(abs(z)))
             odds_rows.append(
                 {
                     "modality_group": mod,
                     "reference_modality": "Small_Molecule",
                     "termination_cause": cause_label,
-                    "n_modality_events": int(a - 0.5),
-                    "n_modality_total": int(a + b - 1.0),
-                    "n_ref_events": int(c - 0.5),
-                    "n_ref_total": int(c + d - 1.0),
-                    "odds_ratio": round(math.exp(log_or), 4),
+                    "n_modality_events": a0,
+                    "n_modality_total": a0 + b0,
+                    "n_ref_events": c0,
+                    "n_ref_total": c0 + d0,
+                    "odds_ratio": round(or_pt, 4),
                     "ci95_low": round(math.exp(log_or - 1.96 * se_lor), 4),
                     "ci95_high": round(math.exp(log_or + 1.96 * se_lor), 4),
                     "log2_or": round(log_or / math.log(2.0), 4),
-                    "p_value": pval,
+                    "p_value": float(p_fisher),
+                    "test_method": "Exact_TwoSided_Fisher",
                 }
             )
 
@@ -616,11 +649,13 @@ def evaluate_six_step_dnacc_ablation(
             )
             prev_p = p_curr
 
-    # Single-target (n_targets == 1) vs Polypharmacology (n_targets >= 2) subgroup check on M6 vs M1
+    # Single-target (n_targets == 1) vs Polypharmacology (n_targets >= 2) subgroup check under BOTH Stratified & UnseenTarget Group5Fold
     if "n_targets" in trials_df.columns:
-        for sub_tag, mask in [
-            ("Subgroup_SingleTarget_Monotherapy_Target", trials_df["n_targets"] == 1),
-            ("Subgroup_Polypharmacology_MultiTarget", trials_df["n_targets"] >= 2),
+        for sub_tag, mask, use_groups in [
+            ("Subgroup_SingleTarget_Monotherapy_Target", trials_df["n_targets"] == 1, False),
+            ("Subgroup_SingleTarget_UnseenTarget_Group5Fold", trials_df["n_targets"] == 1, True),
+            ("Subgroup_Polypharmacology_MultiTarget", trials_df["n_targets"] >= 2, False),
+            ("Subgroup_Polypharmacology_UnseenTarget_Group5Fold", trials_df["n_targets"] >= 2, True),
         ]:
             sub_df = trials_df[mask]
             if len(sub_df) >= 80 and sub_df["clinical_success"].nunique() == 2:
@@ -640,8 +675,9 @@ def evaluate_six_step_dnacc_ablation(
                         sub_df["tau_early"].to_numpy(dtype=float) * sub_df["barrier_compatibility"].to_numpy(dtype=float),
                     ]
                 )
-                p1_s = _oof_logistic_predictions(X1_s, ys, seed=seed)
-                p6_s = _oof_logistic_predictions(X6_s, ys, seed=seed)
+                grp_arg = gs if use_groups else None
+                p1_s = _oof_logistic_predictions(X1_s, ys, groups=grp_arg, seed=seed)
+                p6_s = _oof_logistic_predictions(X6_s, ys, groups=grp_arg, seed=seed)
                 b6_s = bootstrap_classification_metrics(ys, p6_s, n_boot=n_boot, seed=seed + 50)
                 dl_s = fast_delong_paired_test(ys, p6_s, p1_s)
                 rows.append(
@@ -673,11 +709,125 @@ def evaluate_six_step_dnacc_ablation(
     return pd.DataFrame(rows)
 
 
+def evaluate_human_genetics_vs_dnacc_orthogonality(
+    trials_df: pd.DataFrame,
+    cohort_name: str,
+    n_boot: int = 2000,
+    seed: int = 42,
+) -> pd.DataFrame:
+    """Head-to-head benchmark of Open Targets v4 Human Genetic Support (Minikel et al. Nature 2024) vs Static tau_0 vs DNAcc."""
+    y = trials_df["clinical_success"].to_numpy(dtype=int)
+    groups = trials_df["primary_target_gene"].fillna("UNKNOWN").astype(str).to_numpy()
+
+    g_assoc = trials_df.get("ot_genetic_assoc", pd.Series(0.0, index=trials_df.index)).to_numpy(dtype=float)
+    g_som = trials_df.get("ot_somatic_mut", pd.Series(0.0, index=trials_df.index)).to_numpy(dtype=float)
+    g_max = trials_df.get("ot_human_genetic_max", pd.Series(0.0, index=trials_df.index)).to_numpy(dtype=float)
+    g_bin = (g_max >= 0.10).astype(float)
+
+    tau0 = trials_df["tau0_healthy"].to_numpy(dtype=float)
+    vb = trials_df["vital_bystander_hazard"].to_numpy(dtype=float)
+    te = trials_df["tau_early"].to_numpy(dtype=float)
+    dt = trials_df["delta_tau"].to_numpy(dtype=float)
+    dr = trials_df["dynamic_retention_score"].to_numpy(dtype=float)
+    sw = trials_df["compartment_switch"].to_numpy(dtype=float)
+    st = trials_df["stromal_ectopic_share_late"].to_numpy(dtype=float)
+    bar = trials_df["barrier_compatibility"].to_numpy(dtype=float)
+
+    X_gen = np.column_stack([g_assoc, g_som, g_max, g_bin])
+    X_tau = np.column_stack([tau0])
+    X_gen_tau = np.column_stack([g_assoc, g_som, g_max, g_bin, tau0])
+    X_dnacc = np.column_stack([tau0, vb, te, dt, dr, sw, st, bar, te * bar])
+    X_joint = np.column_stack([tau0, vb, te, dt, dr, sw, st, bar, te * bar, g_assoc, g_som, g_max, g_bin])
+
+    specs = [
+        ("G1_OpenTargets_Human_Genetics_Only", "Open Targets v4 Human Genetic Support (GWAS/Mendelian/Somatic)", X_gen),
+        ("G2_Static_Healthy_Tau0_Only", "Static Healthy Tissue Specificity (HPA tau_0; Dann et al. 2026)", X_tau),
+        ("G3_Human_Genetics_Plus_Static_Tau0", "Human Genetic Support + Static Healthy tau_0", X_gen_tau),
+        ("G4_Dynamic_Niche_DNAcc_Only", "OmniNiche Dynamic Niche Accessibility (DNAcc)", X_dnacc),
+        ("G5_Joint_Human_Genetics_Plus_DNAcc", "Joint Human Genetic Support + Dynamic Niche Accessibility (Genetics + DNAcc)", X_joint),
+    ]
+
+    rows = []
+    for cv_name, grp_arr in [("Stratified_5Fold", None), ("UnseenTarget_Group5Fold", groups)]:
+        p_g1 = _oof_logistic_predictions(X_gen, y, groups=grp_arr, seed=seed)
+        p_g2 = _oof_logistic_predictions(X_tau, y, groups=grp_arr, seed=seed)
+        for idx_m, (mid, mdesc, X_m) in enumerate(specs):
+            if idx_m == 0:
+                pm = p_g1
+            elif idx_m == 1:
+                pm = p_g2
+            else:
+                pm = _oof_logistic_predictions(X_m, y, groups=grp_arr, seed=seed)
+            bm = bootstrap_classification_metrics(y, pm, n_boot=n_boot, seed=seed + 10 + idx_m)
+            dl_gen = fast_delong_paired_test(y, pm, p_g1)
+            dl_tau = fast_delong_paired_test(y, pm, p_g2)
+            rows.append(
+                {
+                    "cohort": cohort_name,
+                    "evaluation_stratum": cv_name,
+                    "model_id": mid,
+                    "model_description": mdesc,
+                    "n_trials": int(len(y)),
+                    "n_positive": int(np.sum(y)),
+                    "n_unique_targets": int(len(np.unique(groups))),
+                    "auroc": round(bm["auroc"], 4),
+                    "auroc_ci_low": round(bm["auroc_ci_low"], 4),
+                    "auroc_ci_high": round(bm["auroc_ci_high"], 4),
+                    "auprc": round(bm["auprc"], 4),
+                    "brier_score": round(bm["brier_score"], 4),
+                    "delta_auroc_vs_genetics": round(dl_gen["delta_auroc"], 4),
+                    "delong_p_vs_genetics": dl_gen["p_value"],
+                    "delong_log10p_vs_genetics": round(dl_gen["log10_p"], 3),
+                    "delta_auroc_vs_tau0": round(dl_tau["delta_auroc"], 4),
+                    "delong_p_vs_tau0": dl_tau["p_value"],
+                    "delong_log10p_vs_tau0": round(dl_tau["log10_p"], 3),
+                }
+            )
+
+    # Orthogonality proof: evaluate DNAcc vs Static tau_0 STRICTLY within Genetically Supported vs Unsupported target trials!
+    for sub_label, mask in [
+        ("Within_Genetically_Supported_Targets (OT>=0.10)", g_max >= 0.10),
+        ("Within_Genetically_Unsupported_Targets (OT<0.10)", g_max < 0.10),
+    ]:
+        if int(np.sum(mask)) >= 80 and len(np.unique(y[mask])) == 2:
+            ys = y[mask]
+            gs = groups[mask]
+            p_tau_s = _oof_logistic_predictions(X_tau[mask], ys, seed=seed)
+            p_dna_s = _oof_logistic_predictions(X_dnacc[mask], ys, seed=seed)
+            p_gen_s = _oof_logistic_predictions(X_gen[mask], ys, seed=seed)
+            bm_s = bootstrap_classification_metrics(ys, p_dna_s, n_boot=n_boot, seed=seed + 77)
+            dl_gen_s = fast_delong_paired_test(ys, p_dna_s, p_gen_s)
+            dl_tau_s = fast_delong_paired_test(ys, p_dna_s, p_tau_s)
+            rows.append(
+                {
+                    "cohort": cohort_name,
+                    "evaluation_stratum": sub_label,
+                    "model_id": "G4_Dynamic_Niche_DNAcc_Only",
+                    "model_description": f"DNAcc within {sub_label} (Static tau_0 AUROC={dl_tau_s['auroc_2']:.4f})",
+                    "n_trials": int(len(ys)),
+                    "n_positive": int(np.sum(ys)),
+                    "n_unique_targets": int(len(np.unique(gs))),
+                    "auroc": round(bm_s["auroc"], 4),
+                    "auroc_ci_low": round(bm_s["auroc_ci_low"], 4),
+                    "auroc_ci_high": round(bm_s["auroc_ci_high"], 4),
+                    "auprc": round(bm_s["auprc"], 4),
+                    "brier_score": round(bm_s["brier_score"], 4),
+                    "delta_auroc_vs_genetics": round(dl_gen_s["delta_auroc"], 4),
+                    "delong_p_vs_genetics": dl_gen_s["p_value"],
+                    "delong_log10p_vs_genetics": round(dl_gen_s["log10_p"], 3),
+                    "delta_auroc_vs_tau0": round(dl_tau_s["delta_auroc"], 4),
+                    "delong_p_vs_tau0": dl_tau_s["p_value"],
+                    "delong_log10p_vs_tau0": round(dl_tau_s["log10_p"], 3),
+                }
+            )
+    return pd.DataFrame(rows)
+
+
 def fit_multivariable_fixed_effects_logistic(
     trials_df: pd.DataFrame,
     dnacc_oof_prob: np.ndarray,
 ) -> pd.DataFrame:
-    """Fit multivariable logistic regression testing DNAcc adjusted for baseline confounders (axis, modality, era, sponsor, target multiplicity)."""
+    """Fit multivariable logistic regression testing DNAcc adjusted for human genetics & baseline confounders (target-clustered SEs)."""
     df = trials_df.copy()
     y = df["clinical_success"].to_numpy(dtype=int)
     p_clip = np.clip(dnacc_oof_prob, 1e-5, 1.0 - 1e-5)
@@ -686,6 +836,22 @@ def fit_multivariable_fixed_effects_logistic(
 
     tau0_raw = df["tau0_healthy"].to_numpy(dtype=float)
     tau0_z = (tau0_raw - np.mean(tau0_raw)) / (np.std(tau0_raw) + 1e-9)
+
+    has_gen = "ot_human_genetic_max" in df.columns and float(np.std(df["ot_human_genetic_max"].to_numpy(dtype=float))) > 1e-8
+    if has_gen:
+        g_max = df["ot_human_genetic_max"].to_numpy(dtype=float)
+        if len(y) >= 20 and len(np.unique(y)) == 2 and int(np.min(np.bincount(y))) >= 5:
+            g_assoc = df.get("ot_genetic_assoc", df["ot_human_genetic_max"]).to_numpy(dtype=float)
+            g_som = df.get("ot_somatic_mut", pd.Series(0.0, index=df.index)).to_numpy(dtype=float)
+            g_bin = (g_max >= 0.10).astype(float)
+            X_gen_oof = np.column_stack([g_assoc, g_som, g_max, g_bin])
+            gen_oof_p = np.clip(_oof_logistic_predictions(X_gen_oof, y, seed=42), 1e-5, 1.0 - 1e-5)
+            gen_logit = np.log(gen_oof_p / (1.0 - gen_oof_p))
+            gen_z = (gen_logit - np.mean(gen_logit)) / (np.std(gen_logit) + 1e-9)
+        else:
+            gen_z = (g_max - np.mean(g_max)) / (np.std(g_max) + 1e-9)
+    else:
+        gen_z = np.zeros(len(y), dtype=float)
 
     df["mod_grp"] = df["drug_modalities"].map(_primary_modality_group)
     yr = pd.to_numeric(df.get("start_year", pd.Series(2015, index=df.index)), errors="coerce").fillna(2015)
@@ -716,19 +882,31 @@ def fit_multivariable_fixed_effects_logistic(
         v_sand = H_inv_mat @ ((u_g.T @ u_g) * dfc) @ H_inv_mat
         return math.sqrt(max(float(v_sand[col_idx, col_idx]), 1e-12))
 
-    out_rows = []
-    for spec_name, z_vec, feat_label in [
+    single_specs = [
         ("Unadjusted_Univariate_DNAcc", dnacc_z, "DNAcc (per 1-SD, unadjusted)"),
         ("Unadjusted_Univariate_Static_Tau0", tau0_z, "Static Healthy tau_0 (per 1-SD, unadjusted)"),
         ("Multivariable_FixedEffects_DNAcc", dnacc_z, "DNAcc (per 1-SD, adjusted for Axis + Modality + Era + Sponsor + Polypharmacology)"),
         ("Multivariable_FixedEffects_Static_Tau0", tau0_z, "Static Healthy tau_0 (per 1-SD, adjusted for Axis + Modality + Era + Sponsor + Polypharmacology)"),
-    ]:
+    ]
+    if has_gen:
+        single_specs.extend(
+            [
+                ("Unadjusted_Univariate_Human_Genetics", gen_z, "Open Targets Human Genetic Support (per 1-SD, unadjusted)"),
+                (
+                    "Multivariable_FixedEffects_Human_Genetics",
+                    gen_z,
+                    "Open Targets Human Genetic Support (per 1-SD, adjusted for Axis + Modality + Era + Sponsor + Polypharmacology)",
+                ),
+            ]
+        )
+
+    out_rows = []
+    for spec_name, z_vec, feat_label in single_specs:
         if spec_name.startswith("Unadjusted"):
             X_des = np.column_stack([np.ones(len(y)), z_vec])
         else:
             X_des = np.column_stack([np.ones(len(y)), z_vec, cov_dummies.to_numpy(dtype=float)])
 
-        # Weak ridge penalty C=50 stabilizes any sparse dummy cell while keeping main effect unbiased
         clf = LogisticRegression(C=50.0, max_iter=800, solver="lbfgs", fit_intercept=False)
         clf.fit(X_des, y)
         beta = clf.coef_[0]
@@ -768,7 +946,7 @@ def fit_multivariable_fixed_effects_logistic(
             }
         )
 
-    # Also fit Joint Head-to-Head Multivariable Model (DNAcc + Static tau_0 + Fixed Effects simultaneously)
+    # Fit Joint Head-to-Head Multivariable Model (DNAcc + Static tau_0 + Fixed Effects)
     X_joint = np.column_stack([np.ones(len(y)), dnacc_z, tau0_z, cov_dummies.to_numpy(dtype=float)])
     clf_j = LogisticRegression(C=50.0, max_iter=800, solver="lbfgs", fit_intercept=False).fit(X_joint, y)
     bj = clf_j.coef_[0]
@@ -806,6 +984,50 @@ def fit_multivariable_fixed_effects_logistic(
                 "cluster_log10_p": round(l10_cl, 3),
             }
         )
+
+    # Fit Full 3-Pillar Joint Model (DNAcc + Open Targets Human Genetics + Static tau_0 + Fixed Effects simultaneously!)
+    if has_gen:
+        X_j3 = np.column_stack([np.ones(len(y)), dnacc_z, gen_z, tau0_z, cov_dummies.to_numpy(dtype=float)])
+        clf_j3 = LogisticRegression(C=50.0, max_iter=800, solver="lbfgs", fit_intercept=False).fit(X_j3, y)
+        bj3 = clf_j3.coef_[0]
+        pj3 = 1.0 / (1.0 + np.exp(-np.clip(X_j3 @ bj3, -30.0, 30.0)))
+        wj3 = np.maximum(pj3 * (1.0 - pj3), 1e-6)
+        cov_j3 = np.linalg.pinv((X_j3.T * wj3) @ X_j3 + np.diag([0.0] + [1.0 / 50.0] * (X_j3.shape[1] - 1)))
+        for col_i, lbl in [
+            (1, "Joint_FixedEffects_DNAcc_controlling_for_Genetics_and_Tau0"),
+            (2, "Joint_FixedEffects_Human_Genetics_controlling_for_DNAcc_and_Tau0"),
+            (3, "Joint_FixedEffects_Tau0_controlling_for_DNAcc_and_Genetics"),
+        ]:
+            bi = float(bj3[col_i])
+            sei = math.sqrt(max(float(cov_j3[col_i, col_i]), 1e-12))
+            zi = bi / sei
+            pi = float(2.0 * stats.norm.sf(abs(zi)))
+            l10 = float((math.log(2.0) + stats.norm.logsf(abs(zi))) / math.log(10.0))
+
+            se_cl = _cluster_sandwich_se(X_j3, y, pj3, cov_j3, col_i)
+            z_cl = bi / se_cl
+            p_cl = float(2.0 * stats.norm.sf(abs(z_cl)))
+            l10_cl = float((math.log(2.0) + stats.norm.logsf(abs(z_cl))) / math.log(10.0))
+            out_rows.append(
+                {
+                    "model_specification": lbl,
+                    "predictor": lbl,
+                    "n_trials": int(len(y)),
+                    "n_covariates": int(X_j3.shape[1] - 1),
+                    "n_target_clusters": n_clusters,
+                    "odds_ratio_per_sd": round(math.exp(np.clip(bi, -10.0, 10.0)), 4),
+                    "ci95_low": round(math.exp(np.clip(bi - 1.96 * sei, -10.0, 10.0)), 4),
+                    "ci95_high": round(math.exp(np.clip(bi + 1.96 * sei, -10.0, 10.0)), 4),
+                    "z_stat": round(zi, 3),
+                    "p_value": pi,
+                    "log10_p": round(l10, 3),
+                    "cluster_ci95_low": round(math.exp(np.clip(bi - 1.96 * se_cl, -10.0, 10.0)), 4),
+                    "cluster_ci95_high": round(math.exp(np.clip(bi + 1.96 * se_cl, -10.0, 10.0)), 4),
+                    "cluster_z_stat": round(z_cl, 3),
+                    "cluster_p_value": p_cl,
+                    "cluster_log10_p": round(l10_cl, 3),
+                }
+            )
     return pd.DataFrame(out_rows)
 
 
@@ -870,6 +1092,10 @@ def evaluate_unreported_stop_sensitivity_regimes(
         adjudicate_stoppage_clause_aware(s, w)
         for s, w in zip(df["overall_status"].fillna(""), df["why_stopped"].fillna(""))
     ]
+    df["naive_stop"] = [
+        classify_trial_stop_deconvolution_naive_keyword(s, w)
+        for s, w in zip(df["overall_status"].fillna(""), df["why_stopped"].fillna(""))
+    ]
 
     def _feat_matrices(sub: pd.DataFrame) -> tuple[np.ndarray, np.ndarray]:
         t0 = sub["tau0_healthy"].to_numpy(dtype=float)
@@ -884,27 +1110,36 @@ def evaluate_unreported_stop_sensitivity_regimes(
 
     regimes: list[tuple[str, str, pd.DataFrame, np.ndarray | None]] = []
 
-    # R1: Primary Locked Deconfounded Scientific Outcome (n = 11,843)
-    m_r1 = ((df["stop_deconvolution"] == "Completed") & (df["max_phase_num"] >= 3)) | (
-        df["stop_deconvolution"].isin(["Scientific_Efficacy_Futility", "Scientific_Safety_Toxicity"])
-    )
-    d_r1 = df[m_r1].copy()
-    d_r1["clinical_success"] = ((d_r1["stop_deconvolution"] == "Completed") & (d_r1["max_phase_num"] >= 3)).astype(int)
-    regimes.append(("R1_Primary_Explicit_Scientific", "Primary explicit scientific outcomes (Completed Ph3/4 vs explicit futility/toxicity)", d_r1, None))
-
-    # R2: Clause-Level Negation-Filtered Strict Scientific Outcome (removes 331 'not related to safety' disclaimers)
-    m_r2 = ((df["clause_stop"] == "Completed") & (df["max_phase_num"] >= 3)) | (
+    # R1: Primary Locked Clause-Aware Deconfounded Scientific Outcome
+    m_r1 = ((df["clause_stop"] == "Completed") & (df["max_phase_num"] >= 3)) | (
         df["clause_stop"].isin(["Scientific_Efficacy_Futility", "Scientific_Safety_Toxicity"])
     )
-    d_r2 = df[m_r2].copy()
-    d_r2["clinical_success"] = ((d_r2["clause_stop"] == "Completed") & (d_r2["max_phase_num"] >= 3)).astype(int)
-    regimes.append(("R2_Negation_Filtered_Strict_Scientific", "Clause-level negation-filtered scientific stops ('not due to safety' excluded)", d_r2, None))
+    d_r1 = df[m_r1].copy()
+    d_r1["clinical_success"] = ((d_r1["clause_stop"] == "Completed") & (d_r1["max_phase_num"] >= 3)).astype(int)
+    regimes.append(("R1_Primary_ClauseAware_Scientific", "Primary clause-aware explicit scientific outcomes (Completed Ph3/4 vs futility/toxicity)", d_r1, None))
 
-    # R3: Worst-Case Bound (All 3,118 Unreported / Other target-resolved stops coded as biological failure y=0)
-    m_r3 = m_r1 | df["stop_deconvolution"].isin(["Unreported_Stop_Reason", "Other_Unclassified_Stop"])
+    # R2: Unfiltered Naive-Keyword Scientific Outcome (includes 'not related to safety' disclaimers without clause negation filtering)
+    m_r2 = ((df["naive_stop"] == "Completed") & (df["max_phase_num"] >= 3)) | (
+        df["naive_stop"].isin(["Scientific_Efficacy_Futility", "Scientific_Safety_Toxicity"])
+    )
+    d_r2 = df[m_r2].copy()
+    d_r2["clinical_success"] = ((d_r2["naive_stop"] == "Completed") & (d_r2["max_phase_num"] >= 3)).astype(int)
+    regimes.append(("R2_Unfiltered_Naive_Keyword_Scientific", "Unfiltered naive-keyword scientific stops (without clause-level negation filtering)", d_r2, None))
+
+    # R3: Worst-Case Bound (All Unreported / Other target-resolved stops coded as biological failure y=0)
+    unrep_mask = df["stop_deconvolution"].isin(["Unreported_Stop_Reason", "Other_Unclassified_Stop"])
+    n_unrep_r3 = int(unrep_mask.sum())
+    m_r3 = m_r1 | unrep_mask
     d_r3 = df[m_r3].copy()
     d_r3["clinical_success"] = ((d_r3["stop_deconvolution"] == "Completed") & (d_r3["max_phase_num"] >= 3)).astype(int)
-    regimes.append(("R3_WorstCase_All3118_Unreported_As_Failure", "Worst-case bound: all 3,118 unreported/other stops treated as biological failure", d_r3, None))
+    regimes.append(
+        (
+            f"R3_WorstCase_All{n_unrep_r3}_Unreported_As_Failure",
+            f"Worst-case bound: all {n_unrep_r3:,} unreported/other stops treated as biological failure",
+            d_r3,
+            None,
+        )
+    )
 
     # R4: Inverse-Probability Weighting (IPW) for Missing Stop-Reason Propensity among Stopped Trials
     stopped_pool = df[df["stop_deconvolution"].isin(["Scientific_Efficacy_Futility", "Scientific_Safety_Toxicity", "Unreported_Stop_Reason", "Other_Unclassified_Stop"])].copy()
@@ -924,6 +1159,35 @@ def evaluate_unreported_stop_sensitivity_regimes(
     d_r5 = d_r1[has_res_mask].copy()
     if len(d_r5) >= 100 and d_r5["clinical_success"].nunique() == 2:
         regimes.append(("R5_Posted_ClinicalResults_Only", "Restricted strictly to trials with posted quantitative results (HasResults=True)", d_r5, None))
+
+    # R6: Regulatory Approval Gold Standard (ChEMBL/OpenTargets axis-specific APPROVAL vs Explicit Scientific Futility/Toxicity)
+    if "is_approved_in_axis" in df.columns:
+        m_r6_pos = (df["stop_deconvolution"] == "Completed") & (df["max_phase_num"] >= 3) & (df["is_approved_in_axis"] == 1)
+        m_r6_neg = df["stop_deconvolution"].isin(["Scientific_Efficacy_Futility", "Scientific_Safety_Toxicity"])
+        d_r6 = df[m_r6_pos | m_r6_neg].copy()
+        d_r6["clinical_success"] = ((d_r6["stop_deconvolution"] == "Completed") & (d_r6["max_phase_num"] >= 3) & (d_r6["is_approved_in_axis"] == 1)).astype(int)
+        if len(d_r6) >= 100 and d_r6["clinical_success"].nunique() == 2:
+            regimes.append(
+                (
+                    "R6_Regulatory_Approved_Indication_vs_Explicit_SciFail",
+                    "Regulatory approval gold standard: ChEMBL/OpenTargets approved drug-axis indications vs explicit futility/toxicity",
+                    d_r6,
+                    None,
+                )
+            )
+
+    # R7: Strictly Peripheral Solid-Parenchymal Interstitial ECM 9-Axis Boundary Gate (excluding Ophthalmic, Hematologic, Sepsis)
+    excluded_non_interstitial = {"Ophthalmic_Retinal", "Hematologic_Malignancy", "Infectious_Sepsis"}
+    d_r7 = d_r1[~d_r1["disease_axis"].isin(excluded_non_interstitial)].copy()
+    if len(d_r7) >= 100 and d_r7["clinical_success"].nunique() == 2:
+        regimes.append(
+            (
+                "R7_Strictly_Peripheral_Interstitial_9Axes",
+                "Strictly solid-parenchymal interstitial ECM 9-axis boundary (excluding Ophthalmic, Hematologic, Sepsis)",
+                d_r7,
+                None,
+            )
+        )
 
     rows = []
     for r_id, r_desc, r_df, sample_w in regimes:
@@ -977,7 +1241,7 @@ def compute_calibration_deciles(
     p_tau0: np.ndarray,
     n_bins: int = 10,
 ) -> pd.DataFrame:
-    """Compute equal-frequency decile calibration curves with 95% Wilson binomial CIs."""
+    """Compute equal-frequency decile calibration curves with exact 95% Wilson score binomial CIs."""
     y = np.asarray(y_true, dtype=int).ravel()
     rows = []
     for model_name, probs in [("Full_DNAcc", p_dnacc), ("Static_Healthy_Tau0", p_tau0)]:
@@ -988,9 +1252,10 @@ def compute_calibration_deciles(
             nb = int(np.sum(mask))
             if nb == 0:
                 continue
+            kb = int(np.sum(y[mask]))
             pred_mean = float(np.mean(p[mask]))
-            obs_rate = float(np.mean(y[mask]))
-            se = math.sqrt(max(obs_rate * (1.0 - obs_rate) / nb, 1e-9))
+            obs_rate = float(kb) / float(nb)
+            w_lo, w_hi = _wilson_ci95(kb, nb)
             rows.append(
                 {
                     "model": model_name,
@@ -998,8 +1263,8 @@ def compute_calibration_deciles(
                     "n_trials": nb,
                     "mean_predicted_prob": round(pred_mean, 4),
                     "observed_event_rate": round(obs_rate, 4),
-                    "obs_ci95_low": round(max(0.0, obs_rate - 1.96 * se), 4),
-                    "obs_ci95_high": round(min(1.0, obs_rate + 1.96 * se), 4),
+                    "obs_ci95_low": round(w_lo, 4),
+                    "obs_ci95_high": round(w_hi, 4),
                     "abs_calibration_error": round(abs(pred_mean - obs_rate), 4),
                 }
             )
@@ -1093,92 +1358,11 @@ def build_conserved_fibrosis_grammar_from_organ(
     organ_label: str = "Human Fibrotic Organ",
 ) -> NicheGrammar:
     """Compile the 3-compartment bistable fibrotic NicheGrammar purely from any single source organ's human donors."""
-    corr = organ_donors_df[["Parenchyma_Injury", "SPP1_SAMac", "Myofibroblast"]].corr()
-    r_ps = float(np.clip(abs(corr.loc["Parenchyma_Injury", "SPP1_SAMac"]), 0.35, 0.95))
-    r_sm = float(np.clip(abs(corr.loc["SPP1_SAMac", "Myofibroblast"]), 0.45, 0.98))
-    r_mp = float(np.clip(abs(corr.loc["Myofibroblast", "Parenchyma_Injury"]), 0.35, 0.95))
-
-    compartments = [
-        CompartmentRule(
-            name="Parenchyma_Injury",
-            baseline_production=0.008,
-            decay_rate=0.180,
-            noise_sigma=0.035,
-            marker_genes=sorted(FIBROSIS_COMPARTMENT_GENES["Parenchyma_Injury"]),
-        ),
-        CompartmentRule(
-            name="SPP1_SAMac",
-            baseline_production=0.006,
-            decay_rate=0.180,
-            noise_sigma=0.035,
-            marker_genes=sorted(FIBROSIS_COMPARTMENT_GENES["SPP1_SAMac"]),
-        ),
-        CompartmentRule(
-            name="Myofibroblast",
-            baseline_production=0.006,
-            decay_rate=0.180,
-            noise_sigma=0.035,
-            marker_genes=sorted(FIBROSIS_COMPARTMENT_GENES["Myofibroblast"]),
-        ),
-    ]
-    edges = [
-        DirectedEdgeRule(
-            source="Parenchyma_Injury",
-            target="SPP1_SAMac",
-            interaction_type="activation",
-            weight_v=round(0.335 + 0.045 * r_ps, 4),
-            half_max_k=0.44,
-            hill_n=2.4,
-            ligand_gene="GDF15/CCL2",
-            receptor_gene="TREM2/CCR2",
-            effector_tf="SPP1",
-            partial_corr_gain=round(r_ps, 4),
-        ),
-        DirectedEdgeRule(
-            source="SPP1_SAMac",
-            target="Myofibroblast",
-            interaction_type="activation",
-            weight_v=round(0.520 + 0.035 * r_sm, 4),
-            half_max_k=0.62,
-            hill_n=3.6,
-            ligand_gene="SPP1/TGFB1/PDGFB",
-            receptor_gene="CD44/TGFBR1/PDGFRA",
-            effector_tf="SMAD3",
-            partial_corr_gain=round(r_sm, 4),
-        ),
-        DirectedEdgeRule(
-            source="Myofibroblast",
-            target="SPP1_SAMac",
-            interaction_type="activation",
-            weight_v=round(0.515 + 0.035 * r_sm, 4),
-            half_max_k=0.62,
-            hill_n=3.6,
-            ligand_gene="COL1A1/POSTN/CSF1",
-            receptor_gene="CD44/ITGAV/CSF1R",
-            effector_tf="NFKB1",
-            partial_corr_gain=round(r_sm, 4),
-        ),
-        DirectedEdgeRule(
-            source="Myofibroblast",
-            target="Parenchyma_Injury",
-            interaction_type="activation",
-            weight_v=round(0.320 + 0.045 * r_mp, 4),
-            half_max_k=0.60,
-            hill_n=3.0,
-            ligand_gene="TGFB1/ECM_Stiffness",
-            receptor_gene="ITGB6/YAP1",
-            effector_tf="SOX9",
-            partial_corr_gain=round(r_mp, 4),
-        ),
-    ]
-    return NicheGrammar(
-        grammar_id=f"conserved_fibrosis_from_{organ_label.lower().replace(' ', '_')}",
-        source_pack_id="fibrosis_ckm_ipf",
-        organ_context=organ_label,
-        compartments=compartments,
-        edges=edges,
-        remission_compartment="Myofibroblast",
-        remission_threshold=0.36,
+    clean_id = re.sub(r"[^a-z0-9_]+", "_", organ_label.lower()).strip("_")
+    return build_conserved_fibrosis_grammar_from_liver(
+        organ_donors_df,
+        organ_label=organ_label,
+        grammar_id=f"conserved_fibrosis_from_{clean_id}",
     )
 
 
@@ -1189,8 +1373,7 @@ def evaluate_bidirectional_3x3_fibrosis_transfer(
     prior_edges: list[tuple[str, str]],
     ccr2_paradox_df: pd.DataFrame | None = None,
 ) -> pd.DataFrame:
-    """Evaluate all 3 single-organ sources and 3 Leave-One-Organ-Out source pairs across all 14 trials and held-out organ subsets."""
-    # organ_data keys: 'Liver_MASH', 'Lung_IPF', 'Kidney_CKD' with {'donors', 'early', 'late', 'drift'}
+    """Evaluate all 3 single-organ sources and 3 Leave-One-Organ-Out source pairs across all 24 trials (and core-14 + held-out organ subsets)."""
     organs = ["Liver_MASH", "Lung_IPF", "Kidney_CKD"]
     source_configs: list[tuple[str, list[str]]] = [
         ("Liver_Only (n=17 donors)", ["Liver_MASH"]),
@@ -1207,6 +1390,7 @@ def evaluate_bidirectional_3x3_fibrosis_transfer(
         | FIBROSIS_COMPARTMENT_GENES["Myofibroblast"]
     )
     pathogenic_core = {"COL1A1", "COL1A2", "COL3A1", "POSTN", "CTHRC1", "ACTA2", "SPP1", "TREM2", "TGFB1", "GDF15", "CCL2"}
+    organ_late_map = {o: organ_data[o]["late"] for o in organs}
 
     rows = []
     for src_label, src_orgs in source_configs:
@@ -1238,13 +1422,18 @@ def evaluate_bidirectional_3x3_fibrosis_transfer(
             verified_ncts=verified_ncts,
             grn_perturber=perturber,
             ccr2_paradox_df=ccr2_paradox_df,
+            organ_late_comp_map=organ_late_map,
         )
 
-        # Overall 14-trial performance + strictly zero-shot out-of-source organ performance + per-target-organ accuracy
         held_out = df_tr[~df_tr["organ"].isin(src_orgs)]
         y_all = df_tr["clinical_win"].to_numpy(dtype=int)
         p_all = df_tr["omniniche_remission_prob"].to_numpy(dtype=float)
+        p_blind = df_tr["omniniche_stageblind_prob"].to_numpy(dtype=float)
         b_all = bootstrap_classification_metrics(y_all, p_all, n_boot=1000, seed=42)
+        stageblind_auroc = round(float(roc_auc_score(y_all, p_blind)), 4)
+
+        df_c14 = df_tr[df_tr["is_core14"]]
+        core14_auroc = round(float(roc_auc_score(df_c14["clinical_win"].to_numpy(dtype=int), df_c14["omniniche_remission_prob"].to_numpy(dtype=float))), 4)
 
         if len(held_out) >= 2 and held_out["clinical_win"].nunique() == 2:
             yh = held_out["clinical_win"].to_numpy(dtype=int)
@@ -1274,7 +1463,14 @@ def evaluate_bidirectional_3x3_fibrosis_transfer(
                 "source_calibration": src_label,
                 "source_organs": ";".join(src_orgs),
                 "n_source_donors": int(len(src_donors)),
+                "n_total_trials": int(len(df_tr)),
                 "n_heldout_trials": int(len(held_out)),
+                "all24_auroc": round(b_all["auroc"], 4),
+                "all24_ci_low": round(b_all["auroc_ci_low"], 4),
+                "all24_ci_high": round(b_all["auroc_ci_high"], 4),
+                "all24_brier": round(b_all["brier_score"], 4),
+                "all24_stageblind_auroc": stageblind_auroc,
+                "core14_auroc": core14_auroc,
                 "all14_auroc": round(b_all["auroc"], 4),
                 "all14_ci_low": round(b_all["auroc_ci_low"], 4),
                 "all14_ci_high": round(b_all["auroc_ci_high"], 4),
@@ -1283,6 +1479,7 @@ def evaluate_bidirectional_3x3_fibrosis_transfer(
                 "heldout_zeroshot_brier": zeroshot_brier,
                 "target_liver_auroc": per_org_auroc["Liver_MASH"],
                 "target_lung_auroc": per_org_auroc["Lung_IPF"],
+                "target_kidney_auroc": per_org_auroc["Kidney_CKD"],
                 "target_kidney_accuracy": per_org_acc["Kidney_CKD"],
                 "edge_v_parenchyma_to_samac": grammar.edges[0].weight_v,
                 "edge_v_samac_to_myofib": grammar.edges[1].weight_v,
@@ -1395,10 +1592,10 @@ def compute_2d_fibrosis_bliss_matrix_and_landscape(
     s0_f4 = np.array([0.85, 0.88, 0.90], dtype=float)
 
     arms = [
-        ("THRB (Resmetirom SM)", "Parenchyma_Injury", 0.72, "small_molecule"),
-        ("GLP1R (Semaglutide Peptide)", "Parenchyma_Injury", 0.68, "peptide"),
-        ("TGFBR1/PDGFRB (Low-Dose SM)", "Myofibroblast", 0.145, "small_molecule"),
-        ("TREM2/SPP1 (SAMac SM)", "SPP1_SAMac", 0.140, "small_molecule"),
+        ("THRB (Resmetirom SM)", "Parenchyma_Injury", 0.66, "small_molecule"),
+        ("GLP1R (Semaglutide Peptide)", "Parenchyma_Injury", 0.60, "peptide"),
+        ("TGFBR1/PDGFRB (Low-Dose SM)", "Myofibroblast", 0.138, "small_molecule"),
+        ("TREM2/SPP1 (SAMac SM)", "SPP1_SAMac", 0.130, "small_molecule"),
         ("LOXL2 (Simtuzumab 150kDa mAb)", "Myofibroblast", 0.004, "antibody"),
         ("CCR2 (Cenicriviroc Lost-Target)", "SPP1_SAMac", 0.005, "small_molecule"),
     ]

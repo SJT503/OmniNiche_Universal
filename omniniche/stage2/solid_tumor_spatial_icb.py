@@ -96,14 +96,38 @@ def compute_visium_spatial_barrier_and_proximity(
 def build_default_solid_tumor_icb_grammar(
     spatial_prox: pd.DataFrame | None = None,
 ) -> NicheGrammar:
-    """Construct bistable 4-compartment solid-tumor stromal-myeloid-exhaustion lock-in grammar weighted by Visium proximity."""
+    """Construct bistable 4-compartment solid-tumor stromal-myeloid-exhaustion lock-in grammar weighted by Visium proximity.
+
+    Off-diagonal Visium proximity weights P_ij are normalized relative to the mean off-diagonal spatial contact
+    density P_mean so that uniform-proximity ablation (P_ij = 1 everywhere) preserves identical mean edge coupling
+    while isolating purely directional spatial barrier anisotropy.
+    """
+    def _vis_key(name: str) -> str:
+        if spatial_prox is not None and name not in spatial_prox.index and name == "CD8_Exhaustion" and "CD8_T" in spatial_prox.index:
+            return "CD8_T"
+        return name
+
+    comps_4 = ["Tumor", "TAM", "myCAF", "CD8_Exhaustion"]
+    if spatial_prox is not None:
+        off_vals = [
+            float(spatial_prox.loc[_vis_key(s), _vis_key(d)])
+            for s in comps_4
+            for d in comps_4
+            if s != d and _vis_key(s) in spatial_prox.index and _vis_key(d) in spatial_prox.columns
+        ]
+        p_mean = float(np.mean(off_vals)) if off_vals else 0.55
+    else:
+        p_mean = 0.55
+
     def _sp(src: str, dst: str) -> float:
-        if spatial_prox is not None and src in spatial_prox.index and dst in spatial_prox.columns:
-            return float(spatial_prox.loc[src, dst])
-        return 0.65
+        ks, kd = _vis_key(src), _vis_key(dst)
+        if spatial_prox is not None and ks in spatial_prox.index and kd in spatial_prox.columns:
+            return float(spatial_prox.loc[ks, kd])
+        return p_mean
 
     def _w(src: str, dst: str, base_v: float) -> float:
-        return round(float(base_v * (0.72 + 0.42 * _sp(src, dst))), 4)
+        rel_p = _sp(src, dst) / max(p_mean, 1e-6)
+        return round(float(base_v * (0.62 + 0.38 * rel_p)), 4)
 
     compartments = [
         CompartmentRule(name="Tumor", baseline_production=0.020, decay_rate=0.180, noise_sigma=0.048, marker_genes=TME_SIGNATURES["Tumor"]),
@@ -229,7 +253,7 @@ def build_default_solid_tumor_icb_grammar(
         compartments=compartments,
         edges=edges,
         remission_compartment="Tumor",
-        remission_threshold=0.36,
+        remission_threshold=0.38,
     )
 
 
@@ -238,10 +262,25 @@ def score_baseline_patients_via_langevin_icb(
     grammar: NicheGrammar | None = None,
     n_ensemble: int = 180,
     seed: int = 42,
+    compute_combos: bool = True,
 ) -> pd.DataFrame:
     """Project each patient's baseline TME state onto Langevin SDE under Anti-PD-1 monotherapy vs barrier-breaking combos."""
     g = grammar or build_default_solid_tumor_icb_grammar()
     solver = LangevinNicheSolver(g, t_end=96.0, dt=0.5)
+
+    # Derive macromolecular IgG4 exclusion gate strength directly from empirical Visium directional barrier asymmetry:
+    # Delta_P_visium = max(0, P(TAM->myCAF) - P(CD8->Tumor)); ~0.195 on 12-section Visium vs 0.0 under uniform P_ij = 1.
+    p_tam_caf = next(
+        (float(e.spatial_proximity_weight) for e in g.edges if e.source == "TAM" and e.target == "myCAF"),
+        0.6661,
+    )
+    p_cd8_tum = next(
+        (float(e.spatial_proximity_weight) for e in g.edges if e.source == "CD8_Exhaustion" and e.target == "Tumor"),
+        0.4712,
+    )
+    delta_p_visium = max(0.0, p_tam_caf - p_cd8_tum)
+    barrier_attenuation = float(np.clip(0.16 + 1.55 * delta_p_visium, 0.0, 0.62))
+    kernel_tau = 0.11
 
     req_cols = ["Tumor", "TAM", "myCAF", "CD8_Exhaustion"]
     has_eff_col = "CD8_Effector_Reserve" in patient_comp_df.columns
@@ -249,22 +288,26 @@ def score_baseline_patients_via_langevin_icb(
     for idx_i, (pid, row) in enumerate(patient_comp_df.iterrows()):
         s0 = np.clip(np.array([float(row[c]) for c in req_cols], dtype=float), 0.05, 0.95)
         tum_load = float(s0[0])
+        tam_load = float(s0[1])
         mycaf_shield = float(s0[2])
         exh_load = float(s0[3])
         eff_reserve = float(np.clip(row["CD8_Effector_Reserve"], 0.05, 0.95)) if has_eff_col else float(1.0 - 0.55 * exh_load)
 
-        # Physical macromolecular (150 kDa IgG4 anti-PD-1) penetration across dense myCAF matrix shield (Hill barrier gate)
-        caf_hill_gate = float((mycaf_shield ** 3.6) / (0.62 ** 3.6 + mycaf_shield ** 3.6))
-        barrier_access = float(np.clip(0.96 - 0.46 * caf_hill_gate, 0.34, 0.96))
-        effective_pd1_eta = float(np.clip(barrier_access * (0.18 + 0.85 * eff_reserve), 0.12, 0.96))
+        # Physical macromolecular (150 kDa IgG4 anti-PD-1) penetration across joint myCAF-TAM myeloid-stromal capsule (Visium Hill gate)
+        capsule_load = 0.76 * mycaf_shield + 0.24 * tam_load
+        caf_hill_gate = float((capsule_load ** 4.2) / (0.62 ** 4.2 + capsule_load ** 4.2))
+        barrier_access = float(np.clip(0.96 - barrier_attenuation * caf_hill_gate, 0.30, 0.96))
+        effective_pd1_eta = float(np.clip(barrier_access * (0.34 + 0.56 * eff_reserve), 0.10, 0.95))
 
-        # Unleashed cytotoxic CD8 killing obeys Holling Type-II Effector-to-Target (E:T) tumor-burden saturation
-        et_saturation = float(1.0 / (1.0 + 0.65 * ((tum_load / 0.58) ** 2.8)))
+        # Dual-source barrier-gated CD8 cytotoxicity: fresh peripheral clonal replacement (Yost et al., Nat. Med. 2019) + local TIL reactivation,
+        # governed by Holling Type-II Effector-to-Target (E:T) tumor-burden saturation and myeloid-exhaustion quenching
+        et_saturation = float(1.0 / (1.0 + 0.78 * ((tum_load / 0.55) ** 2.9)))
+        clonal_and_local_drive = float(0.62 + 0.34 * eff_reserve)
         unlocked_killing_eta = float(
             np.clip(
-                (0.36 + 0.88 * eff_reserve * barrier_access) * et_saturation - 0.14 * exh_load,
-                0.08,
-                0.92,
+                (clonal_and_local_drive * barrier_access) * et_saturation - 0.22 * exh_load - 0.12 * tam_load,
+                0.04,
+                0.90,
             )
         )
         reg_mono = [
@@ -287,49 +330,69 @@ def score_baseline_patients_via_langevin_icb(
             n_patients=n_ensemble,
             seed=seed + idx_i,
         )
-        # Combo 1: Anti-PD-1 + Stromal myCAF/TGFBR1 Barrier Remodeler (restores antibody penetration + breaks CAF-TAM loop)
-        unlocked_caf_kill = float(np.clip(0.46 + 0.62 * eff_reserve, 0.48, 0.94))
-        reg_combo_caf = [
-            InterventionRegimen(target_compartment="CD8_Exhaustion", perturbation_eta=0.90, modality="antibody", start_time=0.0),
-            InterventionRegimen(target_compartment="myCAF", perturbation_eta=0.84, modality="small_molecule", start_time=0.0),
-            InterventionRegimen(target_compartment="Tumor", perturbation_eta=unlocked_caf_kill, modality="antibody", start_time=4.0),
-        ]
-        sim_combo_caf = solver.simulate_ensemble(
-            s0=s0,
-            regimens=reg_combo_caf,
-            n_patients=n_ensemble,
-            seed=seed + 1000 + idx_i,
-        )
-        # Combo 2: Anti-PD-1 + SPP1/TREM2 TAM Reprogrammer
-        unlocked_tam_kill = float(np.clip((0.40 + 0.60 * eff_reserve) * (1.0 - 0.28 * caf_hill_gate), 0.30, 0.88))
-        reg_combo_tam = [
-            InterventionRegimen(
-                target_compartment="CD8_Exhaustion",
-                perturbation_eta=float(np.clip(effective_pd1_eta + 0.20, 0.25, 0.92)),
-                modality="antibody",
-                start_time=0.0,
-            ),
-            InterventionRegimen(target_compartment="TAM", perturbation_eta=0.82, modality="antibody", start_time=0.0),
-            InterventionRegimen(target_compartment="Tumor", perturbation_eta=unlocked_tam_kill, modality="antibody", start_time=4.0),
-        ]
-        sim_combo_tam = solver.simulate_ensemble(
-            s0=s0,
-            regimens=reg_combo_tam,
-            n_patients=n_ensemble,
-            seed=seed + 2000 + idx_i,
-        )
-
-        # Smooth observational pathological remission likelihood integrated over the stochastic Langevin trajectory ensemble
         th = float(g.remission_threshold)
-        p_mono = float(np.mean(expit((th - np.asarray(sim_mono["final_effector_scores"], dtype=float)) / 0.065)))
-        p_combo_caf = float(np.mean(expit((th - np.asarray(sim_combo_caf["final_effector_scores"], dtype=float)) / 0.065)))
-        p_combo_tam = float(np.mean(expit((th - np.asarray(sim_combo_tam["final_effector_scores"], dtype=float)) / 0.065)))
+        p_mono = float(np.mean(expit((th - np.asarray(sim_mono["final_effector_scores"], dtype=float)) / kernel_tau)))
+
+        if compute_combos:
+            # Combo 1: Anti-PD-1 + Stromal myCAF/TGFBR1 Barrier Remodeler (physically ablates 85% of myCAF steric shield, governed by identical Holling Type-II law)
+            barrier_access_caf = float(np.clip(0.96 - barrier_attenuation * (0.15 * caf_hill_gate), 0.30, 0.96))
+            eff_pd1_caf = float(np.clip(barrier_access_caf * (0.18 + 0.92 * eff_reserve), 0.14, 0.95))
+            unlocked_caf_kill = float(
+                np.clip(
+                    ((clonal_and_local_drive + 0.12) * barrier_access_caf) * et_saturation - 0.05 * exh_load,
+                    0.06,
+                    0.90,
+                )
+            )
+            reg_combo_caf = [
+                InterventionRegimen(target_compartment="CD8_Exhaustion", perturbation_eta=eff_pd1_caf, modality="antibody", start_time=0.0),
+                InterventionRegimen(target_compartment="myCAF", perturbation_eta=0.82, modality="small_molecule", start_time=0.0),
+                InterventionRegimen(target_compartment="Tumor", perturbation_eta=unlocked_caf_kill, modality="antibody", start_time=4.0),
+            ]
+            sim_combo_caf = solver.simulate_ensemble(
+                s0=s0,
+                regimens=reg_combo_caf,
+                n_patients=n_ensemble,
+                seed=seed + 1000 + idx_i,
+            )
+            # Combo 2: Anti-PD-1 + SPP1/TREM2 TAM Reprogrammer (breaks TAM-myCAF paracrine amplification while residual ECM collagen persists)
+            barrier_access_tam = float(np.clip(0.96 - barrier_attenuation * (0.55 * caf_hill_gate), 0.30, 0.96))
+            eff_pd1_tam = float(np.clip(barrier_access_tam * (0.15 + 0.92 * eff_reserve), 0.12, 0.93))
+            unlocked_tam_kill = float(
+                np.clip(
+                    ((clonal_and_local_drive + 0.10) * barrier_access_tam) * et_saturation - 0.08 * exh_load,
+                    0.05,
+                    0.88,
+                )
+            )
+            reg_combo_tam = [
+                InterventionRegimen(
+                    target_compartment="CD8_Exhaustion",
+                    perturbation_eta=eff_pd1_tam,
+                    modality="antibody",
+                    start_time=0.0,
+                ),
+                InterventionRegimen(target_compartment="TAM", perturbation_eta=0.80, modality="antibody", start_time=0.0),
+                InterventionRegimen(target_compartment="Tumor", perturbation_eta=unlocked_tam_kill, modality="antibody", start_time=4.0),
+            ]
+            sim_combo_tam = solver.simulate_ensemble(
+                s0=s0,
+                regimens=reg_combo_tam,
+                n_patients=n_ensemble,
+                seed=seed + 2000 + idx_i,
+            )
+            p_combo_caf = float(np.mean(expit((th - np.asarray(sim_combo_caf["final_effector_scores"], dtype=float)) / kernel_tau)))
+            p_combo_tam = float(np.mean(expit((th - np.asarray(sim_combo_tam["final_effector_scores"], dtype=float)) / kernel_tau)))
+        else:
+            p_combo_caf = float("nan")
+            p_combo_tam = float("nan")
 
         term_mean = np.asarray(sim_mono["mean_trajectory"], dtype=float)[-1]
         lock_depth = float(0.45 * term_mean[0] + 0.30 * term_mean[2] + 0.25 * term_mean[3])
         rows.append(
             {
                 "patient_id": str(pid),
+                "visium_delta_p_barrier": round(delta_p_visium, 4),
                 "effective_pd1_delivery": round(effective_pd1_eta, 4),
                 "simulated_icb_remission_prob": round(p_mono, 4),
                 "quasi_potential_lock_depth": round(lock_depth, 4),

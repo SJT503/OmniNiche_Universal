@@ -1,4 +1,4 @@
 cohort,modality_stratum,n_trials,n_positive,n_negative,n_unique_targets,static_tau0_auroc,static_tau0_ci_low,static_tau0_ci_high,dnacc_auroc,dnacc_ci_low,dnacc_ci_high,delta_auroc,delong_p_value,delong_log10_p
-Deconfounded_Scientific_Ph34_vs_SciFail_All12Axes,Small_Molecule,7369,6958,411,239,0.5601,0.5337,0.5885,0.6554,0.6273,0.6831,0.0953,5.968979238625859e-11,-10.224
-Deconfounded_Scientific_Ph34_vs_SciFail_All12Axes,Antibody_Biologic,2357,2082,275,146,0.5515,0.5164,0.5864,0.6958,0.6636,0.7253,0.1443,4.3609127515292743e-10,-9.36
-Deconfounded_Scientific_Ph34_vs_SciFail_All12Axes,Protein_Peptide,1930,1858,72,101,0.5007,0.4436,0.559,0.5306,0.4563,0.606,0.0299,0.371957589790639,-0.43
+Deconfounded_Scientific_Ph34_vs_SciFail_All12Axes,Small_Molecule,7286,6958,328,235,0.5451,0.5125,0.5764,0.6735,0.644,0.7033,0.1284,2.0419269233263872e-13,-12.69
+Deconfounded_Scientific_Ph34_vs_SciFail_All12Axes,Antibody_Biologic,2264,2082,182,137,0.5959,0.5546,0.64,0.6657,0.6277,0.7024,0.0698,0.013301997466630678,-1.876
+Deconfounded_Scientific_Ph34_vs_SciFail_All12Axes,Protein_Peptide,1904,1858,46,99,0.487,0.4154,0.5557,0.6107,0.5119,0.703,0.1237,0.004468943961216444,-2.35

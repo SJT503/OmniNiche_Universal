@@ -11,9 +11,9 @@ disease_axis,Ophthalmic_Retinal,943,61.0,28.5,222.5,462.4,184850
 disease_axis,Pulmonary_IPF_ARDS,3324,95.0,34.0,324.0,736.5,1044113
 disease_axis,Renal_CKD_AKI,1744,80.0,30.0,203.0,456.0,424526
 disease_axis,Solid_Oncology,14220,52.0,24.0,130.0,392.1,2554805
-stop_class,Administrative_Commercial_Enrollment,3572,16.0,6.0,46.0,130.0,268658
+stop_class,Administrative_Commercial_Enrollment,3694,16.0,6.0,46.0,136.0,287827
 stop_class,Completed,31163,84.0,38.0,240.0,574.0,9766445
-stop_class,Other_Unclassified_Stop,1920,29.0,10.0,100.0,346.0,349376
-stop_class,Scientific_Efficacy_Futility,502,73.0,23.0,258.8,651.1,125765
-stop_class,Scientific_Safety_Toxicity,293,24.0,10.0,88.0,315.8,49907
+stop_class,Other_Unclassified_Stop,1839,29.0,10.5,100.5,346.0,338943
+stop_class,Scientific_Efficacy_Futility,462,77.5,24.2,267.2,651.1,118439
+stop_class,Scientific_Safety_Toxicity,292,24.0,10.0,84.2,282.8,48497
 stop_class,Unreported_Stop_Reason,792,45.5,17.0,151.2,449.0,178757

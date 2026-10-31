@@ -163,11 +163,12 @@ def test_visium_continuous_radial_distance_profile_captures_peritumoral_mycaf_ri
 def test_bidirectional_cross_organ_fibrosis_grammar_calibration() -> None:
     from omniniche.engine.langevin_solver import InterventionRegimen, LangevinNicheSolver
 
+    # Realistic cross-compartment human donor variation (r_sm ~ 0.44, matching primary human organs)
     lung_donors = pd.DataFrame(
         {
-            "Parenchyma_Injury": [0.16, 0.22, 0.50, 0.55, 0.80, 0.87],
-            "SPP1_SAMac": [0.14, 0.18, 0.44, 0.48, 0.82, 0.89],
-            "Myofibroblast": [0.12, 0.15, 0.42, 0.47, 0.84, 0.92],
+            "Parenchyma_Injury": [0.16, 0.34, 0.50, 0.42, 0.80, 0.68, 0.25, 0.62],
+            "SPP1_SAMac": [0.14, 0.52, 0.30, 0.66, 0.82, 0.45, 0.40, 0.74],
+            "Myofibroblast": [0.12, 0.20, 0.58, 0.36, 0.78, 0.88, 0.52, 0.48],
         }
     )
     g_lung = build_conserved_fibrosis_grammar_from_organ(lung_donors, organ_label="Human Lung IPF")
@@ -193,9 +194,9 @@ def test_profile_likelihood_and_2d_bliss_no_spurious_inactive_synergy() -> None:
 
     donors = pd.DataFrame(
         {
-            "Parenchyma_Injury": [0.16, 0.28, 0.50, 0.46, 0.80, 0.74, 0.35, 0.62],
-            "SPP1_SAMac": [0.14, 0.20, 0.44, 0.55, 0.82, 0.69, 0.48, 0.54],
-            "Myofibroblast": [0.22, 0.15, 0.42, 0.49, 0.76, 0.88, 0.31, 0.67],
+            "Parenchyma_Injury": [0.16, 0.34, 0.50, 0.42, 0.80, 0.68, 0.25, 0.62],
+            "SPP1_SAMac": [0.14, 0.52, 0.30, 0.66, 0.82, 0.45, 0.40, 0.74],
+            "Myofibroblast": [0.12, 0.20, 0.58, 0.36, 0.78, 0.88, 0.52, 0.48],
         }
     )
     g = build_conserved_fibrosis_grammar_from_organ(donors, organ_label="Human Liver")
@@ -251,3 +252,123 @@ def test_target_cluster_robust_se_and_within_modality_dnacc() -> None:
     strat = evaluate_within_modality_dnacc_stratification(df, dnacc, tau0, n_boot=100, seed=7)
     sm_row = strat[strat["modality_stratum"] == "Small_Molecule"].iloc[0]
     assert float(sm_row["dnacc_auroc"]) > float(sm_row["static_tau0_auroc"]) + 0.10
+
+
+def test_t1_noncircular_240_manual_clinical_stoppage_benchmark() -> None:
+    import pathlib
+    from omniniche.stage2.v2_statistical_fortification import audit_stoppage_classifier_benchmark
+
+    root = pathlib.Path(r"F:\OmniNiche_Universal")
+    ledger = root / "data_vault" / "raw_clinical_trials" / "stoppage_240_manual_clinical_adjudication_ledger.csv"
+    master = root / "data_vault" / "raw_clinical_trials" / "non_cns_phase234_trials_master.csv"
+    assert ledger.exists()
+    df_m = pd.read_csv(master, usecols=["nct_id", "disease_axis", "overall_status", "why_stopped"], low_memory=False)
+    val_df, cm_df, sample_df = audit_stoppage_classifier_benchmark(df_m, manual_ledger_path=ledger)
+    assert len(sample_df) == 240
+    assert cm_df.shape == (4, 4)
+
+    cl_col = "auditor_name" if "auditor_name" in val_df.columns else "classifier"
+    cl = val_df[val_df[cl_col] == "Clause_Aware_Auditor_v2_2"].iloc[0]
+    nv = val_df[val_df[cl_col] == "Naive_Keyword_Baseline"].iloc[0]
+    assert float(cl["overall_accuracy"]) >= 0.94
+    assert float(cl["cohen_kappa"]) >= 0.92
+    assert float(cl["overall_accuracy"]) > float(nv["overall_accuracy"]) + 0.20
+
+
+def test_t2_intrahepatic_glp1r_absent_and_objective_compartment_weights() -> None:
+    from omniniche.engine.grn_perturb import RidgeGRNPerturber
+    from omniniche.stage2.fibrosis_mash_deconvolution import (
+        FIBROSIS_COMPARTMENT_GENES,
+        LANDMARK_FIBROSIS_TRIALS,
+        compute_unsigned_grn_leverage,
+        derive_objective_compartment_weights,
+    )
+
+    # Jara et al. Nat. Med. 2025: absent intrahepatic GLP1R in organ-resident macrophages
+    assert "GLP1R" not in FIBROSIS_COMPARTMENT_GENES["SPP1_SAMac"]
+    assert len(LANDMARK_FIBROSIS_TRIALS) == 24
+    assert all("compartments_hit" not in t for t in LANDMARK_FIBROSIS_TRIALS)
+
+    w_glp = derive_objective_compartment_weights(["GLP1R"])
+    assert w_glp["Parenchyma_Injury"] == 1.0
+    assert w_glp.get("SPP1_SAMac", 0.0) == 0.0
+
+    # Protective nuclear agonist THRB (negatively correlated with COL1A1) still yields positive unsigned leverage
+    expr = pd.DataFrame(
+        {
+            "THRB": [4.2, 3.8, 2.5, 1.4, 0.9],
+            "GDF15": [1.1, 1.5, 2.8, 3.9, 4.5],
+            "COL1A1": [0.8, 1.2, 2.6, 4.0, 4.9],
+        }
+    )
+    pert = RidgeGRNPerturber(ridge_lambda=0.5, propagation_steps=2).fit(
+        expr, prior_edges=[("THRB", "GDF15"), ("GDF15", "COL1A1")], pathogenic_program_genes=["GDF15", "COL1A1"]
+    )
+    assert compute_unsigned_grn_leverage(pert, ["THRB"]) > 0.10
+
+
+def test_t4_opentargets_human_genetics_orthogonality_and_joint_lift() -> None:
+    from omniniche.stage2.v2_statistical_fortification import evaluate_human_genetics_vs_dnacc_orthogonality
+
+    rng = np.random.default_rng(2026)
+    n = 320
+    genes = [f"G_{i:02d}" for i in rng.integers(0, 45, size=n)]
+    g_assoc = np.clip(rng.beta(0.7, 1.8, size=n), 0.0, 1.0)
+    g_som = np.zeros(n)
+    tau0 = rng.uniform(0.3, 0.9, size=n)
+    dtau = rng.normal(-0.05, 0.25, size=n)
+    bar = rng.uniform(0.35, 0.96, size=n)
+    logit = -1.6 + 2.1 * g_assoc + 2.6 * dtau + 2.4 * bar
+    y = (rng.uniform(0, 1, size=n) < (1.0 / (1.0 + np.exp(-logit)))).astype(int)
+
+    df = pd.DataFrame(
+        {
+            "primary_target_gene": genes,
+            "ot_genetic_assoc": g_assoc,
+            "ot_somatic_mut": g_som,
+            "ot_human_genetic_max": g_assoc,
+            "tau0_healthy": tau0,
+            "vital_bystander_hazard": 1.0 - tau0,
+            "tau_early": tau0,
+            "delta_tau": dtau,
+            "dynamic_retention_score": np.clip(0.5 + dtau, 0.05, 0.95),
+            "compartment_switch": (dtau < -0.15).astype(int),
+            "stromal_ectopic_share_late": np.clip(0.3 - 0.5 * dtau, 0.05, 0.90),
+            "barrier_compatibility": bar,
+            "clinical_success": y,
+        }
+    )
+    res = evaluate_human_genetics_vs_dnacc_orthogonality(df, "Synthetic_Genetics", n_boot=100, seed=42)
+    st = res[res["evaluation_stratum"] == "Stratified_5Fold"].set_index("model_id")
+    assert float(st.loc["G5_Joint_Human_Genetics_Plus_DNAcc", "auroc"]) > float(st.loc["G1_OpenTargets_Human_Genetics_Only", "auroc"]) + 0.04
+    sup = res[res["evaluation_stratum"].str.startswith("Within_Genetically_Supported")].iloc[0]
+    assert float(sup["delta_auroc_vs_tau0"]) > 0.08
+
+
+def test_t5_empirical_ecm_density_and_singletarget_group5fold() -> None:
+    import pathlib
+    from omniniche.stage2.pan_disease_drift_law import compute_empirical_axis_ecm_density_map
+
+    vault_pb = pathlib.Path(r"F:\OmniNiche_Universal\data_vault\processed_pseudobulk")
+    ecm_map = compute_empirical_axis_ecm_density_map(vault_pb)
+    assert len(ecm_map) >= 6
+    assert ecm_map["Pulmonary_IPF_ARDS"] > ecm_map["Infectious_Sepsis"]
+    assert all(0.05 <= v <= 0.40 for v in ecm_map.values())
+
+
+def test_t7_lopo_reference_scaling_zero_test_patient_leakage() -> None:
+    import sys
+
+    if r"F:\OmniNiche_Universal\scripts" not in sys.path:
+        sys.path.insert(0, r"F:\OmniNiche_Universal\scripts")
+    from run_stage2_task4_solid_tumor_icb import _lopo_robust_01, _lopo_zscore
+
+    arr1 = np.array([1.0, 2.0, 3.0, 4.0, 5.0, 100.0])
+    arr2 = np.array([1.0, 2.0, 3.0, 4.0, 5.0, 500.0])
+    # Patient index 5's LOPO reference median/MAD depends ONLY on indices 0..4!
+    z1 = _lopo_zscore(arr1)
+    z2 = _lopo_zscore(arr2)
+    # Scaling factor (median=3.0, MAD*1.4826=1.4826) for patient 5 is strictly identical regardless of patient 5's own value
+    assert np.isclose((arr1[5] - 3.0) / z1[5], (arr2[5] - 3.0) / z2[5], rtol=1e-10)
+    p1 = _lopo_robust_01(arr1, 0.14, 0.88)
+    assert np.all((p1 >= 0.14) & (p1 <= 0.88))

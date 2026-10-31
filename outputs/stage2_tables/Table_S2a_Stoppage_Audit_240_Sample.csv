@@ -1,241 +1,241 @@
-nct_id,disease_axis,overall_status,why_stopped,pred_4class,ref_4class
-NCT04987307,Autoimmune_IBD_Rheum,TERMINATED,The study was terminated due to meeting a prespecified futility rule and not related to any safety concerns.,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
-NCT04864392,Musculoskeletal_Bone,TERMINATED,Study early terminated due to lack of effect (did not meet primary/ secondary endpoints). This decision was not linked to safety concerns,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
-NCT00290706,Hematologic_Malignancy,TERMINATED,Closed per Data Monitoring Committee due to lack of efficacy,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
-NCT00936832,Solid_Oncology,WITHDRAWN,because the sunitinib showed futility in anotehr trial,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
-NCT04437368,Ophthalmic_Retinal,TERMINATED,Terminated for interim analysis demonstrating futility (trial highly unlikely to meet efficacy outcome). The trial is not ending early because of medical problems or concerns.,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
-NCT03175172,Solid_Oncology,TERMINATED,Study was stopped due to low enrollment and lack of clinical activity.,Administrative_Commercial_Enrollment,Scientific_Efficacy_Futility
-NCT01385293,Solid_Oncology,TERMINATED,The trial was stopped at the first stage due to futility,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
-NCT01362348,Ophthalmic_Retinal,TERMINATED,Lack of efficacy identified during a preliminary analysis,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
-NCT01999192,Autoimmune_IBD_Rheum,TERMINATED,Lack of efficacy,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
-NCT05101915,Pulmonary_IPF_ARDS,TERMINATED,TSC recommended early termination due to lack of futility of the trial.,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
-NCT06160609,Hematologic_Malignancy,TERMINATED,The study was terminated due to lack of efficacy.,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
-NCT06859294,Autoimmune_IBD_Rheum,TERMINATED,The interim analysis data failed to demonstrate the intended treatment effect.,Other_or_Unreported,Scientific_Efficacy_Futility
-NCT01113801,Renal_CKD_AKI,TERMINATED,Interim Assessment: Lack of Efficacy,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
-NCT00117351,Solid_Oncology,TERMINATED,insufficient efficacy,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
-NCT00824785,Solid_Oncology,TERMINATED,Lack of efficacy,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
-NCT01676701,Autoimmune_IBD_Rheum,TERMINATED,Insufficient efficacy observed in study BCDM(NCT01198002) and BCDV(NCT01202773),Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
-NCT00516841,Solid_Oncology,TERMINATED,Decision to terminate recruitment based on lack of efficacy,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
-NCT01767857,Solid_Oncology,TERMINATED,The study crossed the prospective futility boundary of primary endpoint,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
-NCT04161391,Solid_Oncology,TERMINATED,Adverse change in the risk/benefit.,Other_or_Unreported,Scientific_Efficacy_Futility
-NCT02722369,Solid_Oncology,TERMINATED,"Low recruitment, lack of efficacy and increased adverse events in investigational arm.",Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
-NCT00217464,Solid_Oncology,TERMINATED,Closed for futility,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
-NCT02633800,Solid_Oncology,TERMINATED,Trial was terminated by sponsor due to lack of efficacy.,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
-NCT01467076,Pulmonary_IPF_ARDS,TERMINATED,The study was halted due to futility concerns based on the unmet benchmarks as specified in the pilot study protocol.,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
-NCT00087776,Solid_Oncology,TERMINATED,Interim analysis determined that the futility boundary had been crossed and there was no reasonable prospect that statistical significance would be achieved if patient accrual continued,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
-NCT05630937,Solid_Oncology,TERMINATED,"In the Phase II part of the study, among the participants evaluable for efficacy, no objective (partial response or clinical response) was observed at the first futility analysis.",Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
-NCT04369469,Pulmonary_IPF_ARDS,TERMINATED,Met futility bar at interim analysis,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
-NCT02119676,Solid_Oncology,TERMINATED,Substudy 1 was terminated for futility at interim analysis and Substudy 2 was terminated per sponsor decision.,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
-NCT01130246,Cardiovascular_HF_Athero,TERMINATED,Lack of efficacy,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
-NCT01316939,Autoimmune_IBD_Rheum,TERMINATED,This study was terminated due to the lack of efficacy of GSK1605786A in Crohn's disease based on the results of Study CCX114151.,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
-NCT06312020,Autoimmune_IBD_Rheum,TERMINATED,The study was terminated by sponsor due to meeting pre-defined criteria for futility.,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
-NCT01759511,Pulmonary_IPF_ARDS,TERMINATED,The Study was terminated due to lack of efficacy.,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
-NCT01215942,Autoimmune_IBD_Rheum,TERMINATED,Insufficient efficacy observed in study BCDM (NCT01198002) and BCDV (NCT01202773).,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
-NCT03719300,Solid_Oncology,TERMINATED,Lack of efficacy,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
-NCT00459108,Solid_Oncology,TERMINATED,Halted early for futility.,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
-NCT02119663,Solid_Oncology,TERMINATED,The safety committee found no safety issues but recommended halting the study based on a lack of efficacy in a similar trial. The sponsor terminated the trial.,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
-NCT02369796,Metabolic_Endocrine,TERMINATED,Sponsor decision to terminate the study because the study did not achieve the primary efficacy objective.,Administrative_Commercial_Enrollment,Scientific_Efficacy_Futility
-NCT06881251,Dermatologic_Immune,TERMINATED,Terminated: futility criteria met at interim efficacy analysis.,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
-NCT01798485,Solid_Oncology,TERMINATED,The study was stopped after the first Interim Analysis due to futility.,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
-NCT01740401,Solid_Oncology,TERMINATED,Primary Endpoint not met,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
-NCT02454842,Solid_Oncology,TERMINATED,Lack of efficacy,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
-NCT04365400,Metabolic_Endocrine,TERMINATED,Trial prematurely terminated on 03 May 2022 due to the results from an interim analysis indicating a lack of efficacy in the study population.,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
-NCT04476797,Solid_Oncology,TERMINATED,Development GC4711 was halted after the lead study in pancreatic cancer was stopped early due to meeting the requirements of a futility analysis,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
-NCT04347226,Solid_Oncology,TERMINATED,Interim analysis indicated that futility boundary was reached.,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
-NCT00558636,Solid_Oncology,TERMINATED,Terminated early when the results from Study NCT00300885 showed an overall lack of efficacy in NSCLC and increased mortality in subjects with squamous subtype.,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
-NCT03071692,Metabolic_Endocrine,TERMINATED,The study was stopped for futility based on efficacy results at the interim analysis; no unexpected safety findings were observed.,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
-NCT05232864,Renal_CKD_AKI,TERMINATED,Study terminated by sponsor based on a futility analysis of the core study CAIN457Q12301,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
-NCT00526890,Solid_Oncology,TERMINATED,lack of efficacy,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
-NCT03222622,Dermatologic_Immune,TERMINATED,The efficacy failed to meet the primary efficacy endpoint,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
-NCT02895100,Autoimmune_IBD_Rheum,TERMINATED,Data Monitoring Committee discontinued the trial due to futility-based outcome,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
-NCT04791319,Dermatologic_Immune,TERMINATED,Premature Termination due to Interim Analysis (100 patients at Week 16) meeting futility.,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
-NCT03288545,Solid_Oncology,TERMINATED,"Sponsor stopped the study after meeting enrollment targets and primary objectives, and after collecting sufficient data for planned regulatory filings. The decision was not due to safety concerns, futility, or any regulatory request.",Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
-NCT03329885,Hepatic_MASH_Fibrosis,TERMINATED,Adverse change in the risk/benefit,Other_or_Unreported,Scientific_Efficacy_Futility
-NCT05911841,Dermatologic_Immune,TERMINATED,The decision to terminate the study was due to efficacy/effectiveness reasons.,Other_or_Unreported,Scientific_Efficacy_Futility
-NCT07283848,Solid_Oncology,WITHDRAWN,The pharmaceutical company is not moving forward with this intervention due to lack of efficacy.,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
-NCT00723203,Hematologic_Malignancy,TERMINATED,Terminated early due to a lack of efficacy,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
-NCT06844669,Solid_Oncology,TERMINATED,Futility,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
-NCT00538291,Solid_Oncology,TERMINATED,Study was terminated early due to lack of efficacy.,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
-NCT03630224,Renal_CKD_AKI,TERMINATED,Premature termination due to futility following interim analysis,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
-NCT02603146,Autoimmune_IBD_Rheum,TERMINATED,"Enrollment was closed before reaching the target. In the 1st interim analysis after enrollment closure, the follow up \& treatment of active participants were stopped early due to evidence of futility.",Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
-NCT04921358,Solid_Oncology,TERMINATED,"Due to safety risks and unfavorable risk-benefit assessment results, the sponsor has decided to voluntarily terminate the study.",Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
-NCT00544908,Solid_Oncology,TERMINATED,Toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
-NCT00646659,Solid_Oncology,TERMINATED,Recruitment was suspended prematurely for safety concerns and closed after IDMC review,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
-NCT01277510,Renal_CKD_AKI,TERMINATED,Study was put on clinical hold on 30 Jan 2013 following a subject fatality. Study was never restarted and was closed.,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
-NCT04634825,Solid_Oncology,TERMINATED,Based on internal review of safety data,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
-NCT04858451,Pulmonary_IPF_ARDS,TERMINATED,Study stopping criteria were met. A safety event has occurred which was classified as an SAE and was related to the study intervention.,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
-NCT02457910,Solid_Oncology,TERMINATED,Interim analysis - toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
-NCT00401401,Solid_Oncology,TERMINATED,MTD was established and patients completed 16 months safety f-up and response assessments. It is considered of limited value to follow patients for 3 years.,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
-NCT02495233,Solid_Oncology,TERMINATED,Study terminated due to adverse events related to the combination therapy,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
-NCT01009346,Solid_Oncology,TERMINATED,Toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
-NCT04142658,Cardiovascular_HF_Athero,TERMINATED,Safety,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
-NCT02585388,Solid_Oncology,TERMINATED,Treatment toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
-NCT01388647,Solid_Oncology,TERMINATED,Closed early due to increased hematologic toxicity and possible reduced efficacy,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
-NCT00352690,Solid_Oncology,TERMINATED,Safety of patients,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
-NCT04594694,Hepatic_MASH_Fibrosis,TERMINATED,Intercept made a business decision to terminate the study based on FDA's request for voluntary withdrawal of Ocaliva and the issuance of clinical hold on studies under US IND involving OCA.,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
-NCT05435053,Solid_Oncology,TERMINATED,"The study was terminated on the basis on an evaluation of the safety and efficacy of the 9 included patients of which 2 of the patients were excluded before receiving any study treatments, thus 7 patients were treated in the study.",Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
-NCT04075136,Ophthalmic_Retinal,WITHDRAWN,IRB stopped study due to safety concerns before any participants were enrolled.,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
-NCT01609582,Metabolic_Endocrine,TERMINATED,Due to potential concerns about liver safety (See Detailed Description),Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
-NCT01339910,Hematologic_Malignancy,TERMINATED,Accrual terminated as recommended by the data and safety monitoring board.,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
-NCT03357224,Infectious_Sepsis,TERMINATED,Following an urgent safety measure due to toxicity recruitment has been closed prematurely.,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
-NCT02677948,Hematologic_Malignancy,WITHDRAWN,FDA has placed all trials involving Pacritinib on Full Clinical Hold,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
-NCT04623216,Hematologic_Malignancy,TERMINATED,Study was stopped following a strategic decision from the Sponsor. It was not based on any safety findings or safety concerns with sabatolimab.,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
-NCT03026166,Solid_Oncology,TERMINATED,Enrollment was stopped after the dose-limiting toxicity (DLT) evaluation phase of Cohort 2.,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
-NCT00555217,Renal_CKD_AKI,TERMINATED,It was stopped primarily because of safety concerns along with low conditional power to detect a treatment effect on the primary outcome.,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
-NCT01326312,Solid_Oncology,TERMINATED,FDA Clinical Hold,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
-NCT01481116,Metabolic_Endocrine,TERMINATED,Due to potential concerns about liver safety (See Detailed Description),Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
-NCT02532010,Hematologic_Malignancy,TERMINATED,"The study was put on clinical hold by the sponsor since Feb 9th 2016, and was later decided not to re-open due to financial constraints.",Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
-NCT00496223,Solid_Oncology,TERMINATED,toxicities required dose reduction compromising effectiveness and PI left Moffitt,Other_or_Unreported,Scientific_Safety_Toxicity
-NCT03720574,Metabolic_Endocrine,TERMINATED,Reassess safety risks and benefits,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
-NCT03945227,Solid_Oncology,WITHDRAWN,"Due to the delay in the study shceduled, due to the start of competitive study and the approval of Durvalumab from the Ministry of Food and Drug Safety, it was judged that it was difficult to enroll subjects.",Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
-NCT00953576,Solid_Oncology,TERMINATED,The study terminated early due to concerns about drug toxicity.,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
-NCT04952753,Solid_Oncology,TERMINATED,"The study was terminated early due to the halt of NIS793 treatment and urgent safety measures issued in July and August 2023, respectively, as continued evaluation of Standard of Care alone will not support the trial's purpose.",Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
-NCT03663166,Solid_Oncology,TERMINATED,Increased SAE occurrence per PI,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
-NCT02438787,Autoimmune_IBD_Rheum,TERMINATED,This study was stopped because ustekinumab did not achieve key endpoints in a related study. The safety profile was consistent with past ustekinumab studies.,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
-NCT03694197,Metabolic_Endocrine,TERMINATED,The primary objective (to evaluate the long-term safety of Praluent) was adequately evaluated in other studies.,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
-NCT02711137,Solid_Oncology,TERMINATED,Study terminated due to safety issues.,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
-NCT05360264,Solid_Oncology,TERMINATED,Unexpected toxicity events were documented during interim safety evaluations of the investigational drug.,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
-NCT00277316,Solid_Oncology,TERMINATED,Development of XL999 was stopped due to cardiac toxicities in the subjects,Other_or_Unreported,Scientific_Safety_Toxicity
-NCT00393380,Hematologic_Malignancy,TERMINATED,Study stopped because of toxicity concerns.,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
-NCT01342016,Renal_CKD_AKI,TERMINATED,Due to safety concern of active control drug,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
-NCT00366795,Hepatic_MASH_Fibrosis,TERMINATED,Study was terminated due to safety reason.,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
-NCT01029925,Solid_Oncology,TERMINATED,"DSMB determined, due to higher than expected risk/safety concerns, study should be closed.",Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
-NCT07087938,Autoimmune_IBD_Rheum,WITHDRAWN,Study did not begin recruiting participants due to insufficient preclinical evidence resulting in FDA clinical hold.,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
-NCT02910882,Solid_Oncology,TERMINATED,Safety,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
-NCT01576887,Renal_CKD_AKI,WITHDRAWN,IDMC recommendation for safety concerns,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
-NCT00290017,Solid_Oncology,TERMINATED,FDA Hold May 2007,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
-NCT02361346,Hematologic_Malignancy,TERMINATED,Sponsor decision following clinical hold,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
-NCT00417248,Solid_Oncology,TERMINATED,Negative sorafenib results from ESCAPE trial and safety concerns of regimen,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
-NCT03713944,Solid_Oncology,TERMINATED,"Extreme toxicity, thromboembolic events",Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
-NCT03285646,Musculoskeletal_Bone,TERMINATED,"Due to implementation of an urgent safety measure, enrollment and dosing in R475-PN-1612 was stopped; enrolled participants entered the 20-week safety follow-up",Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
-NCT00955240,Solid_Oncology,TERMINATED,Inadequate toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
-NCT00383487,Solid_Oncology,TERMINATED,Extreme toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
-NCT00667277,Hematologic_Malignancy,TERMINATED,lack of response activity in the setting of an unacceptable toxicity profile,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
-NCT05589597,Solid_Oncology,TERMINATED,"Sponsor decision to stop recruitment in context of overall EO4010 development goals. Stop of recruitment was not related to any safety concern, with the safety profile of EO4010 being benign",Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
-NCT00788606,Hematologic_Malignancy,TERMINATED,Toxicity and efficacy data from another trial,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
-NCT00243204,Solid_Oncology,TERMINATED,FDA Hold May 2007,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
-NCT05223647,Solid_Oncology,TERMINATED,Termination was adviced by Data Safety Committee due to excess toxicity of the experimental treatment.,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
-NCT00277290,Solid_Oncology,TERMINATED,Study was terminated due to cardiac toxicities in the subjects,Other_or_Unreported,Scientific_Safety_Toxicity
-NCT00199342,Solid_Oncology,TERMINATED,Occurrence of 2 dose-limiting toxicities at the initial dose level (60 mg/m2) in Part I.,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
-NCT03765541,Hematologic_Malignancy,TERMINATED,"Despite a recruitment target that was not met, we managed to achieve more than 50% of inclusions and 33% of deaths, enabling us to carry out an initial analysis of the primary endpoint",Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
-NCT01792635,Metabolic_Endocrine,TERMINATED,The study was terminated prematurely on 16 May 2014 due to a safety concern.,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
-NCT00330200,Metabolic_Endocrine,TERMINATED,Due to poor enrollment,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
-NCT01420666,Musculoskeletal_Bone,WITHDRAWN,The study was withdrawn for administrative reason,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
-NCT02560038,Solid_Oncology,TERMINATED,slow enrollment; resource re-allocation,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
-NCT01315873,Hematologic_Malignancy,TERMINATED,PI left the institution before all data analysis was completed,Other_or_Unreported,Administrative_Commercial_Enrollment
-NCT01264081,Solid_Oncology,TERMINATED,Protocol would not be able to reach stated accrual.,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
-NCT00949988,Hematologic_Malignancy,TERMINATED,Three subjects were enrolled and all three subjects withdrew.,Other_or_Unreported,Administrative_Commercial_Enrollment
-NCT05329168,Infectious_Sepsis,WITHDRAWN,business decision before FPFV; not related to any safety concerns,Scientific_Safety_Toxicity,Administrative_Commercial_Enrollment
-NCT03355482,Autoimmune_IBD_Rheum,TERMINATED,"poor recruitment, funding",Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
-NCT04995094,Solid_Oncology,WITHDRAWN,"Enrollment challenges, study not feasible",Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
-NCT05177770,Solid_Oncology,TERMINATED,"The study was terminated for strategic reasons, not due to any safety concerns.",Scientific_Safety_Toxicity,Administrative_Commercial_Enrollment
-NCT02413827,Solid_Oncology,TERMINATED,Feasibility concerns due to changes in standard of care,Other_or_Unreported,Administrative_Commercial_Enrollment
-NCT01570192,Infectious_Sepsis,TERMINATED,NIAID terminated the study due to low subject enrollment,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
-NCT04965688,Solid_Oncology,TERMINATED,Lack of enrollment to meet the primary and secondary study goals,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
-NCT00239720,Dermatologic_Immune,TERMINATED,Study team decision-impact(s) of change in hOKT3γ1 (Ala-Ala) manufacturer during study.,Other_or_Unreported,Administrative_Commercial_Enrollment
-NCT02812693,Solid_Oncology,WITHDRAWN,poor accrual,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
-NCT04905407,Hematologic_Malignancy,TERMINATED,"As per sponsor decision, the study was terminated.",Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
-NCT00920556,Hematologic_Malignancy,TERMINATED,Study terminated.24 subjects enrolled;provided adequate data for decision making.,Other_or_Unreported,Administrative_Commercial_Enrollment
-NCT05470985,Autoimmune_IBD_Rheum,TERMINATED,Study was terminated due to business reasons.,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
-NCT02716688,Solid_Oncology,WITHDRAWN,No patients enrolled.,Other_or_Unreported,Administrative_Commercial_Enrollment
-NCT06608940,Solid_Oncology,WITHDRAWN,Funding unavailable,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
-NCT00690885,Pulmonary_IPF_ARDS,TERMINATED,Insufficient patient accrual,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
-NCT00983346,Hematologic_Malignancy,TERMINATED,"Lab Staff that was required left the institution, therefore accrual closed prematurely",Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
-NCT00885963,Solid_Oncology,TERMINATED,Limitation in financial resources.,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
-NCT04802031,Hematologic_Malignancy,WITHDRAWN,Low accrual,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
-NCT04134208,Solid_Oncology,TERMINATED,Slow accrual,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
-NCT02508636,Solid_Oncology,TERMINATED,Low Accrual,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
-NCT02978443,Solid_Oncology,TERMINATED,Lack of Enrollment,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
-NCT00109850,Solid_Oncology,TERMINATED,Closed due to poor accrual,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
-NCT07090174,Solid_Oncology,WITHDRAWN,Study withdrawn prior to participant enrollment due to lack of study product.,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
-NCT03241927,Solid_Oncology,TERMINATED,difficult enrollment,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
-NCT00846391,Metabolic_Endocrine,TERMINATED,Study was terminated due to inability to recruit patients.,Other_or_Unreported,Administrative_Commercial_Enrollment
-NCT02980705,Autoimmune_IBD_Rheum,TERMINATED,Study terminated-Sponsor's decision,Other_or_Unreported,Administrative_Commercial_Enrollment
-NCT00356525,Solid_Oncology,TERMINATED,Stopped early due to low enrollment,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
-NCT00184028,Solid_Oncology,TERMINATED,Insufficient Accrual,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
-NCT04249622,Solid_Oncology,TERMINATED,slow accrual,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
-NCT04678323,Metabolic_Endocrine,WITHDRAWN,Funding,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
-NCT01897454,Solid_Oncology,TERMINATED,Study was terminated due to slower than anticipated accrual,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
-NCT05245760,Solid_Oncology,WITHDRAWN,Funding unavailable.,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
-NCT05423197,Solid_Oncology,WITHDRAWN,logistical issues,Other_or_Unreported,Administrative_Commercial_Enrollment
-NCT02153905,Solid_Oncology,TERMINATED,"Slow, insufficient accrual.",Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
-NCT00003532,Solid_Oncology,TERMINATED,Slow accrual,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
-NCT00349752,Autoimmune_IBD_Rheum,TERMINATED,"Recruitment was stopped early due to slow enrolment of this population. With no safety concerns, the study continued normally for subjects already recruited",Scientific_Safety_Toxicity,Administrative_Commercial_Enrollment
-NCT00304200,Solid_Oncology,TERMINATED,Funding was inadequate to continue; Companies requested closure.,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
-NCT00356200,Dermatologic_Immune,TERMINATED,Enrollment criteria met,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
-NCT04639024,Hematologic_Malignancy,TERMINATED,ADCT is reallocating all resources to the phase III program.,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
-NCT02127073,Solid_Oncology,TERMINATED,Could not identify collaborator and secure additional funding after transferring the record to Montefiore Medical Center,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
-NCT02405910,Solid_Oncology,WITHDRAWN,PI Left Institution,Other_or_Unreported,Administrative_Commercial_Enrollment
-NCT03287271,Solid_Oncology,TERMINATED,Due to loss of funding,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
-NCT03496298,Metabolic_Endocrine,TERMINATED,"Sponsor decision to cancel TRIAL, not related to safety concern",Scientific_Safety_Toxicity,Administrative_Commercial_Enrollment
-NCT00372996,Solid_Oncology,TERMINATED,This study was closed to enrollment as of 13 May 2011 due to business reasons. Premature closure was not prompted by any safety or efficacy concerns.,Scientific_Safety_Toxicity,Administrative_Commercial_Enrollment
-NCT00215631,Solid_Oncology,TERMINATED,slow recruitment,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
-NCT02928029,Hematologic_Malignancy,TERMINATED,Due to the changes of standard of care and the slow recruitment of participants.,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
-NCT04975516,Solid_Oncology,TERMINATED,Low/slow accrual,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
-NCT01312935,Cardiovascular_HF_Athero,TERMINATED,PolyMedix decided to stop enrollment in both clinical trials due to observations of reductions in blood pressure.,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
-NCT00544076,Solid_Oncology,TERMINATED,Accrual too slow,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
-NCT02484209,Metabolic_Endocrine,WITHDRAWN,Inclusion criteria too strict making it difficult to recruit in primary care,Other_or_Unreported,Administrative_Commercial_Enrollment
-NCT03295552,Solid_Oncology,TERMINATED,Slow enrollment.,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
-NCT00809341,Hematologic_Malignancy,TERMINATED,Low accrual,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
-NCT04892446,Hematologic_Malignancy,TERMINATED,This study was terminated early due to the Sponsor's decision to discontinue development of the investigational drug and close the program.,Other_or_Unreported,Administrative_Commercial_Enrollment
-NCT00515112,Solid_Oncology,TERMINATED,This study has been terminated due to poor accrual,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
-NCT04522375,Metabolic_Endocrine,WITHDRAWN,"Twenty months after investigative site initiations, and best efforts to identify study participants, no participants were identified.",Other_or_Unreported,Other_or_Unreported
-NCT03340558,Solid_Oncology,WITHDRAWN,Negative results in a similar study,Other_or_Unreported,Other_or_Unreported
-NCT00346749,Pulmonary_IPF_ARDS,TERMINATED,The study was terminated due to difficulties with finding sites and subjects willing to participate.,Other_or_Unreported,Other_or_Unreported
-NCT00664105,Solid_Oncology,TERMINATED,Treatment became standard.,Other_or_Unreported,Other_or_Unreported
-NCT00243035,Hematologic_Malignancy,TERMINATED,,Other_or_Unreported,Other_or_Unreported
-NCT01097083,Solid_Oncology,TERMINATED,,Other_or_Unreported,Other_or_Unreported
-NCT05647512,Hematologic_Malignancy,WITHDRAWN,According to sponsor strategy,Other_or_Unreported,Other_or_Unreported
-NCT01060345,Solid_Oncology,TERMINATED,Drug no longer available,Other_or_Unreported,Other_or_Unreported
-NCT00264368,Renal_CKD_AKI,TERMINATED,,Other_or_Unreported,Other_or_Unreported
-NCT02773797,Pulmonary_IPF_ARDS,WITHDRAWN,,Other_or_Unreported,Other_or_Unreported
-NCT00418821,Metabolic_Endocrine,TERMINATED,Study was conducted to fulfill a post marketing commitment (PMC). FDA acknowledged closure of PMC.,Other_or_Unreported,Other_or_Unreported
-NCT01367275,Solid_Oncology,TERMINATED,Sponsor closed study,Other_or_Unreported,Other_or_Unreported
-NCT00447291,Metabolic_Endocrine,TERMINATED,"Zone Labs, Inc discontinue utilizing their fish oil supplement and frozen foods",Other_or_Unreported,Other_or_Unreported
-NCT03906071,Solid_Oncology,TERMINATED,Inability to meet protocol objectives,Other_or_Unreported,Other_or_Unreported
-NCT01569074,Autoimmune_IBD_Rheum,TERMINATED,AZ decision to discontinue fostamatinib development in RA; rights to fostamatinib returned to Rigel Pharmaceuticals.,Other_or_Unreported,Other_or_Unreported
-NCT00386399,Solid_Oncology,WITHDRAWN,"All consented subjects tested negative for the BRCA2 mutation, therefore, did not meet criteria to start the study, resulting in withdrawal by PI",Other_or_Unreported,Other_or_Unreported
-NCT03360448,Cardiovascular_HF_Athero,WITHDRAWN,Clinical development plans and strategy for RT-100 being re-evaluated,Other_or_Unreported,Other_or_Unreported
-NCT00325455,Metabolic_Endocrine,TERMINATED,,Other_or_Unreported,Other_or_Unreported
-NCT00347165,Ophthalmic_Retinal,TERMINATED,undefined,Other_or_Unreported,Other_or_Unreported
-NCT02421354,Hematologic_Malignancy,TERMINATED,,Other_or_Unreported,Other_or_Unreported
-NCT03777124,Solid_Oncology,TERMINATED,The sponsor's R\&D strategy is adjusted.,Other_or_Unreported,Other_or_Unreported
-NCT00051688,Solid_Oncology,TERMINATED,,Other_or_Unreported,Other_or_Unreported
-NCT00073450,Solid_Oncology,TERMINATED,,Other_or_Unreported,Other_or_Unreported
-NCT01484860,Solid_Oncology,TERMINATED,,Other_or_Unreported,Other_or_Unreported
-NCT01866423,Solid_Oncology,TERMINATED,Not progressing toward scientific goals,Other_or_Unreported,Other_or_Unreported
-NCT00426127,Solid_Oncology,TERMINATED,Inadequate number of eligible patients,Other_or_Unreported,Other_or_Unreported
-NCT00245466,Solid_Oncology,TERMINATED,The maintenance doses were too low to maintain testosterone suppression,Other_or_Unreported,Other_or_Unreported
-NCT00625729,Hematologic_Malignancy,TERMINATED,No patients exhibited natural killer cell expansion (primary endpoint).,Other_or_Unreported,Other_or_Unreported
-NCT03038477,Solid_Oncology,WITHDRAWN,Cancelled by PI,Other_or_Unreported,Other_or_Unreported
-NCT02701517,Hematologic_Malignancy,TERMINATED,The trial was stopped before the targeted number of patients was reached due to lack of support.,Other_or_Unreported,Other_or_Unreported
-NCT01501370,Hematologic_Malignancy,WITHDRAWN,,Other_or_Unreported,Other_or_Unreported
-NCT04732286,Solid_Oncology,TERMINATED,The study was completed as pre-specified in the protocol. Study was terminated only for participants who were in the study even after 24 months of follow-up as specified in the protocol.,Other_or_Unreported,Other_or_Unreported
-NCT00493428,Solid_Oncology,WITHDRAWN,The study have been stoped because the protocol is going to be modify.,Other_or_Unreported,Other_or_Unreported
-NCT00695604,Pulmonary_IPF_ARDS,WITHDRAWN,"Study was not able to be completed, no results analyzed.",Other_or_Unreported,Other_or_Unreported
-NCT01716546,Solid_Oncology,TERMINATED,Not reached the primary endpoint target according to the statistical design,Other_or_Unreported,Other_or_Unreported
-NCT01067326,Cardiovascular_HF_Athero,TERMINATED,Novartis ended all studies regarding Aliskiren.,Other_or_Unreported,Other_or_Unreported
-NCT00042302,Solid_Oncology,TERMINATED,,Other_or_Unreported,Other_or_Unreported
-NCT06191250,Solid_Oncology,TERMINATED,"Study Terminated Prior to trial activation, due to changes in SOC of the treatment",Other_or_Unreported,Other_or_Unreported
-NCT00293436,Solid_Oncology,WITHDRAWN,,Other_or_Unreported,Other_or_Unreported
-NCT03576885,Cardiovascular_HF_Athero,TERMINATED,based on DSMB recommendation at interim analysis,Other_or_Unreported,Other_or_Unreported
-NCT03858972,Solid_Oncology,TERMINATED,The Sponsor has discontinued the development of tesetaxel,Other_or_Unreported,Other_or_Unreported
-NCT04171284,Solid_Oncology,TERMINATED,"Strategy adjustments, independent of the safety and efficacy of the trial medication",Scientific_Safety_Toxicity,Other_or_Unreported
-NCT03365661,Hematologic_Malignancy,WITHDRAWN,Sponsor halted study.,Other_or_Unreported,Other_or_Unreported
-NCT02215161,Solid_Oncology,TERMINATED,Risk to benefit ratio is not acceptable,Other_or_Unreported,Other_or_Unreported
-NCT04453371,Pulmonary_IPF_ARDS,WITHDRAWN,Our local committee has denied the approval request,Other_or_Unreported,Other_or_Unreported
-NCT02458963,Solid_Oncology,WITHDRAWN,,Other_or_Unreported,Other_or_Unreported
-NCT00188045,Hepatic_MASH_Fibrosis,TERMINATED,,Other_or_Unreported,Other_or_Unreported
-NCT02713828,Solid_Oncology,TERMINATED,Company discontinued further development of study drug for this indication,Other_or_Unreported,Other_or_Unreported
-NCT05564338,Solid_Oncology,WITHDRAWN,Study has voluntarily discontinued due to a change in the company-level development strategy and is not because of any safety concern or the request from any health authority worldwide.,Scientific_Safety_Toxicity,Other_or_Unreported
-NCT03228186,Solid_Oncology,TERMINATED,Pharmaceutical company discontinued the study drug.,Other_or_Unreported,Other_or_Unreported
-NCT00242372,Metabolic_Endocrine,TERMINATED,The development program has been terminated,Other_or_Unreported,Other_or_Unreported
-NCT00539799,Renal_CKD_AKI,WITHDRAWN,Local pharmacy unwilling to comply with study protocol,Other_or_Unreported,Other_or_Unreported
-NCT01884675,Cardiovascular_HF_Athero,TERMINATED,,Other_or_Unreported,Other_or_Unreported
-NCT04216472,Solid_Oncology,TERMINATED,\<75% participation,Other_or_Unreported,Other_or_Unreported
-NCT03343977,Solid_Oncology,WITHDRAWN,Study withdrawn for technical reasons,Other_or_Unreported,Other_or_Unreported
-NCT02385669,Solid_Oncology,TERMINATED,why study stopped,Other_or_Unreported,Other_or_Unreported
-NCT00498901,Solid_Oncology,TERMINATED,,Other_or_Unreported,Other_or_Unreported
-NCT01966575,Solid_Oncology,WITHDRAWN,Recent findings suggest that letrozole may be a superior Clomiphene Citrate.,Other_or_Unreported,Other_or_Unreported
-NCT00273507,Solid_Oncology,TERMINATED,,Other_or_Unreported,Other_or_Unreported
-NCT01135329,Hematologic_Malignancy,TERMINATED,The stopping rule was met and hence the study was closed,Other_or_Unreported,Other_or_Unreported
+nct_id,disease_axis,overall_status,why_stopped,ref_4class,clause_aware_pred_4class,naive_keyword_pred_4class
+NCT04987307,Autoimmune_IBD_Rheum,TERMINATED,The study was terminated due to meeting a prespecified futility rule and not related to any safety concerns.,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
+NCT04864392,Musculoskeletal_Bone,TERMINATED,Study early terminated due to lack of effect (did not meet primary/ secondary endpoints). This decision was not linked to safety concerns,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
+NCT00290706,Hematologic_Malignancy,TERMINATED,Closed per Data Monitoring Committee due to lack of efficacy,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
+NCT00936832,Solid_Oncology,WITHDRAWN,because the sunitinib showed futility in anotehr trial,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
+NCT04437368,Ophthalmic_Retinal,TERMINATED,Terminated for interim analysis demonstrating futility (trial highly unlikely to meet efficacy outcome). The trial is not ending early because of medical problems or concerns.,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
+NCT03175172,Solid_Oncology,TERMINATED,Study was stopped due to low enrollment and lack of clinical activity.,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility,Administrative_Commercial_Enrollment
+NCT01385293,Solid_Oncology,TERMINATED,The trial was stopped at the first stage due to futility,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
+NCT01362348,Ophthalmic_Retinal,TERMINATED,Lack of efficacy identified during a preliminary analysis,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
+NCT01999192,Autoimmune_IBD_Rheum,TERMINATED,Lack of efficacy,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
+NCT05101915,Pulmonary_IPF_ARDS,TERMINATED,TSC recommended early termination due to lack of futility of the trial.,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
+NCT06160609,Hematologic_Malignancy,TERMINATED,The study was terminated due to lack of efficacy.,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
+NCT06859294,Autoimmune_IBD_Rheum,TERMINATED,The interim analysis data failed to demonstrate the intended treatment effect.,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility,Other_or_Unreported
+NCT01113801,Renal_CKD_AKI,TERMINATED,Interim Assessment: Lack of Efficacy,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
+NCT00117351,Solid_Oncology,TERMINATED,insufficient efficacy,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
+NCT00824785,Solid_Oncology,TERMINATED,Lack of efficacy,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
+NCT01676701,Autoimmune_IBD_Rheum,TERMINATED,Insufficient efficacy observed in study BCDM(NCT01198002) and BCDV(NCT01202773),Scientific_Efficacy_Futility,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
+NCT00516841,Solid_Oncology,TERMINATED,Decision to terminate recruitment based on lack of efficacy,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
+NCT01767857,Solid_Oncology,TERMINATED,The study crossed the prospective futility boundary of primary endpoint,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
+NCT04161391,Solid_Oncology,TERMINATED,Adverse change in the risk/benefit.,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility,Other_or_Unreported
+NCT02722369,Solid_Oncology,TERMINATED,"Low recruitment, lack of efficacy and increased adverse events in investigational arm.",Scientific_Efficacy_Futility,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
+NCT00217464,Solid_Oncology,TERMINATED,Closed for futility,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
+NCT02633800,Solid_Oncology,TERMINATED,Trial was terminated by sponsor due to lack of efficacy.,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
+NCT01467076,Pulmonary_IPF_ARDS,TERMINATED,The study was halted due to futility concerns based on the unmet benchmarks as specified in the pilot study protocol.,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
+NCT00087776,Solid_Oncology,TERMINATED,Interim analysis determined that the futility boundary had been crossed and there was no reasonable prospect that statistical significance would be achieved if patient accrual continued,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
+NCT05630937,Solid_Oncology,TERMINATED,"In the Phase II part of the study, among the participants evaluable for efficacy, no objective (partial response or clinical response) was observed at the first futility analysis.",Scientific_Efficacy_Futility,Other_or_Unreported,Scientific_Efficacy_Futility
+NCT04369469,Pulmonary_IPF_ARDS,TERMINATED,Met futility bar at interim analysis,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
+NCT02119676,Solid_Oncology,TERMINATED,Substudy 1 was terminated for futility at interim analysis and Substudy 2 was terminated per sponsor decision.,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
+NCT01130246,Cardiovascular_HF_Athero,TERMINATED,Lack of efficacy,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
+NCT01316939,Autoimmune_IBD_Rheum,TERMINATED,This study was terminated due to the lack of efficacy of GSK1605786A in Crohn's disease based on the results of Study CCX114151.,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
+NCT06312020,Autoimmune_IBD_Rheum,TERMINATED,The study was terminated by sponsor due to meeting pre-defined criteria for futility.,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
+NCT01759511,Pulmonary_IPF_ARDS,TERMINATED,The Study was terminated due to lack of efficacy.,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
+NCT01215942,Autoimmune_IBD_Rheum,TERMINATED,Insufficient efficacy observed in study BCDM (NCT01198002) and BCDV (NCT01202773).,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
+NCT03719300,Solid_Oncology,TERMINATED,Lack of efficacy,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
+NCT00459108,Solid_Oncology,TERMINATED,Halted early for futility.,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
+NCT02119663,Solid_Oncology,TERMINATED,The safety committee found no safety issues but recommended halting the study based on a lack of efficacy in a similar trial. The sponsor terminated the trial.,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
+NCT02369796,Metabolic_Endocrine,TERMINATED,Sponsor decision to terminate the study because the study did not achieve the primary efficacy objective.,Scientific_Efficacy_Futility,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
+NCT06881251,Dermatologic_Immune,TERMINATED,Terminated: futility criteria met at interim efficacy analysis.,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
+NCT01798485,Solid_Oncology,TERMINATED,The study was stopped after the first Interim Analysis due to futility.,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
+NCT01740401,Solid_Oncology,TERMINATED,Primary Endpoint not met,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
+NCT02454842,Solid_Oncology,TERMINATED,Lack of efficacy,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
+NCT04365400,Metabolic_Endocrine,TERMINATED,Trial prematurely terminated on 03 May 2022 due to the results from an interim analysis indicating a lack of efficacy in the study population.,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
+NCT04476797,Solid_Oncology,TERMINATED,Development GC4711 was halted after the lead study in pancreatic cancer was stopped early due to meeting the requirements of a futility analysis,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
+NCT04347226,Solid_Oncology,TERMINATED,Interim analysis indicated that futility boundary was reached.,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
+NCT00558636,Solid_Oncology,TERMINATED,Terminated early when the results from Study NCT00300885 showed an overall lack of efficacy in NSCLC and increased mortality in subjects with squamous subtype.,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
+NCT03071692,Metabolic_Endocrine,TERMINATED,The study was stopped for futility based on efficacy results at the interim analysis; no unexpected safety findings were observed.,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
+NCT05232864,Renal_CKD_AKI,TERMINATED,Study terminated by sponsor based on a futility analysis of the core study CAIN457Q12301,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
+NCT00526890,Solid_Oncology,TERMINATED,lack of efficacy,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
+NCT03222622,Dermatologic_Immune,TERMINATED,The efficacy failed to meet the primary efficacy endpoint,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
+NCT02895100,Autoimmune_IBD_Rheum,TERMINATED,Data Monitoring Committee discontinued the trial due to futility-based outcome,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
+NCT04791319,Dermatologic_Immune,TERMINATED,Premature Termination due to Interim Analysis (100 patients at Week 16) meeting futility.,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
+NCT03288545,Solid_Oncology,TERMINATED,"Sponsor stopped the study after meeting enrollment targets and primary objectives, and after collecting sufficient data for planned regulatory filings. The decision was not due to safety concerns, futility, or any regulatory request.",Administrative_Commercial_Enrollment,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
+NCT03329885,Hepatic_MASH_Fibrosis,TERMINATED,Adverse change in the risk/benefit,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility,Other_or_Unreported
+NCT05911841,Dermatologic_Immune,TERMINATED,The decision to terminate the study was due to efficacy/effectiveness reasons.,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility,Other_or_Unreported
+NCT07283848,Solid_Oncology,WITHDRAWN,The pharmaceutical company is not moving forward with this intervention due to lack of efficacy.,Scientific_Efficacy_Futility,Other_or_Unreported,Scientific_Efficacy_Futility
+NCT00723203,Hematologic_Malignancy,TERMINATED,Terminated early due to a lack of efficacy,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
+NCT06844669,Solid_Oncology,TERMINATED,Futility,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
+NCT00538291,Solid_Oncology,TERMINATED,Study was terminated early due to lack of efficacy.,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
+NCT03630224,Renal_CKD_AKI,TERMINATED,Premature termination due to futility following interim analysis,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
+NCT02603146,Autoimmune_IBD_Rheum,TERMINATED,"Enrollment was closed before reaching the target. In the 1st interim analysis after enrollment closure, the follow up \& treatment of active participants were stopped early due to evidence of futility.",Scientific_Efficacy_Futility,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility
+NCT04921358,Solid_Oncology,TERMINATED,"Due to safety risks and unfavorable risk-benefit assessment results, the sponsor has decided to voluntarily terminate the study.",Scientific_Safety_Toxicity,Scientific_Safety_Toxicity,Scientific_Efficacy_Futility
+NCT00544908,Solid_Oncology,TERMINATED,Toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
+NCT00646659,Solid_Oncology,TERMINATED,Recruitment was suspended prematurely for safety concerns and closed after IDMC review,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
+NCT01277510,Renal_CKD_AKI,TERMINATED,Study was put on clinical hold on 30 Jan 2013 following a subject fatality. Study was never restarted and was closed.,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
+NCT04634825,Solid_Oncology,TERMINATED,Based on internal review of safety data,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
+NCT04858451,Pulmonary_IPF_ARDS,TERMINATED,Study stopping criteria were met. A safety event has occurred which was classified as an SAE and was related to the study intervention.,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
+NCT02457910,Solid_Oncology,TERMINATED,Interim analysis - toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
+NCT00401401,Solid_Oncology,TERMINATED,MTD was established and patients completed 16 months safety f-up and response assessments. It is considered of limited value to follow patients for 3 years.,Administrative_Commercial_Enrollment,Other_or_Unreported,Scientific_Safety_Toxicity
+NCT02495233,Solid_Oncology,TERMINATED,Study terminated due to adverse events related to the combination therapy,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
+NCT01009346,Solid_Oncology,TERMINATED,Toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
+NCT04142658,Cardiovascular_HF_Athero,TERMINATED,Safety,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
+NCT02585388,Solid_Oncology,TERMINATED,Treatment toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
+NCT01388647,Solid_Oncology,TERMINATED,Closed early due to increased hematologic toxicity and possible reduced efficacy,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
+NCT00352690,Solid_Oncology,TERMINATED,Safety of patients,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
+NCT04594694,Hepatic_MASH_Fibrosis,TERMINATED,Intercept made a business decision to terminate the study based on FDA's request for voluntary withdrawal of Ocaliva and the issuance of clinical hold on studies under US IND involving OCA.,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
+NCT05435053,Solid_Oncology,TERMINATED,"The study was terminated on the basis on an evaluation of the safety and efficacy of the 9 included patients of which 2 of the patients were excluded before receiving any study treatments, thus 7 patients were treated in the study.",Scientific_Safety_Toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
+NCT04075136,Ophthalmic_Retinal,WITHDRAWN,IRB stopped study due to safety concerns before any participants were enrolled.,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
+NCT01609582,Metabolic_Endocrine,TERMINATED,Due to potential concerns about liver safety (See Detailed Description),Scientific_Safety_Toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
+NCT01339910,Hematologic_Malignancy,TERMINATED,Accrual terminated as recommended by the data and safety monitoring board.,Other_or_Unreported,Administrative_Commercial_Enrollment,Scientific_Safety_Toxicity
+NCT03357224,Infectious_Sepsis,TERMINATED,Following an urgent safety measure due to toxicity recruitment has been closed prematurely.,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
+NCT02677948,Hematologic_Malignancy,WITHDRAWN,FDA has placed all trials involving Pacritinib on Full Clinical Hold,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
+NCT04623216,Hematologic_Malignancy,TERMINATED,Study was stopped following a strategic decision from the Sponsor. It was not based on any safety findings or safety concerns with sabatolimab.,Administrative_Commercial_Enrollment,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
+NCT03026166,Solid_Oncology,TERMINATED,Enrollment was stopped after the dose-limiting toxicity (DLT) evaluation phase of Cohort 2.,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
+NCT00555217,Renal_CKD_AKI,TERMINATED,It was stopped primarily because of safety concerns along with low conditional power to detect a treatment effect on the primary outcome.,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
+NCT01326312,Solid_Oncology,TERMINATED,FDA Clinical Hold,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
+NCT01481116,Metabolic_Endocrine,TERMINATED,Due to potential concerns about liver safety (See Detailed Description),Scientific_Safety_Toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
+NCT02532010,Hematologic_Malignancy,TERMINATED,"The study was put on clinical hold by the sponsor since Feb 9th 2016, and was later decided not to re-open due to financial constraints.",Scientific_Safety_Toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
+NCT00496223,Solid_Oncology,TERMINATED,toxicities required dose reduction compromising effectiveness and PI left Moffitt,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity,Other_or_Unreported
+NCT03720574,Metabolic_Endocrine,TERMINATED,Reassess safety risks and benefits,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
+NCT03945227,Solid_Oncology,WITHDRAWN,"Due to the delay in the study shceduled, due to the start of competitive study and the approval of Durvalumab from the Ministry of Food and Drug Safety, it was judged that it was difficult to enroll subjects.",Administrative_Commercial_Enrollment,Other_or_Unreported,Scientific_Safety_Toxicity
+NCT00953576,Solid_Oncology,TERMINATED,The study terminated early due to concerns about drug toxicity.,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
+NCT04952753,Solid_Oncology,TERMINATED,"The study was terminated early due to the halt of NIS793 treatment and urgent safety measures issued in July and August 2023, respectively, as continued evaluation of Standard of Care alone will not support the trial's purpose.",Scientific_Safety_Toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
+NCT03663166,Solid_Oncology,TERMINATED,Increased SAE occurrence per PI,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
+NCT02438787,Autoimmune_IBD_Rheum,TERMINATED,This study was stopped because ustekinumab did not achieve key endpoints in a related study. The safety profile was consistent with past ustekinumab studies.,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility,Scientific_Safety_Toxicity
+NCT03694197,Metabolic_Endocrine,TERMINATED,The primary objective (to evaluate the long-term safety of Praluent) was adequately evaluated in other studies.,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Scientific_Safety_Toxicity
+NCT02711137,Solid_Oncology,TERMINATED,Study terminated due to safety issues.,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
+NCT05360264,Solid_Oncology,TERMINATED,Unexpected toxicity events were documented during interim safety evaluations of the investigational drug.,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
+NCT00277316,Solid_Oncology,TERMINATED,Development of XL999 was stopped due to cardiac toxicities in the subjects,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity,Other_or_Unreported
+NCT00393380,Hematologic_Malignancy,TERMINATED,Study stopped because of toxicity concerns.,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
+NCT01342016,Renal_CKD_AKI,TERMINATED,Due to safety concern of active control drug,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
+NCT00366795,Hepatic_MASH_Fibrosis,TERMINATED,Study was terminated due to safety reason.,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
+NCT01029925,Solid_Oncology,TERMINATED,"DSMB determined, due to higher than expected risk/safety concerns, study should be closed.",Scientific_Safety_Toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
+NCT07087938,Autoimmune_IBD_Rheum,WITHDRAWN,Study did not begin recruiting participants due to insufficient preclinical evidence resulting in FDA clinical hold.,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
+NCT02910882,Solid_Oncology,TERMINATED,Safety,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
+NCT01576887,Renal_CKD_AKI,WITHDRAWN,IDMC recommendation for safety concerns,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
+NCT00290017,Solid_Oncology,TERMINATED,FDA Hold May 2007,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
+NCT02361346,Hematologic_Malignancy,TERMINATED,Sponsor decision following clinical hold,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
+NCT00417248,Solid_Oncology,TERMINATED,Negative sorafenib results from ESCAPE trial and safety concerns of regimen,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
+NCT03713944,Solid_Oncology,TERMINATED,"Extreme toxicity, thromboembolic events",Scientific_Safety_Toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
+NCT03285646,Musculoskeletal_Bone,TERMINATED,"Due to implementation of an urgent safety measure, enrollment and dosing in R475-PN-1612 was stopped; enrolled participants entered the 20-week safety follow-up",Scientific_Safety_Toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
+NCT00955240,Solid_Oncology,TERMINATED,Inadequate toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
+NCT00383487,Solid_Oncology,TERMINATED,Extreme toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
+NCT00667277,Hematologic_Malignancy,TERMINATED,lack of response activity in the setting of an unacceptable toxicity profile,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
+NCT05589597,Solid_Oncology,TERMINATED,"Sponsor decision to stop recruitment in context of overall EO4010 development goals. Stop of recruitment was not related to any safety concern, with the safety profile of EO4010 being benign",Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Scientific_Safety_Toxicity
+NCT00788606,Hematologic_Malignancy,TERMINATED,Toxicity and efficacy data from another trial,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
+NCT00243204,Solid_Oncology,TERMINATED,FDA Hold May 2007,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
+NCT05223647,Solid_Oncology,TERMINATED,Termination was adviced by Data Safety Committee due to excess toxicity of the experimental treatment.,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
+NCT00277290,Solid_Oncology,TERMINATED,Study was terminated due to cardiac toxicities in the subjects,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity,Other_or_Unreported
+NCT00199342,Solid_Oncology,TERMINATED,Occurrence of 2 dose-limiting toxicities at the initial dose level (60 mg/m2) in Part I.,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
+NCT03765541,Hematologic_Malignancy,TERMINATED,"Despite a recruitment target that was not met, we managed to achieve more than 50% of inclusions and 33% of deaths, enabling us to carry out an initial analysis of the primary endpoint",Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Scientific_Safety_Toxicity
+NCT01792635,Metabolic_Endocrine,TERMINATED,The study was terminated prematurely on 16 May 2014 due to a safety concern.,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity,Scientific_Safety_Toxicity
+NCT00330200,Metabolic_Endocrine,TERMINATED,Due to poor enrollment,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
+NCT01420666,Musculoskeletal_Bone,WITHDRAWN,The study was withdrawn for administrative reason,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
+NCT02560038,Solid_Oncology,TERMINATED,slow enrollment; resource re-allocation,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
+NCT01315873,Hematologic_Malignancy,TERMINATED,PI left the institution before all data analysis was completed,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Other_or_Unreported
+NCT01264081,Solid_Oncology,TERMINATED,Protocol would not be able to reach stated accrual.,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
+NCT00949988,Hematologic_Malignancy,TERMINATED,Three subjects were enrolled and all three subjects withdrew.,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Other_or_Unreported
+NCT05329168,Infectious_Sepsis,WITHDRAWN,business decision before FPFV; not related to any safety concerns,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Scientific_Safety_Toxicity
+NCT03355482,Autoimmune_IBD_Rheum,TERMINATED,"poor recruitment, funding",Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
+NCT04995094,Solid_Oncology,WITHDRAWN,"Enrollment challenges, study not feasible",Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
+NCT05177770,Solid_Oncology,TERMINATED,"The study was terminated for strategic reasons, not due to any safety concerns.",Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Scientific_Safety_Toxicity
+NCT02413827,Solid_Oncology,TERMINATED,Feasibility concerns due to changes in standard of care,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Other_or_Unreported
+NCT01570192,Infectious_Sepsis,TERMINATED,NIAID terminated the study due to low subject enrollment,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
+NCT04965688,Solid_Oncology,TERMINATED,Lack of enrollment to meet the primary and secondary study goals,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
+NCT00239720,Dermatologic_Immune,TERMINATED,Study team decision-impact(s) of change in hOKT3γ1 (Ala-Ala) manufacturer during study.,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Other_or_Unreported
+NCT02812693,Solid_Oncology,WITHDRAWN,poor accrual,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
+NCT04905407,Hematologic_Malignancy,TERMINATED,"As per sponsor decision, the study was terminated.",Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
+NCT00920556,Hematologic_Malignancy,TERMINATED,Study terminated.24 subjects enrolled;provided adequate data for decision making.,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Other_or_Unreported
+NCT05470985,Autoimmune_IBD_Rheum,TERMINATED,Study was terminated due to business reasons.,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
+NCT02716688,Solid_Oncology,WITHDRAWN,No patients enrolled.,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Other_or_Unreported
+NCT06608940,Solid_Oncology,WITHDRAWN,Funding unavailable,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
+NCT00690885,Pulmonary_IPF_ARDS,TERMINATED,Insufficient patient accrual,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
+NCT00983346,Hematologic_Malignancy,TERMINATED,"Lab Staff that was required left the institution, therefore accrual closed prematurely",Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
+NCT00885963,Solid_Oncology,TERMINATED,Limitation in financial resources.,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
+NCT04802031,Hematologic_Malignancy,WITHDRAWN,Low accrual,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
+NCT04134208,Solid_Oncology,TERMINATED,Slow accrual,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
+NCT02508636,Solid_Oncology,TERMINATED,Low Accrual,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
+NCT02978443,Solid_Oncology,TERMINATED,Lack of Enrollment,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
+NCT00109850,Solid_Oncology,TERMINATED,Closed due to poor accrual,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
+NCT07090174,Solid_Oncology,WITHDRAWN,Study withdrawn prior to participant enrollment due to lack of study product.,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
+NCT03241927,Solid_Oncology,TERMINATED,difficult enrollment,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
+NCT00846391,Metabolic_Endocrine,TERMINATED,Study was terminated due to inability to recruit patients.,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Other_or_Unreported
+NCT02980705,Autoimmune_IBD_Rheum,TERMINATED,Study terminated-Sponsor's decision,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Other_or_Unreported
+NCT00356525,Solid_Oncology,TERMINATED,Stopped early due to low enrollment,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
+NCT00184028,Solid_Oncology,TERMINATED,Insufficient Accrual,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
+NCT04249622,Solid_Oncology,TERMINATED,slow accrual,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
+NCT04678323,Metabolic_Endocrine,WITHDRAWN,Funding,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
+NCT01897454,Solid_Oncology,TERMINATED,Study was terminated due to slower than anticipated accrual,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
+NCT05245760,Solid_Oncology,WITHDRAWN,Funding unavailable.,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
+NCT05423197,Solid_Oncology,WITHDRAWN,logistical issues,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Other_or_Unreported
+NCT02153905,Solid_Oncology,TERMINATED,"Slow, insufficient accrual.",Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
+NCT00003532,Solid_Oncology,TERMINATED,Slow accrual,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
+NCT00349752,Autoimmune_IBD_Rheum,TERMINATED,"Recruitment was stopped early due to slow enrolment of this population. With no safety concerns, the study continued normally for subjects already recruited",Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Scientific_Safety_Toxicity
+NCT00304200,Solid_Oncology,TERMINATED,Funding was inadequate to continue; Companies requested closure.,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
+NCT00356200,Dermatologic_Immune,TERMINATED,Enrollment criteria met,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
+NCT04639024,Hematologic_Malignancy,TERMINATED,ADCT is reallocating all resources to the phase III program.,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
+NCT02127073,Solid_Oncology,TERMINATED,Could not identify collaborator and secure additional funding after transferring the record to Montefiore Medical Center,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
+NCT02405910,Solid_Oncology,WITHDRAWN,PI Left Institution,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Other_or_Unreported
+NCT03287271,Solid_Oncology,TERMINATED,Due to loss of funding,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
+NCT03496298,Metabolic_Endocrine,TERMINATED,"Sponsor decision to cancel TRIAL, not related to safety concern",Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Scientific_Safety_Toxicity
+NCT00372996,Solid_Oncology,TERMINATED,This study was closed to enrollment as of 13 May 2011 due to business reasons. Premature closure was not prompted by any safety or efficacy concerns.,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Scientific_Safety_Toxicity
+NCT00215631,Solid_Oncology,TERMINATED,slow recruitment,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
+NCT02928029,Hematologic_Malignancy,TERMINATED,Due to the changes of standard of care and the slow recruitment of participants.,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
+NCT04975516,Solid_Oncology,TERMINATED,Low/slow accrual,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
+NCT01312935,Cardiovascular_HF_Athero,TERMINATED,PolyMedix decided to stop enrollment in both clinical trials due to observations of reductions in blood pressure.,Scientific_Safety_Toxicity,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
+NCT00544076,Solid_Oncology,TERMINATED,Accrual too slow,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
+NCT02484209,Metabolic_Endocrine,WITHDRAWN,Inclusion criteria too strict making it difficult to recruit in primary care,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Other_or_Unreported
+NCT03295552,Solid_Oncology,TERMINATED,Slow enrollment.,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
+NCT00809341,Hematologic_Malignancy,TERMINATED,Low accrual,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
+NCT04892446,Hematologic_Malignancy,TERMINATED,This study was terminated early due to the Sponsor's decision to discontinue development of the investigational drug and close the program.,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Other_or_Unreported
+NCT00515112,Solid_Oncology,TERMINATED,This study has been terminated due to poor accrual,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment
+NCT04522375,Metabolic_Endocrine,WITHDRAWN,"Twenty months after investigative site initiations, and best efforts to identify study participants, no participants were identified.",Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Other_or_Unreported
+NCT03340558,Solid_Oncology,WITHDRAWN,Negative results in a similar study,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility,Other_or_Unreported
+NCT00346749,Pulmonary_IPF_ARDS,TERMINATED,The study was terminated due to difficulties with finding sites and subjects willing to participate.,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Other_or_Unreported
+NCT00664105,Solid_Oncology,TERMINATED,Treatment became standard.,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Other_or_Unreported
+NCT00243035,Hematologic_Malignancy,TERMINATED,,Other_or_Unreported,Other_or_Unreported,Other_or_Unreported
+NCT01097083,Solid_Oncology,TERMINATED,,Other_or_Unreported,Other_or_Unreported,Other_or_Unreported
+NCT05647512,Hematologic_Malignancy,WITHDRAWN,According to sponsor strategy,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Other_or_Unreported
+NCT01060345,Solid_Oncology,TERMINATED,Drug no longer available,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Other_or_Unreported
+NCT00264368,Renal_CKD_AKI,TERMINATED,,Other_or_Unreported,Other_or_Unreported,Other_or_Unreported
+NCT02773797,Pulmonary_IPF_ARDS,WITHDRAWN,,Other_or_Unreported,Other_or_Unreported,Other_or_Unreported
+NCT00418821,Metabolic_Endocrine,TERMINATED,Study was conducted to fulfill a post marketing commitment (PMC). FDA acknowledged closure of PMC.,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Other_or_Unreported
+NCT01367275,Solid_Oncology,TERMINATED,Sponsor closed study,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Other_or_Unreported
+NCT00447291,Metabolic_Endocrine,TERMINATED,"Zone Labs, Inc discontinue utilizing their fish oil supplement and frozen foods",Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Other_or_Unreported
+NCT03906071,Solid_Oncology,TERMINATED,Inability to meet protocol objectives,Other_or_Unreported,Other_or_Unreported,Other_or_Unreported
+NCT01569074,Autoimmune_IBD_Rheum,TERMINATED,AZ decision to discontinue fostamatinib development in RA; rights to fostamatinib returned to Rigel Pharmaceuticals.,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Other_or_Unreported
+NCT00386399,Solid_Oncology,WITHDRAWN,"All consented subjects tested negative for the BRCA2 mutation, therefore, did not meet criteria to start the study, resulting in withdrawal by PI",Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Other_or_Unreported
+NCT03360448,Cardiovascular_HF_Athero,WITHDRAWN,Clinical development plans and strategy for RT-100 being re-evaluated,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Other_or_Unreported
+NCT00325455,Metabolic_Endocrine,TERMINATED,,Other_or_Unreported,Other_or_Unreported,Other_or_Unreported
+NCT00347165,Ophthalmic_Retinal,TERMINATED,undefined,Other_or_Unreported,Other_or_Unreported,Other_or_Unreported
+NCT02421354,Hematologic_Malignancy,TERMINATED,,Other_or_Unreported,Other_or_Unreported,Other_or_Unreported
+NCT03777124,Solid_Oncology,TERMINATED,The sponsor's R\&D strategy is adjusted.,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Other_or_Unreported
+NCT00051688,Solid_Oncology,TERMINATED,,Other_or_Unreported,Other_or_Unreported,Other_or_Unreported
+NCT00073450,Solid_Oncology,TERMINATED,,Other_or_Unreported,Other_or_Unreported,Other_or_Unreported
+NCT01484860,Solid_Oncology,TERMINATED,,Other_or_Unreported,Other_or_Unreported,Other_or_Unreported
+NCT01866423,Solid_Oncology,TERMINATED,Not progressing toward scientific goals,Other_or_Unreported,Other_or_Unreported,Other_or_Unreported
+NCT00426127,Solid_Oncology,TERMINATED,Inadequate number of eligible patients,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Other_or_Unreported
+NCT00245466,Solid_Oncology,TERMINATED,The maintenance doses were too low to maintain testosterone suppression,Scientific_Efficacy_Futility,Other_or_Unreported,Other_or_Unreported
+NCT00625729,Hematologic_Malignancy,TERMINATED,No patients exhibited natural killer cell expansion (primary endpoint).,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility,Other_or_Unreported
+NCT03038477,Solid_Oncology,WITHDRAWN,Cancelled by PI,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Other_or_Unreported
+NCT02701517,Hematologic_Malignancy,TERMINATED,The trial was stopped before the targeted number of patients was reached due to lack of support.,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Other_or_Unreported
+NCT01501370,Hematologic_Malignancy,WITHDRAWN,,Other_or_Unreported,Other_or_Unreported,Other_or_Unreported
+NCT04732286,Solid_Oncology,TERMINATED,The study was completed as pre-specified in the protocol. Study was terminated only for participants who were in the study even after 24 months of follow-up as specified in the protocol.,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Other_or_Unreported
+NCT00493428,Solid_Oncology,WITHDRAWN,The study have been stoped because the protocol is going to be modify.,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Other_or_Unreported
+NCT00695604,Pulmonary_IPF_ARDS,WITHDRAWN,"Study was not able to be completed, no results analyzed.",Other_or_Unreported,Other_or_Unreported,Other_or_Unreported
+NCT01716546,Solid_Oncology,TERMINATED,Not reached the primary endpoint target according to the statistical design,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility,Other_or_Unreported
+NCT01067326,Cardiovascular_HF_Athero,TERMINATED,Novartis ended all studies regarding Aliskiren.,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Other_or_Unreported
+NCT00042302,Solid_Oncology,TERMINATED,,Other_or_Unreported,Other_or_Unreported,Other_or_Unreported
+NCT06191250,Solid_Oncology,TERMINATED,"Study Terminated Prior to trial activation, due to changes in SOC of the treatment",Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Other_or_Unreported
+NCT00293436,Solid_Oncology,WITHDRAWN,,Other_or_Unreported,Other_or_Unreported,Other_or_Unreported
+NCT03576885,Cardiovascular_HF_Athero,TERMINATED,based on DSMB recommendation at interim analysis,Other_or_Unreported,Other_or_Unreported,Other_or_Unreported
+NCT03858972,Solid_Oncology,TERMINATED,The Sponsor has discontinued the development of tesetaxel,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Other_or_Unreported
+NCT04171284,Solid_Oncology,TERMINATED,"Strategy adjustments, independent of the safety and efficacy of the trial medication",Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Scientific_Safety_Toxicity
+NCT03365661,Hematologic_Malignancy,WITHDRAWN,Sponsor halted study.,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Other_or_Unreported
+NCT02215161,Solid_Oncology,TERMINATED,Risk to benefit ratio is not acceptable,Scientific_Efficacy_Futility,Scientific_Efficacy_Futility,Other_or_Unreported
+NCT04453371,Pulmonary_IPF_ARDS,WITHDRAWN,Our local committee has denied the approval request,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Other_or_Unreported
+NCT02458963,Solid_Oncology,WITHDRAWN,,Other_or_Unreported,Other_or_Unreported,Other_or_Unreported
+NCT00188045,Hepatic_MASH_Fibrosis,TERMINATED,,Other_or_Unreported,Other_or_Unreported,Other_or_Unreported
+NCT02713828,Solid_Oncology,TERMINATED,Company discontinued further development of study drug for this indication,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Other_or_Unreported
+NCT05564338,Solid_Oncology,WITHDRAWN,Study has voluntarily discontinued due to a change in the company-level development strategy and is not because of any safety concern or the request from any health authority worldwide.,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Scientific_Safety_Toxicity
+NCT03228186,Solid_Oncology,TERMINATED,Pharmaceutical company discontinued the study drug.,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Other_or_Unreported
+NCT00242372,Metabolic_Endocrine,TERMINATED,The development program has been terminated,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Other_or_Unreported
+NCT00539799,Renal_CKD_AKI,WITHDRAWN,Local pharmacy unwilling to comply with study protocol,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Other_or_Unreported
+NCT01884675,Cardiovascular_HF_Athero,TERMINATED,,Other_or_Unreported,Other_or_Unreported,Other_or_Unreported
+NCT04216472,Solid_Oncology,TERMINATED,\<75% participation,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Other_or_Unreported
+NCT03343977,Solid_Oncology,WITHDRAWN,Study withdrawn for technical reasons,Other_or_Unreported,Other_or_Unreported,Other_or_Unreported
+NCT02385669,Solid_Oncology,TERMINATED,why study stopped,Other_or_Unreported,Other_or_Unreported,Other_or_Unreported
+NCT00498901,Solid_Oncology,TERMINATED,,Other_or_Unreported,Other_or_Unreported,Other_or_Unreported
+NCT01966575,Solid_Oncology,WITHDRAWN,Recent findings suggest that letrozole may be a superior Clomiphene Citrate.,Administrative_Commercial_Enrollment,Administrative_Commercial_Enrollment,Other_or_Unreported
+NCT00273507,Solid_Oncology,TERMINATED,,Other_or_Unreported,Other_or_Unreported,Other_or_Unreported
+NCT01135329,Hematologic_Malignancy,TERMINATED,The stopping rule was met and hence the study was closed,Other_or_Unreported,Other_or_Unreported,Other_or_Unreported

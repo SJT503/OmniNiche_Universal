@@ -29,11 +29,58 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from omniniche.stage2.fibrosis_mash_deconvolution import _read_10x_mtx_triplet_bytes
+from omniniche.stage2.macro_clinical_census import (
+    adjudicate_stoppage_clause_aware,
+    classify_trial_stop_deconvolution_naive_keyword,
+)
 from omniniche.stage2.pan_disease_drift_law import (
     compute_dynamic_drift_metrics,
+    compute_empirical_axis_ecm_density_map,
     compute_modality_barrier_compatibility,
     evaluate_translational_progression_models,
 )
+
+
+def unify_clause_aware_stoppage_tables(vault_ct: pathlib.Path, out_tables: pathlib.Path) -> None:
+    """Promote adjudicate_stoppage_clause_aware() as the single unified stop_deconvolution across master CSV, Table S1, and Table S2."""
+    master_p = vault_ct / "non_cns_phase234_trials_master.csv"
+    if master_p.exists():
+        mdf = pd.read_csv(master_p, low_memory=False)
+        mdf["naive_keyword_stop"] = [
+            classify_trial_stop_deconvolution_naive_keyword(s, w)
+            for s, w in zip(mdf["overall_status"].fillna(""), mdf["why_stopped"].fillna(""))
+        ]
+        mdf["stop_deconvolution"] = [
+            adjudicate_stoppage_clause_aware(s, w)
+            for s, w in zip(mdf["overall_status"].fillna(""), mdf["why_stopped"].fillna(""))
+        ]
+        mdf.to_csv(master_p, index=False, encoding="utf-8")
+
+        s1_p = out_tables / "Table_S1_Systemic_Organ_ClinicalTrials_PRISMA_Summary.csv"
+        if s1_p.exists():
+            s1 = pd.read_csv(s1_p)
+            for idx, r in s1.iterrows():
+                ax = str(r["disease_axis"])
+                sub = mdf[mdf["disease_axis"] == ax]
+                s1.loc[idx, "completed_trials"] = int((sub["stop_deconvolution"] == "Completed").sum())
+                s1.loc[idx, "scientific_efficacy_futility"] = int((sub["stop_deconvolution"] == "Scientific_Efficacy_Futility").sum())
+                s1.loc[idx, "scientific_safety_toxicity"] = int((sub["stop_deconvolution"] == "Scientific_Safety_Toxicity").sum())
+                s1.loc[idx, "administrative_commercial_enrollment"] = int((sub["stop_deconvolution"] == "Administrative_Commercial_Enrollment").sum())
+                s1.loc[idx, "other_or_unreported_stop"] = int(sub["stop_deconvolution"].isin(["Other_Unclassified_Stop", "Unreported_Stop_Reason"]).sum())
+            s1.to_csv(s1_p, index=False, encoding="utf-8")
+
+    s2_p = out_tables / "Table_S2_Target_Resolved_Trials_Deconvolution.csv"
+    if s2_p.exists():
+        s2 = pd.read_csv(s2_p, low_memory=False)
+        s2["naive_keyword_stop"] = [
+            classify_trial_stop_deconvolution_naive_keyword(s, w)
+            for s, w in zip(s2["overall_status"].fillna(""), s2["why_stopped"].fillna(""))
+        ]
+        s2["stop_deconvolution"] = [
+            adjudicate_stoppage_clause_aware(s, w)
+            for s, w in zip(s2["overall_status"].fillna(""), s2["why_stopped"].fillna(""))
+        ]
+        s2.to_csv(s2_p, index=False, encoding="utf-8")
 
 
 def extract_axis5_human_uc_biopsy_gse250487(
@@ -205,12 +252,14 @@ def extract_axis6_human_sepsis_gse167363(
 def main() -> None:
     vault_sc = ROOT / "data_vault" / "raw_single_cell"
     vault_pb = ROOT / "data_vault" / "processed_pseudobulk"
+    vault_ct = ROOT / "data_vault" / "raw_clinical_trials"
     out_tables = ROOT / "outputs" / "stage2_tables"
     vault_pb.mkdir(parents=True, exist_ok=True)
     out_tables.mkdir(parents=True, exist_ok=True)
 
+    unify_clause_aware_stoppage_tables(vault_ct, out_tables)
     tau0_df = pd.read_csv(vault_pb / "hpa_pan_organ_tau0_table.csv", index_col=0)
-    t2 = pd.read_csv(out_tables / "Table_S2_Target_Resolved_Trials_Deconvolution.csv")
+    t2 = pd.read_csv(out_tables / "Table_S2_Target_Resolved_Trials_Deconvolution.csv", low_memory=False)
 
     clinical_genes: set[str] = set()
     for val in t2["target_genes"].dropna().astype(str):
@@ -292,7 +341,11 @@ def main() -> None:
         "Infectious_Sepsis": axis_drift_tables["Infectious_Sepsis"],
     }
 
-    print("\n>>> [4/4] Linking 29,791 Target-Resolved Clinical Trials with HPA Static tau_0 & 6-Axis Dynamic Drift x Barrier...")
+    print("\n>>> [4/4] Linking 29,791 Target-Resolved Clinical Trials with HPA Static tau_0 & 6-Axis Dynamic Drift x Empirical ECM Barrier...")
+    emp_ecm_map = compute_empirical_axis_ecm_density_map(
+        vault_pb, vault_sc / "hpa_pan_organ_normal" / "rna_single_cell_type.tsv"
+    )
+    print("    Empirical single-cell/HPA interstitial ECM barrier density map D_ECM(axis):", emp_ecm_map)
     # Vectorized trial-level feature assembly across all target genes of each trial
     records: list[dict[str, Any]] = []
     tau0_dict = tau0_df["tau0_healthy"].to_dict()
@@ -322,7 +375,9 @@ def main() -> None:
         else:
             te_v, tl_v, dt_v, sw_v, st_v, dr_v = tau0_v, tau0_v, 0.0, 0, 0.25, 0.50 * tau0_v
 
-        bar_v = compute_modality_barrier_compatibility(str(row.drug_modalities), ax, st_v, sw_v)
+        bar_v = compute_modality_barrier_compatibility(
+            str(row.drug_modalities), ax, st_v, sw_v, axis_ecm_density_map=emp_ecm_map
+        )
         records.append(
             {
                 "nct_id": row.nct_id,

@@ -62,9 +62,9 @@ def test_conserved_fibrosis_grammar_exhibits_f2_vs_f4_hysteresis_and_combo_rescu
 
     mock_liver = pd.DataFrame(
         {
-            "Parenchyma_Injury": [0.15, 0.20, 0.18, 0.52, 0.58, 0.78, 0.85, 0.88],
-            "SPP1_SAMac": [0.12, 0.16, 0.14, 0.45, 0.49, 0.79, 0.84, 0.90],
-            "Myofibroblast": [0.10, 0.14, 0.13, 0.42, 0.46, 0.81, 0.86, 0.91],
+            "Parenchyma_Injury": [0.16, 0.34, 0.50, 0.42, 0.80, 0.68, 0.25, 0.62],
+            "SPP1_SAMac": [0.14, 0.52, 0.30, 0.66, 0.82, 0.45, 0.40, 0.74],
+            "Myofibroblast": [0.12, 0.20, 0.58, 0.36, 0.78, 0.88, 0.52, 0.48],
         }
     )
     grammar = build_conserved_fibrosis_grammar_from_liver(mock_liver)

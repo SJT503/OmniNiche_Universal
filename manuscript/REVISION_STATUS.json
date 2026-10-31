@@ -1,0 +1,137 @@
+{
+  "plan_file": "Simulated_NatMed_5Reviewer_Panel_and_Closure_v2.md",
+  "version": "Stage II v2.2",
+  "updated_at": "2026-10-31",
+  "items": {
+    "T1": {
+      "status": "completed",
+      "priority": "P0_Fatal",
+      "axis": "reproducibility / statistical-rigor",
+      "summary": "Eliminated synthetic PRNG confusion matrix in 240-trial stoppage audit; built independent 240-trial Manual_Clinical_Adjudication_240 reference from verbatim ClinicalTrials.gov whyStopped narratives and benchmarked unified clause-aware parser (95.83% accuracy, kappa = 0.9413) head-to-head against Naive Keyword Baseline (70.00%, kappa = 0.6105).",
+      "evidence_files": [
+        "omniniche/stage2/v2_statistical_fortification.py",
+        "outputs/stage2_tables/Table_S2a_Stoppage_Audit_240_Sample.csv",
+        "outputs/stage2_tables/Table_S2a_Stoppage_Auditor_Validation.csv",
+        "outputs/stage2_figures/Fig2_MacroAtlas_41396_Systemic_Organ_ClinicalTrials.png"
+      ]
+    },
+    "T2": {
+      "status": "completed",
+      "priority": "P0_Fatal",
+      "axis": "mechanism-evidence / reproducibility",
+      "summary": "Replaced hand-coded DRUG_COMPARTMENT_MAP and pIC50 tuning with objective organ-specific single-cell pseudobulk expression routing (>=58% of peak compartment) coupled with tau_0-weighted receptor-sink dilution, unsigned ridge-GRN leverage at uniform pIC50 = 7.5, closure-free cell-level module activity coupling across 64 human donors, and stage-blind fixed-s0 evaluation.",
+      "evidence_files": [
+        "omniniche/stage2/fibrosis_mash_deconvolution.py",
+        "outputs/stage2_tables/Table_S4a_PanOrgan_Fibrosis_All_Human_Donors.csv",
+        "outputs/stage2_tables/Table_S4b_CrossOrgan_ZeroShot_Arena.csv",
+        "outputs/stage2_figures/Fig4_PanOrgan_Fibrosis_ZeroShot_and_Hysteresis.png"
+      ]
+    },
+    "T3": {
+      "status": "completed",
+      "priority": "P1_Major",
+      "axis": "clinical-validity / statistical-rigor",
+      "summary": "Expanded pan-organ human fibrosis benchmark from 14 to 24 live ClinicalTrials.gov SHA-256-locked Phase IIb/III trials across liver (n=13), lung (n=8), and kidney (n=3) (10 winners vs 14 failures; All-24 AUROC = 0.8714, exact P = 0.0010; Core-14 AUROC = 0.9583; Stage-Blind AUROC = 0.7643 / 0.9375; bidirectional 3x3 & LOOO AUROC = 0.8357-0.8821).",
+      "evidence_files": [
+        "omniniche/stage2/fibrosis_mash_deconvolution.py",
+        "outputs/stage2_tables/Table_S4_Fibrosis_Phase3_Benchmark_Trials.csv",
+        "outputs/stage2_tables/Table_S4f_Bidirectional_3x3_CrossOrgan_Transfer.csv",
+        "outputs/stage2_figures/Fig4_PanOrgan_Fibrosis_ZeroShot_and_Hysteresis.png"
+      ]
+    },
+    "T4": {
+      "status": "completed",
+      "priority": "P1_Major",
+      "axis": "novelty-significance / statistical-rigor",
+      "summary": "Executed head-to-head benchmark and joint synergy evaluation against Open Targets v24.09 target-disease human genetic association and somatic mutation evidence across n = 11,637 scientific and n = 23,761 maturation trials (Genetics + DNAcc AUROC = 0.6977 vs Genetics alone 0.6362, DeLong P = 7.13e-10; Maturation 0.7190 vs 0.6631, P = 2.19e-103; 3-pillar target-clustered OR = 1.38, P_cluster = 2.39e-4).",
+      "evidence_files": [
+        "omniniche/stage2/v2_statistical_fortification.py",
+        "outputs/stage2_tables/Table_S3l_Genetics_vs_DNAcc_Orthogonality.csv",
+        "outputs/stage2_tables/Table_S3g_Multivariable_FixedEffects_Control.csv",
+        "outputs/stage2_figures/Fig3_PanOrgan_Dynamic_Drift_and_DNAcc_Law.png"
+      ]
+    },
+    "T5": {
+      "status": "completed",
+      "priority": "P1_Major",
+      "axis": "statistical-rigor / experimental-design",
+      "summary": "Replaced hand-assigned AXIS_FIBROTIC_BARRIER constants with empirical collagen-myofibroblast ECM density D_ECM(axis) in [0.070, 0.350] derived from HPA v23 and single-cell stroma; added unseen-target Group5Fold CV inside single-target monotherapies (scientific P = 1.35e-4; maturation AUROC = 0.6375, P = 7.39e-123); added regulatory approval (R6, AUROC = 0.6777) and strict 9-axis parenchymal (R7, AUROC = 0.6860) sensitivity regimes; achieved significant within-modality DNAcc gains across small molecules, antibodies, and proteins/peptides.",
+      "evidence_files": [
+        "omniniche/stage2/pan_disease_drift_law.py",
+        "omniniche/stage2/v2_statistical_fortification.py",
+        "outputs/stage2_tables/Table_S3m_Empirical_Axis_ECM_Density.csv",
+        "outputs/stage2_tables/Table_S3f_SixStep_Ablation_and_GroupKFold.csv",
+        "outputs/stage2_tables/Table_S3k_WithinModality_DNAcc_Stratified_Audit.csv",
+        "outputs/stage2_tables/Table_S3e_Unreported_Stop_Sensitivity_Bounds.csv"
+      ]
+    },
+    "T6": {
+      "status": "completed",
+      "priority": "P1_Major",
+      "axis": "experimental-design / claim-moderation",
+      "summary": "Eliminated response-label-stratified early/late staging in solid oncology drift calculation by computing Delta_tau strictly from response-label-free early primary BCC tumors vs advanced resected NSCLC tumors; standardized ectopic switch denominators across all profiled targets (17.8%-37.1%) and expressed targets (21.0%-41.3%).",
+      "evidence_files": [
+        "omniniche/stage2/pan_disease_drift_law.py",
+        "outputs/stage2_tables/Table_S3_TargetGene_6Axis_Drift_Atlas.csv",
+        "outputs/stage2_figures/Extended_Data_Fig2_SixAxis_SingleCell_Drift_and_Ablation.png"
+      ]
+    },
+    "T7": {
+      "status": "completed",
+      "priority": "P1_Major",
+      "axis": "clinical-validity / reproducibility",
+      "summary": "Set GSE123813 streaming to exact single-UMI fidelity (umi_stride = 1); ingested real GEO GSE91061 (n=49 pre-nivolumab monotherapy melanoma) and GSE78220 (n=26 pre-pembrolizumab monotherapy melanoma) cohorts, scaling strictly pre-treatment biopsies from n = 32 to n = 107 (including n = 83 pure anti-PD-1 monotherapy); added OmniNiche (No-Visium), 18-gene GEP, CAF/TIDE, and CD8:myCAF baselines plus dual anti-PD-1 + SPP1/TREM2 TAM rescue (74.6%).",
+      "evidence_files": [
+        "omniniche/stage2/solid_tumor_spatial_icb.py",
+        "outputs/stage2_tables/Table_S5_SolidTumor_ICB_Spatial_Responder_Benchmark.csv",
+        "outputs/stage2_tables/Table_S5i_Pooled_PreTreatment_107Patients_Master.csv",
+        "outputs/stage2_figures/Fig5_SolidTumor_Visium_Exclusion_and_PreICB_Responder.png"
+      ]
+    },
+    "T8": {
+      "status": "completed",
+      "priority": "P1_Major",
+      "axis": "reproducibility / writing-clarity",
+      "summary": "Unified clause-aware negation-stripping stoppage parser across macro_clinical_census.py and v2_statistical_fortification.py (admin halts = 4,838 / 9,406 = 51.4%; 2020-2025 pooled = 64.0%, 2021 peak = 66.3%); reconciled modality counts across all 29,791 target-resolved trials (18,128 small-molecule regimens [17,963 typed + 165 untyped chemical], 7,308 IgG antibodies, 4,355 non-antibody biologics [4,021 proteins/peptides + 334 cell/gene/oligo]).",
+      "evidence_files": [
+        "omniniche/stage2/macro_clinical_census.py",
+        "omniniche/stage2/v2_statistical_fortification.py",
+        "outputs/stage2_tables/Table_S1_Systemic_Organ_ClinicalTrials_PRISMA_Summary.csv",
+        "outputs/stage2_tables/Table_S2_Target_Resolved_Trials_Deconvolution.csv"
+      ]
+    },
+    "T9": {
+      "status": "completed",
+      "priority": "P2_Minor_Major",
+      "axis": "figures-and-tables / writing-clarity",
+      "summary": "Added explicit Block A (Deconfounded Scientific Cohort, n = 11,637, G = 374) and Block B (Definitive Phase II-to-III/IV Maturation Cohort & Per-Axis Breakdown, n = 23,761, G = 561) headers in Table 1 and updated Fig. 2-5 and Extended Data Figs. 1-4.",
+      "evidence_files": [
+        "manuscript/OmniNiche_Flagship_Manuscript_EN.md",
+        "manuscript/OmniNiche_Flagship_Manuscript_ZH_Preview.md"
+      ]
+    },
+    "T10": {
+      "status": "completed",
+      "priority": "P2_Minor",
+      "axis": "claim-moderation / clinical-validity",
+      "summary": "Added explicit translational toxicology discussion of systemic pan-TGFBR1 (ALK5) cardiac valvulopathy risks and live-verified literature citations for spatially/lineage-restricted stromal alternatives (inhaled ALK5 inhibitors, LRRC15+ myofibroblast targeting, and TREM2/SPP1 or CXCL9:SPP1 myeloid reprogramming).",
+      "evidence_files": [
+        "manuscript/OmniNiche_Flagship_Manuscript_EN.md",
+        "outputs/stage2_tables/verified_pubmed_references.json"
+      ]
+    }
+  },
+  "completed": [
+    "T1",
+    "T2",
+    "T3",
+    "T4",
+    "T5",
+    "T6",
+    "T7",
+    "T8",
+    "T9",
+    "T10"
+  ],
+  "failed": []
+}

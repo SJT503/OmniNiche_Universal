@@ -1,5 +1,5 @@
-quartile,n_trials_static,static_tau0_maturation_pct,static_ci95_low,static_ci95_high,n_trials_dnacc,dnacc_maturation_pct,dnacc_ci95_low,dnacc_ci95_high
-Q1_Low,5992,44.576,43.318,45.835,5992,25.534,24.43,26.638
-Q2,5992,42.206,40.956,43.457,5992,41.138,39.892,42.384
-Q3,5991,44.6,43.342,45.859,5991,52.746,51.482,54.01
-Q4_High,5992,53.405,52.141,54.668,5992,65.37,64.166,66.575
+quartile,n_trials_static,static_tau0_maturation_pct,static_ci95_low,static_ci95_high,n_trials_dnacc,dnacc_maturation_pct,dnacc_ci95_low,dnacc_ci95_high,n_sci_static,sci_static_tau0_success_pct,sci_static_ci95_low,sci_static_ci95_high,n_sci_dnacc,sci_dnacc_success_pct,sci_dnacc_ci95_low,sci_dnacc_ci95_high
+Q1_Low,5941,44.959,43.697,46.227,5941,29.473,28.327,30.645,2910,94.674,93.797,95.432,2910,91.271,90.191,92.243
+Q2,5940,42.559,41.307,43.821,5940,32.744,31.562,33.948,2909,94.328,93.427,95.112,2909,94.259,93.354,95.048
+Q3,5940,45.0,43.738,46.268,5940,59.781,58.528,61.021,2909,94.706,93.832,95.462,2909,97.422,96.78,97.938
+Q4_High,5940,53.872,52.602,55.137,5940,64.394,63.167,65.602,2909,96.872,96.175,97.445,2909,97.628,97.009,98.121
