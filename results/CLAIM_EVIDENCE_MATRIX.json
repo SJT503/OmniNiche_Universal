@@ -1,0 +1,190 @@
+{
+  "schema_version": "2.1",
+  "generated_at": "2026-11-01T17:05:26.870563+00:00",
+  "project_name": "OmniNiche_Universal",
+  "research_track": "multiomics_spatial_mechanism",
+  "track_rigor_assertions": {
+    "matrix_purity_gate_passed": true,
+    "cell_level_pseudoreplication": false,
+    "full_list_before_top_candidates": true,
+    "cross_cohort_or_spatial_or_perturbation_orthogonal_validated": true,
+    "sha256_truth_firewall_verified": true,
+    "synthetic_interpolation_used": false,
+    "greybox_vs_blackbox_or_identifiability_checked": true,
+    "trajectory_probabilistic_calibration_reported": true,
+    "zero_shot_holdout_trial_or_cohort_validated": true
+  },
+  "claims": [
+    {
+      "claim_id": "C1_ClauseAware_Registry_Deconvolution_Exposes_mAb_Futility",
+      "tier": "core",
+      "claim_text": "Unified clause-aware natural-language stoppage deconvolution across 41,396 Phase II-IV trials (29,791 target-resolved) separates operational/commercial halts (51.4% of stoppages) from biological failures at kappa = 0.9413 and uncovers a 1.57-fold efficacy futility excess for ~150-kDa IgG monoclonal antibodies relative to small molecules.",
+      "evidence_lines": [
+        {
+          "evidence_id": "C1_E1_MacroRegistry_and_Adjudication",
+          "orthogonality_axis": "clinical_registry_nlp_adjudication",
+          "metric_ids": [
+            "total_trials_dedup",
+            "target_resolved_trials",
+            "admin_stop_pct",
+            "adjudication_kappa"
+          ],
+          "summary": "41,396 unique trials (29,791 target-resolved; 51.4% operational stops) validated on an independent 240-trial clinical adjudication benchmark (95.83% accuracy, kappa = 0.9413 vs 0.6105 naive keyword baseline)."
+        },
+        {
+          "evidence_id": "C1_E2_Modality_Futility_Disproportion",
+          "orthogonality_axis": "pharmacological_modality_epidemiology",
+          "metric_ids": [
+            "mab_futility_or"
+          ],
+          "summary": "150-kDa IgG monoclonal antibodies exhibit 1.57-fold higher explicit biological efficacy futility odds than small molecules (Fisher P = 2.26e-4 across 25,271 regimens) without excess systemic toxicity."
+        }
+      ],
+      "sensitivity_or_boundary_note": "Bounded across 7 registry sensitivity regimes (R1-R7), including worst-case assignment of all 2,618 target-resolved unreported stoppages to biological failure (R3 AUROC = 0.6533) and regulatory-approval gold standards (R6 AUROC = 0.6767)."
+    },
+    {
+      "claim_id": "C2_DNAcc_Outperforms_Static_Healthy_Atlas_and_Generalizes_ZeroShot_LODO",
+      "tier": "core",
+      "claim_text": "Static healthy single-cell target specificity performs near chance on deconfounded scientific trial outcomes (AUROC = 0.5387), whereas Dynamic Niche Accessibility (DNAcc) integrating diseased-niche specificity, progression drift, and ECM steric compatibility achieves AUROC = 0.6710 and transfers zero-shot across unseen organ axes (Core-6 LODO AUROC = 0.6306).",
+      "evidence_lines": [
+        {
+          "evidence_id": "C2_E1_Nested_SixStep_Ablation",
+          "orthogonality_axis": "pan_organ_nested_ablation",
+          "metric_ids": [
+            "dnacc_healthy_auroc",
+            "dnacc_m3_auroc",
+            "dnacc_m6_auroc"
+          ],
+          "summary": "Six-step nested ablation across 11,637 scientific trials elevates AUROC from 0.5387 (M1 healthy tau_0) to 0.6614 (M3 early disease) and 0.6710 (M6 full DNAcc, paired DeLong P = 1.11e-21)."
+        },
+        {
+          "evidence_id": "C2_E2_ZeroShot_Organ_Axis_LODO",
+          "orthogonality_axis": "cross_organ_zero_shot_transfer",
+          "metric_ids": [
+            "core6_lodo_auroc"
+          ],
+          "summary": "Holding out entire organ disease axes under intercept-free regularized Leave-One-Disease-Axis-Out transfer (n = 5,662 Core-6 trials) achieves pooled OOF AUROC = 0.6306 (+0.1431 over healthy tau_0, P = 5.19e-16)."
+        }
+      ],
+      "sensitivity_or_boundary_note": "Intravascular bloodstream sepsis (GSE167363 PBMCs, D_ECM = 0.0700) provides the expected negative physical boundary where interstitial ECM steric gating does not apply (maturation AUROC = 0.3822)."
+    },
+    {
+      "claim_id": "C3_DNAcc_Provides_Orthogonal_Additive_Synergy_With_Human_Genetics",
+      "tier": "core",
+      "claim_text": "Dynamic Niche Accessibility is statistically orthogonal to Open Targets human genetic target support and combines additively with human genetics to reach AUROC = 0.7023 on scientific trial outcomes (0.7210 on Phase II-to-III/IV maturation), remaining independently predictive after five-family target-clustered multivariable adjustment.",
+      "evidence_lines": [
+        {
+          "evidence_id": "C3_E1_HeadToHead_Genetics_Synergy",
+          "orthogonality_axis": "human_genetics_orthogonality",
+          "metric_ids": [
+            "genetics_alone_auroc",
+            "dnacc_plus_genetics_auroc"
+          ],
+          "summary": "Joint Human Genetics + DNAcc improves discrimination from 0.6362 (Open Targets genetics alone) to 0.7023 (+0.0661, two-sided paired DeLong P = 1.58e-10; unseen-target Group5Fold 0.6844 vs 0.6175)."
+        },
+        {
+          "evidence_id": "C3_E2_Within_Genetically_Supported_and_LODO",
+          "orthogonality_axis": "multivariable_and_out_of_organ_generalization",
+          "metric_ids": [
+            "dnacc_m6_auroc",
+            "core6_lodo_auroc"
+          ],
+          "summary": "DNAcc retains full predictive power strictly within genetically supported targets (AUROC = 0.6916, P = 3.59e-25), under Liang-Zeger 374-target sandwich regression (adjusted OR = 1.42, P_cluster = 2.81e-5), and across held-out organ axes (0.6306)."
+        }
+      ],
+      "sensitivity_or_boundary_note": "Evaluated under target-gene-disjoint Group5Fold cross-validation across G = 374 scientific and G = 561 maturation target clusters to prevent target-level information leakage."
+    },
+    {
+      "claim_id": "C4_ZeroLabel_Langevin_Predicts_PanOrgan_Antifibrotic_Trials_Invariant_To_Potency",
+      "tier": "core",
+      "claim_text": "A closure-free three-compartment stochastic Ito-Langevin Waddington solver compiled exclusively from primary human biopsy donors with zero clinical trial outcome fitting predicts 24 Phase IIb/III antifibrotic trials across liver, lung, and kidney (AUROC = 0.8714), remaining invariant to ChEMBL v33 biochemical target potency while improving probability calibration under LOOO Platt recalibration (Brier = 0.1735).",
+      "evidence_lines": [
+        {
+          "evidence_id": "C4_E1_ZeroLabel_24Trial_Antifibrotic_Arena",
+          "orthogonality_axis": "zero_label_biophysical_trial_simulation",
+          "metric_ids": [
+            "antifibrotic24_auroc"
+          ],
+          "summary": "Liver-compiled closure-free Langevin dynamics (all 4 directed edges structurally identifiable at Delta_chi2 > 3.841) predicts 24 SHA-256-locked Phase IIb/III trials across liver, lung, and kidney at AUROC = 0.8714 (exact permutation P = 0.0010; Core-14 AUROC = 0.9583)."
+        },
+        {
+          "evidence_id": "C4_E2_ChEMBL_Potency_and_LOOO_Calibration",
+          "orthogonality_axis": "biochemical_potency_and_cross_organ_calibration",
+          "metric_ids": [
+            "antifibrotic24_looo_brier"
+          ],
+          "summary": "Incorporating ChEMBL v33 human pXC50 (3.52-10.00) confirms sub-nanomolar affinity cannot rescue scar-excluded mAbs or drift-eroded targets (alpha=0.15 AUROC = 0.8643, P = 0.0021), while LOOO Platt recalibration lowers Brier error from 0.2072 to 0.1735."
+        },
+        {
+          "evidence_id": "C4_E3_WetLab_Perturbation_and_MultiScale_Consilience",
+          "orthogonality_axis": "wetlab_pharmacological_perturbation_and_multiscale_consilience",
+          "metric_ids": [
+            "wetlab_pirfenidone_delta",
+            "consilience24_spearman_rho"
+          ],
+          "summary": "Direct pharmacological perturbation across n = 73 human fibroblast/TGFBR1i RNA-seq profiles reverses the locked myofibroblast/ECM barrier without refitting (GSE226249 pirfenidone Delta = -0.48, P = 4.47e-6; GSE154646 RepSox P = 1.10e-3; GSE210020 nintedanib P = 0.0182), while macro DNAcc aligns with zero-label meso Langevin remission across all 24 trials (Spearman rho = 0.7861, P = 5.29e-6)."
+        }
+      ],
+      "sensitivity_or_boundary_note": "Pulmonary and renal winners acting via hemodynamic or cAMP pathways compress raw basin probabilities (0.0535-0.2330 at 0.50 cutoff), resolved via LOOO Platt recalibration (76.4%-81.4% balanced accuracy); ziritaxestat reflects off-niche systemic toxicity."
+    },
+    {
+      "claim_id": "C5_Visium_Peritumoral_Stromal_Exclusion_Gates_PreTreatment_AntiPD1_Response",
+      "tier": "core",
+      "claim_text": "Across 20,880 quality-filtered 10x Visium spots from 12 primary human carcinoma sections, concentric myCAF-TAM barriers exclude CD8+ effector T cells beyond library-depth, lineage-admixture, and 2D spatial-autocorrelation confounding (toroidal Stouffer Z = +7.82), enabling zero-label stratification across 107 strictly pre-treatment anti-PD-1 biopsies (AUROC = 0.6367; scRNA TME = 0.8750).",
+      "evidence_lines": [
+        {
+          "evidence_id": "C5_E1_Visium12_Admixture_and_Toroidal_Null",
+          "orthogonality_axis": "spatial_transcriptomics_geostatistics",
+          "metric_ids": [
+            "visium12_spots_qc",
+            "visium12_toroidal_z"
+          ],
+          "summary": "All 12 carcinoma Visium sections (20,880 QC spots) show positive peritumoral exclusion (Wilcoxon P = 2.44e-4), retaining 48.3% mean SEI after UMI/admixture residualization with 24,000 toroidal cyclic shifts yielding Stouffer Z = +7.82 (P = 2.69e-15)."
+        },
+        {
+          "evidence_id": "C5_E2_MultiCohort_PreTreatment_ICB_Transfer",
+          "orthogonality_axis": "clinical_biopsy_immunotherapy_validation",
+          "metric_ids": [
+            "icb107_auroc"
+          ],
+          "summary": "Zero-label Visium-informed Langevin solver achieves AUROC = 0.6367 (exact P = 0.0187) across 107 strictly pre-treatment anti-PD-1 biopsies (0.8750 in intact single-cell TME cohorts GSE123813 BCC and GSE207422 NSCLC), outperforming static PD-L1 (0.5610) and 18-gene GEP (0.5948)."
+        }
+      ],
+      "sensitivity_or_boundary_note": "Bulk RNA-seq tissue homogenization collapses spatial shell geometry toward linear-combination parity (0.6367 vs 0.6442 Linear Mean on bulk-dominated n = 107), whereas single-cell TME preserves spatial-Langevin advantage (0.8750 vs 0.7500/0.8250)."
+    },
+    {
+      "claim_id": "C6_Locked_Stromal_Barrier_Independently_Predicts_AntiPD1_Overall_Survival",
+      "tier": "core",
+      "claim_text": "High pre-treatment transcriptomic stromal barrier load predicts significantly worse overall survival across 74 anti-PD-1 monotherapy melanoma patients both univariably (HR = 1.95, log-rank P = 0.0279) and after multivariable Breslow Cox adjustment for clinical cohort, tumor burden, static PD-L1, and 18-gene GEP (HR = 3.02, P = 0.0082, VanderWeele E-value = 3.68).",
+      "evidence_lines": [
+        {
+          "evidence_id": "C6_E1_KaplanMeier_and_CohortStratified_Survival",
+          "orthogonality_axis": "univariable_and_stratified_clinical_survival",
+          "metric_ids": [
+            "surv74_hr"
+          ],
+          "summary": "Above-median pre-treatment stromal CAF-exclusion barrier predicts mortality across n = 74 melanoma monotherapy patients (43 deaths; HR = 1.95, log-rank P = 0.0279; cohort-stratified HR = 1.91, P = 0.0340; median OS 18.8 vs 34.2 months)."
+        },
+        {
+          "evidence_id": "C6_E2_Multivariable_Cox_and_EValue_Sensitivity",
+          "orthogonality_axis": "multivariable_confounder_and_evalue_sensitivity",
+          "metric_ids": [
+            "surv74_multivar_hr",
+            "surv74_evalue"
+          ],
+          "summary": "Simultaneously adjusting for cohort, tumor burden, static PD-L1, and 18-gene GEP strengthens locked stromal barrier hazard to HR = 3.02 (95% CI 1.33-6.84, P = 0.0082, E-value = 3.68, lower CI E-value = 1.74), while continuous linear CAF is null (HR = 1.08, P = 0.651)."
+        },
+        {
+          "evidence_id": "C6_E3_NonICB_Specificity_and_Treatment_Interaction",
+          "orthogonality_axis": "non_icb_comparator_and_treatment_by_barrier_interaction",
+          "metric_ids": [
+            "nonicb264_multivar_hr",
+            "icb_nonicb338_interaction_hr"
+          ],
+          "summary": "Across n = 264 non-ICB metastatic melanoma patients (149 deaths; GSE65904 + GSE22153), multivariable stromal barrier hazard is null (HR = 0.84, 95% CI 0.56-1.25, P = 0.389), establishing a significant anti-PD-1 x locked stromal barrier interaction across n = 338 melanoma patients (192 deaths; interaction HR = 3.60, 95% CI 1.45-8.98, P = 0.0059)."
+        }
+      ],
+      "sensitivity_or_boundary_note": "Two-regime comparison across 338 melanoma patients (74 anti-PD-1 vs 264 non-ICB) demonstrates immunotherapy-specific survival hazard (interaction HR = 3.60, P = 0.0059), while prospective randomized anti-PD-1 +/- TGFBR1 blockade trials remain warranted for interventional confirmation."
+    }
+  ]
+}

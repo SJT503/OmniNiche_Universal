@@ -17,6 +17,12 @@
     "size_bytes": 3591833,
     "sha256": "11f69d1cee7771304732c88a5bfa79fdb4fc364d840e75e77e3baa833d08a07a"
   },
+  "bms038_clinical_data.csv": {
+    "path": "data_vault\\raw_single_cell\\GSE91061_Melanoma_Nivolumab_Monotherapy\\bms038_clinical_data.csv",
+    "url": "https://raw.githubusercontent.com/riazn/bms038_analysis/master/data/bms038_clinical_data.csv",
+    "size_bytes": 8112,
+    "sha256": "a70ae5a0b1156b6d85ec89f0d58f3f67538bfb969d53ec5d98232411d19869ab"
+  },
   "GSE78220_series_matrix.txt.gz": {
     "path": "data_vault\\raw_single_cell\\GSE78220_Melanoma_Pembrolizumab_Monotherapy\\GSE78220_series_matrix.txt.gz",
     "url": "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE78nnn/GSE78220/matrix/GSE78220_series_matrix.txt.gz",

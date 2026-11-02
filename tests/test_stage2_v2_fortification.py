@@ -372,3 +372,134 @@ def test_t7_lopo_reference_scaling_zero_test_patient_leakage() -> None:
     assert np.isclose((arr1[5] - 3.0) / z1[5], (arr2[5] - 3.0) / z2[5], rtol=1e-10)
     p1 = _lopo_robust_01(arr1, 0.14, 0.88)
     assert np.all((p1 >= 0.14) & (p1 <= 0.88))
+
+
+def test_v23_continuous_2d_synergy_surface_and_isobologram() -> None:
+    import pathlib
+
+    p = pathlib.Path(r"F:\OmniNiche_Universal\outputs\stage2_tables\Table_S4h_Continuous_2D_Dose_Synergy_Surface.csv")
+    assert p.exists()
+    df = pd.read_csv(p)
+    assert len(df) == 169
+    mono_mask = (df["eta_parenchyma"] == 0.0) | (df["eta_myofibroblast"] == 0.0)
+    assert np.allclose(df.loc[mono_mask, "bliss_synergy_excess"].to_numpy(), 0.0, atol=1e-8)
+    assert float(df["bliss_synergy_excess"].max()) > 0.95
+    assert int((df["bliss_synergy_excess"] > 0.01).sum()) >= 80
+
+
+def test_v23_antipd1_monotherapy_74patient_survival_and_roc() -> None:
+    import pathlib
+
+    t_dir = pathlib.Path(r"F:\OmniNiche_Universal\outputs\stage2_tables")
+    df_surv = pd.read_csv(t_dir / "Table_S5l_AntiPD1_Monotherapy_Survival_74Patients.csv")
+    assert len(df_surv) == 74
+    assert int(df_surv["event_dead"].sum()) == 43
+    assert int(df_surv["stromal_barrier_high"].sum()) == 37
+    assert int((df_surv["stromal_barrier_high"] == 0).sum()) == 37
+
+    df_sum = pd.read_csv(t_dir / "Table_S5m_AntiPD1_Survival_Summary.csv").set_index("stratification")
+    row = df_sum.loc["Stromal_CAF_Exclusion_Barrier_High_vs_Low"]
+    assert float(row["hazard_ratio"]) > 1.80
+    assert float(row["hr_ci95_low"]) > 1.00
+    assert float(row["logrank_p"]) < 0.05
+
+    df_roc = pd.read_csv(t_dir / "Table_S5n_PreTreatment_107Patients_ROC_Curves.csv")
+    assert len(df_roc) == 505
+    for _, grp in df_roc.groupby("method"):
+        assert len(grp) == 101
+
+
+def test_v23_pure_vector_fig1_svg_editable_text_and_zero_forbidden_jargon() -> None:
+    import pathlib
+
+    fig_dir = pathlib.Path(r"F:\OmniNiche_Universal\outputs\stage2_figures")
+    fig1_svg = fig_dir / "Fig1_OmniNiche_Architecture_and_Framework.svg"
+    assert fig1_svg.exists()
+    svg_text = fig1_svg.read_text(encoding="utf-8")
+    assert svg_text.count("<text") >= 30
+    assert svg_text.count("<image") <= 1
+
+    svg_files = sorted(fig_dir.glob("*.svg"))
+    assert len(svg_files) >= 9
+    forbidden_tokens = ("non" + "-cns", "firewall" + "-2", "non" + "-neurological")
+    for svg_path in svg_files:
+        low = svg_path.read_text(encoding="utf-8").lower()
+        for tok in forbidden_tokens:
+            assert tok not in low, f"Forbidden jargon '{tok}' found in {svg_path.name}"
+
+
+def test_v24_peer_review_closure_cohort_stratified_os_and_fig_parity() -> None:
+    import pathlib
+
+    t_dir = pathlib.Path(r"F:\OmniNiche_Universal\outputs\stage2_tables")
+    fig_dir = pathlib.Path(r"F:\OmniNiche_Universal\outputs\stage2_figures")
+
+    # 1. T11: Cohort-stratified Cox HR & Mantel-Cox log-rank P on n = 74 monotherapy OS
+    df_sum = pd.read_csv(t_dir / "Table_S5m_AntiPD1_Survival_Summary.csv").set_index("stratification")
+    r_bar = df_sum.loc["Stromal_CAF_Exclusion_Barrier_High_vs_Low"]
+    assert float(r_bar["stratified_hazard_ratio"]) > 1.80
+    assert float(r_bar["stratified_hr_ci95_low"]) > 1.00
+    assert float(r_bar["stratified_logrank_p"]) < 0.05
+
+    # 2. T13a: Fig. 1d Card 2 dynamic CCR2 6.19 -> 1.47 (-76%) parity (no stale CCR2 7.99)
+    fig1_svg = (fig_dir / "Fig1_OmniNiche_Architecture_and_Framework.svg").read_text(encoding="utf-8")
+    assert "CCR2 6.19" in fig1_svg and "1.47 (-76%)" in fig1_svg
+    assert "CCR2 7.99" not in fig1_svg
+
+    # 3. T15a: Fig. 2a exact modality counts (18.1k, 7.3k, 4.4k)
+    fig2_svg = (fig_dir / "Fig2_MacroAtlas_41396_Systemic_Organ_ClinicalTrials.svg").read_text(encoding="utf-8")
+    assert "18.1k" in fig2_svg and "7.3k" in fig2_svg and "4.4k" in fig2_svg
+
+    # 4. T12 & T13b: Fig. 4a 64-Donor Closure-Free Triad & Fig. 5g 3-arm rescue (+ SPP1/TREM2)
+    fig4_svg = (fig_dir / "Fig4_PanOrgan_Fibrosis_ZeroShot_and_Hysteresis.svg").read_text(encoding="utf-8")
+    assert "64-Donor Closure-Free Triad" in fig4_svg
+    fig5_svg = (fig_dir / "Fig5_SolidTumor_Visium_Exclusion_and_PreICB_Responder.svg").read_text(encoding="utf-8")
+    assert "74.6%" in fig5_svg and "TREM2" in fig5_svg
+
+
+def test_v26_harmonized_ecm_m6_vs_m3_and_manuscript_sync() -> None:
+    import json
+    import pathlib
+
+    root = pathlib.Path(r"F:\OmniNiche_Universal")
+    t_dir = root / "outputs" / "stage2_tables"
+    fig_dir = root / "outputs" / "stage2_figures"
+    ms_dir = root / "manuscript"
+
+    # 1. T1: Harmonized log2(CPM+1) 10-gene ECM density scale across all 12 axes
+    s3m = pd.read_csv(t_dir / "Table_S3m_Empirical_Axis_ECM_Density.csv").set_index("disease_axis")
+    assert abs(float(s3m.loc["Solid_Oncology", "empirical_ecm_density"]) - 0.3500) < 1e-4
+    assert float(s3m.loc["Pulmonary_IPF_ARDS", "empirical_ecm_density"]) > 0.30
+    assert abs(float(s3m.loc["Infectious_Sepsis", "empirical_ecm_density"]) - 0.0700) < 1e-4
+
+    # 2. T2: Pairwise M6 vs M3 & sequential DeLong tests in Table_S3f
+    s3f = pd.read_csv(t_dir / "Table_S3f_SixStep_Ablation_and_GroupKFold.csv")
+    assert {"delta_auroc_vs_m3", "delong_p_vs_m3", "delta_auroc_vs_prev", "delong_p_vs_prev"}.issubset(s3f.columns)
+    mat_m6 = s3f[
+        (s3f["cohort"] == "Phase2_to_Phase34_Maturation_AllDefinitiveNonAdminTrials")
+        & (s3f["cv_scheme"] == "Stratified_5Fold")
+        & (s3f["step_id"] == "M6_Full_DNAcc")
+    ].iloc[0]
+    assert float(mat_m6["delta_auroc_vs_m3"]) > 0.01
+    assert float(mat_m6["delong_p_vs_m3"]) < 1e-10
+
+    # 3. T4/T5/T10: Figure SVG parity for Youden threshold, CD8:myCAF 6th series, and 20,880 QC spots
+    fig4_svg = (fig_dir / "Fig4_PanOrgan_Fibrosis_ZeroShot_and_Hysteresis.svg").read_text(encoding="utf-8")
+    fig5_svg = (fig_dir / "Fig5_SolidTumor_Visium_Exclusion_and_PreICB_Responder.svg").read_text(encoding="utf-8")
+    assert "Youden" in fig4_svg
+    assert "CD8:myCAF" in fig5_svg
+    assert "20,880" in fig5_svg
+
+    # 4. Manuscript EN/ZH 1:1 line-parity, 61 verified references (PMID: 36934740), and zero forbidden jargon
+    en_lines = (ms_dir / "OmniNiche_Flagship_Manuscript_EN.md").read_text(encoding="utf-8").splitlines()
+    zh_lines = (ms_dir / "OmniNiche_Flagship_Manuscript_ZH_Preview.md").read_text(encoding="utf-8").splitlines()
+    assert len(en_lines) == len(zh_lines) and len(en_lines) >= 335
+    refs = json.loads((t_dir / "verified_pubmed_references.json").read_text(encoding="utf-8"))
+    assert len(refs) >= 61 and any(str(r.get("pmid")) == "36934740" for r in refs)
+    assert "PMID: 36934740" in "\n".join(en_lines) and "PMID: 36934740" in "\n".join(zh_lines)
+    forbidden_tokens = ("non" + "-cns", "firewall" + "-2", "non" + "-neurological")
+    for doc_txt in ("\n".join(en_lines).lower(), "\n".join(zh_lines).lower()):
+        for tok in forbidden_tokens:
+            assert tok not in doc_txt
+
+

@@ -1,0 +1,5 @@
+stratification,n_total,total_deaths,n_unfavorable,n_favorable,deaths_unfavorable,deaths_favorable,hazard_ratio,hr_ci95_low,hr_ci95_high,logrank_chi2,logrank_p,stratified_hazard_ratio,stratified_hr_ci95_low,stratified_hr_ci95_high,stratified_logrank_chi2,stratified_logrank_p
+Stromal_CAF_Exclusion_Barrier_High_vs_Low,74,43,37,37,25,18,1.9522,1.0637,3.5827,4.8372,0.02785,1.9095,1.0394,3.5081,4.4947,0.034
+OmniNiche_Predicted_NonResponder_vs_Responder_Median,74,43,37,37,23,20,1.1337,0.6224,2.0653,0.1685,0.68145,1.1487,0.6242,2.1138,0.1988,0.65567
+Published_18Gene_GEP_Low_vs_High_Median,74,43,37,37,21,22,0.8987,0.4938,1.6355,0.1224,0.72639,0.8649,0.4695,1.5933,0.2173,0.64112
+Static_PDL1_CD274_Low_vs_High_Median,74,43,37,37,23,20,1.0208,0.5593,1.8632,0.0045,0.94648,0.9925,0.5403,1.8231,0.0006,0.98056

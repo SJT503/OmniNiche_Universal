@@ -1,0 +1,88 @@
+validation_pillar,cohort_or_model,subgroup_or_covariate,sample_or_n,n_samples_or_patients,n_events,metric_primary,metric_secondary,ci95_low,ci95_high,statistic_t_or_z,p_value,pmid
+WetLab_Sample_Trajectory,GSE226249_Primary_Human_IPF_Fibroblasts,N1_Basal_SF,GSM7068934,1,0,8.0525,9.176,7.2165,9.6592,,,36585256
+WetLab_Sample_Trajectory,GSE226249_Primary_Human_IPF_Fibroblasts,N1_Basal_SF,GSM7068935,1,0,7.9455,9.0516,6.8411,9.9804,,,36585256
+WetLab_Sample_Trajectory,GSE226249_Primary_Human_IPF_Fibroblasts,N1_Basal_SF,GSM7068936,1,0,8.04,9.1608,7.2472,9.8647,,,36585256
+WetLab_Sample_Trajectory,GSE226249_Primary_Human_IPF_Fibroblasts,N1_Activated_FBS,GSM7068937,1,0,7.9195,9.2708,9.6254,9.1434,,,36585256
+WetLab_Sample_Trajectory,GSE226249_Primary_Human_IPF_Fibroblasts,N1_Activated_FBS,GSM7068938,1,0,8.0656,9.4365,9.9881,9.1867,,,36585256
+WetLab_Sample_Trajectory,GSE226249_Primary_Human_IPF_Fibroblasts,N1_Activated_FBS,GSM7068939,1,0,7.8816,9.1758,9.7394,9.1878,,,36585256
+WetLab_Sample_Trajectory,GSE226249_Primary_Human_IPF_Fibroblasts,N1_Pirfenidone_1mM,GSM7068940,1,0,7.4616,8.7779,7.3321,7.5068,,,36585256
+WetLab_Sample_Trajectory,GSE226249_Primary_Human_IPF_Fibroblasts,N1_Pirfenidone_1mM,GSM7068941,1,0,7.3614,8.6667,6.8981,7.4806,,,36585256
+WetLab_Sample_Trajectory,GSE226249_Primary_Human_IPF_Fibroblasts,N1_Pirfenidone_1mM,GSM7068942,1,0,7.3314,8.6039,6.4847,7.4513,,,36585256
+WetLab_Sample_Trajectory,GSE226249_Primary_Human_IPF_Fibroblasts,PF2_Basal_SF,GSM7068943,1,0,7.9713,9.2504,6.7355,10.5691,,,36585256
+WetLab_Sample_Trajectory,GSE226249_Primary_Human_IPF_Fibroblasts,PF2_Basal_SF,GSM7068944,1,0,7.8576,9.0257,6.4024,10.6714,,,36585256
+WetLab_Sample_Trajectory,GSE226249_Primary_Human_IPF_Fibroblasts,PF2_Basal_SF,GSM7068945,1,0,7.8768,8.9736,6.4115,10.0842,,,36585256
+WetLab_Sample_Trajectory,GSE226249_Primary_Human_IPF_Fibroblasts,PF2_Activated_FBS,GSM7068946,1,0,7.8965,9.2933,8.756,10.0588,,,36585256
+WetLab_Sample_Trajectory,GSE226249_Primary_Human_IPF_Fibroblasts,PF2_Activated_FBS,GSM7068947,1,0,7.9166,9.3573,9.1589,10.1471,,,36585256
+WetLab_Sample_Trajectory,GSE226249_Primary_Human_IPF_Fibroblasts,PF2_Activated_FBS,GSM7068948,1,0,7.935,9.3662,9.1202,10.1929,,,36585256
+WetLab_Sample_Trajectory,GSE226249_Primary_Human_IPF_Fibroblasts,PF2_Pirfenidone_1mM,GSM7068949,1,0,7.3474,8.7364,6.0481,8.318,,,36585256
+WetLab_Sample_Trajectory,GSE226249_Primary_Human_IPF_Fibroblasts,PF2_Pirfenidone_1mM,GSM7068950,1,0,7.5042,8.9517,7.4289,8.62,,,36585256
+WetLab_Sample_Trajectory,GSE226249_Primary_Human_IPF_Fibroblasts,PF2_Pirfenidone_1mM,GSM7068951,1,0,7.4872,8.878,7.107,8.3604,,,36585256
+WetLab_Sample_Trajectory,GSE226249_Primary_Human_IPF_Fibroblasts,PF3_Basal_SF,GSM7068952,1,0,7.8937,9.0503,6.3884,10.2497,,,36585256
+WetLab_Sample_Trajectory,GSE226249_Primary_Human_IPF_Fibroblasts,PF3_Basal_SF,GSM7068953,1,0,7.5561,8.5503,5.9073,9.7299,,,36585256
+WetLab_Sample_Trajectory,GSE226249_Primary_Human_IPF_Fibroblasts,PF3_Basal_SF,GSM7068954,1,0,7.6164,8.6536,6.0521,9.6531,,,36585256
+WetLab_Sample_Trajectory,GSE226249_Primary_Human_IPF_Fibroblasts,PF3_Activated_FBS,GSM7068955,1,0,7.9866,9.4131,8.9996,10.3137,,,36585256
+WetLab_Sample_Trajectory,GSE226249_Primary_Human_IPF_Fibroblasts,PF3_Activated_FBS,GSM7068956,1,0,8.0221,9.3964,9.0757,10.1773,,,36585256
+WetLab_Sample_Trajectory,GSE226249_Primary_Human_IPF_Fibroblasts,PF3_Activated_FBS,GSM7068957,1,0,7.9946,9.37,8.9536,10.211,,,36585256
+WetLab_Sample_Trajectory,GSE226249_Primary_Human_IPF_Fibroblasts,PF3_Pirfenidone_1mM,GSM7068958,1,0,7.6116,9.1223,7.7426,8.7055,,,36585256
+WetLab_Sample_Trajectory,GSE226249_Primary_Human_IPF_Fibroblasts,PF3_Pirfenidone_1mM,GSM7068959,1,0,7.7771,9.375,8.7491,8.918,,,36585256
+WetLab_Sample_Trajectory,GSE226249_Primary_Human_IPF_Fibroblasts,PF3_Pirfenidone_1mM,GSM7068960,1,0,7.4353,8.8606,6.695,8.7927,,,36585256
+WetLab_Perturbation_Summary,GSE226249_Primary_Human_IPF_Fibroblasts_Pirfenidone,Locked_21Gene_Myofibroblast_PFD_vs_Activated_FBS,"n=27 (9 Basal, 9 Activated, 9 Pirfenidone)",27,9,-0.4779,-0.4563,7.9576,7.4797,-10.8922,4.4689404165365155e-06,36585256
+WetLab_Perturbation_Summary,GSE226249_Primary_Human_IPF_Fibroblasts_Pirfenidone,Core_14Gene_ECM_Myofibroblast_PFD_vs_Activated_FBS,"n=27 (ACTA2 -76.7% CPM, POSTN -67.2% CPM)",27,9,-0.4563,-2.1035,9.3421,8.8858,-6.5821,0.00017257493457469735,36585256
+WetLab_Sample_Trajectory,GSE154646_Human_Carcinoma_RepSox_TGFBR1i,DMSO,GSM4676364,1,0,2.8483,3.5429,6.4967,2.4778,,,37620362
+WetLab_Sample_Trajectory,GSE154646_Human_Carcinoma_RepSox_TGFBR1i,TGFB1,GSM4676365,1,0,3.0224,3.8386,7.3042,2.4823,,,37620362
+WetLab_Sample_Trajectory,GSE154646_Human_Carcinoma_RepSox_TGFBR1i,RepSox_TGFBR1i,GSM4676366,1,0,2.6915,3.335,6.5902,2.293,,,37620362
+WetLab_Sample_Trajectory,GSE154646_Human_Carcinoma_RepSox_TGFBR1i,DMSO,GSM4676367,1,0,2.905,3.2324,6.1713,3.0041,,,37620362
+WetLab_Sample_Trajectory,GSE154646_Human_Carcinoma_RepSox_TGFBR1i,TGFB1,GSM4676368,1,0,2.8638,3.1686,6.7618,2.6245,,,37620362
+WetLab_Sample_Trajectory,GSE154646_Human_Carcinoma_RepSox_TGFBR1i,RepSox_TGFBR1i,GSM4676369,1,0,2.9327,3.1225,5.956,3.0024,,,37620362
+WetLab_Sample_Trajectory,GSE154646_Human_Carcinoma_RepSox_TGFBR1i,DMSO,GSM4676370,1,0,2.3586,2.5428,6.3635,1.9048,,,37620362
+WetLab_Sample_Trajectory,GSE154646_Human_Carcinoma_RepSox_TGFBR1i,TGFB1,GSM4676371,1,0,2.6199,2.7559,7.0819,2.4139,,,37620362
+WetLab_Sample_Trajectory,GSE154646_Human_Carcinoma_RepSox_TGFBR1i,RepSox_TGFBR1i,GSM4676372,1,0,2.2482,2.3399,5.2602,1.2681,,,37620362
+WetLab_Sample_Trajectory,GSE154646_Human_Carcinoma_RepSox_TGFBR1i,DMSO,GSM4676373,1,0,2.3102,2.5695,6.4058,2.0743,,,37620362
+WetLab_Sample_Trajectory,GSE154646_Human_Carcinoma_RepSox_TGFBR1i,TGFB1,GSM4676374,1,0,2.5155,2.6322,7.0518,2.2785,,,37620362
+WetLab_Sample_Trajectory,GSE154646_Human_Carcinoma_RepSox_TGFBR1i,RepSox_TGFBR1i,GSM4676375,1,0,2.1509,2.2469,5.6637,1.157,,,37620362
+WetLab_Sample_Trajectory,GSE154646_Human_Carcinoma_RepSox_TGFBR1i,DMSO,GSM4676376,1,0,3.0773,3.599,6.0104,3.3813,,,37620362
+WetLab_Sample_Trajectory,GSE154646_Human_Carcinoma_RepSox_TGFBR1i,TGFB1,GSM4676377,1,0,3.3331,3.881,6.8388,3.7126,,,37620362
+WetLab_Sample_Trajectory,GSE154646_Human_Carcinoma_RepSox_TGFBR1i,RepSox_TGFBR1i,GSM4676378,1,0,3.0872,3.6435,6.262,3.1433,,,37620362
+WetLab_Sample_Trajectory,GSE154646_Human_Carcinoma_RepSox_TGFBR1i,DMSO,GSM4676379,1,0,2.8125,3.1057,6.0938,2.0924,,,37620362
+WetLab_Sample_Trajectory,GSE154646_Human_Carcinoma_RepSox_TGFBR1i,TGFB1,GSM4676380,1,0,2.9172,3.2293,6.8989,2.7275,,,37620362
+WetLab_Sample_Trajectory,GSE154646_Human_Carcinoma_RepSox_TGFBR1i,RepSox_TGFBR1i,GSM4676381,1,0,2.9726,3.1276,5.7524,3.0527,,,37620362
+WetLab_Sample_Trajectory,GSE154646_Human_Carcinoma_RepSox_TGFBR1i,DMSO,GSM4676382,1,0,2.3809,2.5893,6.195,2.1137,,,37620362
+WetLab_Sample_Trajectory,GSE154646_Human_Carcinoma_RepSox_TGFBR1i,TGFB1,GSM4676383,1,0,2.5422,2.6565,6.9336,2.8515,,,37620362
+WetLab_Sample_Trajectory,GSE154646_Human_Carcinoma_RepSox_TGFBR1i,RepSox_TGFBR1i,GSM4676384,1,0,2.2716,2.3312,5.2955,0.7881,,,37620362
+WetLab_Sample_Trajectory,GSE154646_Human_Carcinoma_RepSox_TGFBR1i,DMSO,GSM4676385,1,0,2.2131,2.3678,6.2998,1.8413,,,37620362
+WetLab_Sample_Trajectory,GSE154646_Human_Carcinoma_RepSox_TGFBR1i,TGFB1,GSM4676386,1,0,2.5507,2.6708,7.0825,2.3057,,,37620362
+WetLab_Sample_Trajectory,GSE154646_Human_Carcinoma_RepSox_TGFBR1i,RepSox_TGFBR1i,GSM4676387,1,0,2.1876,2.2695,5.7364,0.7404,,,37620362
+WetLab_Perturbation_Summary,GSE154646_Human_Carcinoma_RepSox_TGFBR1i,Locked_21Gene_Myofibroblast_RepSox_vs_TGFB1,"n=24 (8 DMSO, 8 TGFB1, 8 RepSox TGFBR1i)",24,8,-0.2278,-0.3021,2.7956,2.5678,-3.4897,0.01013278325908381,37620362
+WetLab_Perturbation_Summary,GSE154646_Human_Carcinoma_RepSox_TGFBR1i,Core_14Gene_ECM_Myofibroblast_RepSox_vs_TGFB1,n=24 (Paired 8-condition TGFBR1/ALK5 blockade),24,8,-0.3021,-1.1796,3.1041,2.802,-5.3176,0.0011021261652617677,37620362
+WetLab_Sample_Trajectory,GSE210020_Primary_Human_Fibroblasts_Nintedanib,DMSO,GSM6415301,1,0,7.8288,9.8158,14.9822,15.4217,,,36055997
+WetLab_Sample_Trajectory,GSE210020_Primary_Human_Fibroblasts_Nintedanib,Nintedanib_5uM,GSM6415302,1,0,7.6867,9.3773,14.3935,15.3408,,,36055997
+WetLab_Sample_Trajectory,GSE210020_Primary_Human_Fibroblasts_Nintedanib,DMSO,GSM6415306,1,0,7.5281,8.8851,13.0276,11.4875,,,36055997
+WetLab_Sample_Trajectory,GSE210020_Primary_Human_Fibroblasts_Nintedanib,Nintedanib_5uM,GSM6415307,1,0,7.733,8.9637,13.3778,11.091,,,36055997
+WetLab_Sample_Trajectory,GSE210020_Primary_Human_Fibroblasts_Nintedanib,DMSO,GSM6415311,1,0,7.8194,9.7997,14.9957,15.4678,,,36055997
+WetLab_Sample_Trajectory,GSE210020_Primary_Human_Fibroblasts_Nintedanib,Nintedanib_5uM,GSM6415312,1,0,7.6499,9.3128,14.4029,15.2187,,,36055997
+WetLab_Sample_Trajectory,GSE210020_Primary_Human_Fibroblasts_Nintedanib,DMSO,GSM6415316,1,0,7.5434,8.9175,13.0922,11.4854,,,36055997
+WetLab_Sample_Trajectory,GSE210020_Primary_Human_Fibroblasts_Nintedanib,Nintedanib_5uM,GSM6415317,1,0,7.7121,8.9479,13.2046,11.0483,,,36055997
+WetLab_Sample_Trajectory,GSE210020_Primary_Human_Fibroblasts_Nintedanib,DMSO,GSM6415321,1,0,7.8021,9.7512,14.9853,15.4513,,,36055997
+WetLab_Sample_Trajectory,GSE210020_Primary_Human_Fibroblasts_Nintedanib,Nintedanib_5uM,GSM6415322,1,0,7.6691,9.3405,14.4184,15.2701,,,36055997
+WetLab_Sample_Trajectory,GSE210020_Primary_Human_Fibroblasts_Nintedanib,DMSO,GSM6415326,1,0,7.5239,8.8815,13.0181,11.505,,,36055997
+WetLab_Sample_Trajectory,GSE210020_Primary_Human_Fibroblasts_Nintedanib,Nintedanib_5uM,GSM6415327,1,0,7.7393,8.9723,13.3286,11.0727,,,36055997
+WetLab_Sample_Trajectory,GSE210020_Primary_Human_Fibroblasts_Nintedanib,Nintedanib_5uM,GSM6415331,1,0,8.174,9.5511,13.9418,12.3961,,,36055997
+WetLab_Sample_Trajectory,GSE210020_Primary_Human_Fibroblasts_Nintedanib,Nintedanib_5uM,GSM6415332,1,0,7.4216,8.1577,12.4264,10.1438,,,36055997
+WetLab_Sample_Trajectory,GSE210020_Primary_Human_Fibroblasts_Nintedanib,DMSO,GSM6415333,1,0,8.3116,9.6628,14.5566,13.1627,,,36055997
+WetLab_Sample_Trajectory,GSE210020_Primary_Human_Fibroblasts_Nintedanib,Nintedanib_5uM,GSM6415334,1,0,7.4817,8.3484,13.5528,11.2468,,,36055997
+WetLab_Sample_Trajectory,GSE210020_Primary_Human_Fibroblasts_Nintedanib,Nintedanib_5uM,GSM6415335,1,0,8.1678,9.255,13.8327,12.8013,,,36055997
+WetLab_Sample_Trajectory,GSE210020_Primary_Human_Fibroblasts_Nintedanib,Nintedanib_5uM,GSM6415336,1,0,7.4522,8.2222,13.0351,10.8707,,,36055997
+WetLab_Sample_Trajectory,GSE210020_Primary_Human_Fibroblasts_Nintedanib,DMSO,GSM6415337,1,0,8.2668,9.604,14.6909,13.1841,,,36055997
+WetLab_Sample_Trajectory,GSE210020_Primary_Human_Fibroblasts_Nintedanib,Nintedanib_5uM,GSM6415338,1,0,7.4584,8.3772,13.6697,11.2746,,,36055997
+WetLab_Sample_Trajectory,GSE210020_Primary_Human_Fibroblasts_Nintedanib,Nintedanib_5uM,GSM6415339,1,0,8.1607,9.2534,14.0153,12.679,,,36055997
+WetLab_Sample_Trajectory,GSE210020_Primary_Human_Fibroblasts_Nintedanib,Nintedanib_5uM,GSM6415340,1,0,7.4416,8.1917,12.9779,10.8382,,,36055997
+WetLab_Perturbation_Summary,GSE210020_Primary_Human_Fibroblasts_Nintedanib,Core_14Gene_ECM_Myofibroblast_Nintedanib_vs_DMSO,"n=22 (8 DMSO, 14 Nintedanib)",22,14,-0.5382,-0.1175,9.4147,8.8765,-2.6184,0.01818262097065526,36055997
+NonICB_Melanoma_Specificity_and_Interaction,GSE65904_NonICB_Melanoma_DSS,Univariate_Locked_Barrier,n=210 (102 deaths),210,102,1.4035,0.5639,0.9495,2.0743,1.7,0.089083,25909218
+NonICB_Melanoma_Specificity_and_Interaction,GSE65904_NonICB_Melanoma_DSS,Multivariable_CTL_PDL1_Adjusted_Barrier,n=210 (102 deaths),210,102,0.7638,0.631,0.4687,1.2446,-1.082,0.279387,25909218
+NonICB_Melanoma_Specificity_and_Interaction,GSE22153_NonICB_StageIV_Melanoma_OS,Univariate_Locked_Barrier,n=54 (47 deaths),54,47,1.5814,0.5868,0.8868,2.8202,1.553,0.120433,20460471
+NonICB_Melanoma_Specificity_and_Interaction,GSE22153_NonICB_StageIV_Melanoma_OS,Multivariable_CTL_PDL1_Adjusted_Barrier,n=54 (47 deaths),54,47,1.0145,0.6462,0.4905,2.0984,0.039,0.969008,20460471
+NonICB_Melanoma_Specificity_and_Interaction,Pooled_NonICB_Melanoma_Control_n264,Multivariable_CTL_PDL1_Cohort_Adjusted_Barrier,n=264 (149 deaths),264,149,0.8373,0.7003,0.5592,1.2537,-0.862,0.38868,25909218;20460471
+NonICB_Melanoma_Specificity_and_Interaction,AntiPD1_Monotherapy_Melanoma_n74,Univariate_Locked_Barrier,n=74 (43 deaths),74,43,1.9522,0.6027,1.0637,3.5827,2.159,0.030819,29033130;26997480
+NonICB_Melanoma_Specificity_and_Interaction,AntiPD1_Monotherapy_Melanoma_n74,Multivariable_GEP18_PDL1_Tumor_Cohort_Adjusted_Barrier,n=74 (43 deaths),74,43,3.0175,0.6361,1.3306,6.8429,2.644,0.008201,29033130;26997480
+NonICB_Melanoma_Specificity_and_Interaction,TwoRegime_AntiPD1_vs_NonICB_Interaction_n338,Multivariable_Treatment_x_Locked_Stromal_Barrier_Interaction,n=338 (74 Anti-PD-1 + 264 Non-ICB; 192 deaths),338,192,3.6035,1.2819,1.4461,8.9791,2.752,0.005925,29033130;26997480;25909218;20460471
+MultiScale_24Trial_DNAcc_Langevin_Consilience,PanOrgan_Fibrosis_24_Phase2b3_RCTs,Macro_DNAcc_Structural_vs_Meso_ZeroShot_Langevin,"n=24 Phase IIb/III RCTs (10 Winners, 14 Failures)",24,10,0.7861,0.6079,5.29e-06,0.00162541,5.965,5.287707498429002e-06,38330999;24836310;24827031

@@ -1,0 +1,16 @@
+{
+  "station": "Station_S4_5_Round4_Narrative_Flow",
+  "project_dir": "F:\\OmniNiche_Universal",
+  "mode": "manuscript",
+  "target_journal_or_fund": "Nature Computational Science",
+  "initialized_at": "2026-11-02T11:24:22",
+  "last_verified_at": "2026-11-02T15:09:53",
+  "modules": {
+    "module_0_archive_and_number_freeze": true,
+    "module_1_exemplar_abstract_autopsy": true,
+    "module_2_title_3flavor_condensation": true,
+    "module_3_hourglass_6sentence_abstract": true,
+    "module_4_body_transition_bridges": true,
+    "module_5_package_sync_and_parity": true
+  }
+}

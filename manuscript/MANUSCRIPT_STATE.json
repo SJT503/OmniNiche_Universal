@@ -1,0 +1,42 @@
+{
+  "project_name": "OmniNiche_Universal",
+  "target_journal": "Nature Computational Science",
+  "research_track": "multiomics_spatial_mechanism",
+  "secondary_track": "biomedical_digital_twin",
+  "archetype": "multiomics",
+  "round": "Stage II v3.1 — Nature Computational Science Flagship Package",
+  "updated_at": "2026-11-02T01:05:00+08:00",
+  "story_contract": {
+    "locked_title": "Modeling dynamic tissue accessibility predicts clinical trial outcomes across human organs",
+    "single_protagonist": "Dynamic Niche Accessibility (DNAcc) and biophysical stromal steric exclusion",
+    "core_thesis": "Clinical realization of human genetic target validity across 12 systemic and parenchymal organ disease axes is gated by dynamic single-cell lineage drift during pathology and macromolecular steric exclusion across fibrotic and peritumoral extracellular matrix barriers.",
+    "scope_framing": "12 systemic and parenchymal organ disease axes governed by interstitial ECM remodeling",
+    "zero_forbidden_jargon": [
+      "Non-CNS",
+      "non-CNS",
+      "non-neurological",
+      "Firewall-2"
+    ]
+  },
+  "journal_style_contract": {
+    "journal": "Nature Computational Science",
+    "locale": "US",
+    "citation_style": "bracket",
+    "supp_prefix": "Extended_Data",
+    "declarations_in_body": true,
+    "abstract_format": "unstructured_single_paragraph",
+    "abstract_max_words": 175,
+    "main_figures_count": 5,
+    "extended_data_figures_count": 6,
+    "figure_widths_mm": {
+      "single": 89,
+      "double": 183
+    },
+    "font_sizes_pt": {
+      "panel": 10,
+      "axis": 8,
+      "tick": 7
+    },
+    "panel_case": "lowercase_bold"
+  }
+}

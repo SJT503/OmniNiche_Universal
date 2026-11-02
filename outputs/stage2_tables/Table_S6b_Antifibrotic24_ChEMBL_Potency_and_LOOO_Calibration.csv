@@ -1,0 +1,31 @@
+record_type,nct_id,trial_acronym,drug,organ,modality,clinical_win,chembl_pxc50,chembl_source,raw_unif_prob,looo_platt_cal_prob,chembl_alpha015_prob,chembl_alpha015_looo_prob,summary_auroc,summary_auroc_ci_low,summary_auroc_ci_high,summary_perm_p,summary_brier,sens_at_050,spec_at_050,bal_acc_at_050
+Trial_Level_24,NCT03900429,MAESTRO-NASH,Resmetirom,Liver_MASH,small_molecule,1,6.68,ChEMBL4105633 THRB pEC50 (EC50=210 nM),0.9648,0.7276,0.9647,0.6716,,,,,,,,
+Trial_Level_24,NCT04822181,ESSENCE,Semaglutide,Liver_MASH,peptide,1,9.4,ChEMBL3707348 GLP1R pEC50 (EC50=0.40 nM),0.7531,0.5945,0.862,0.5997,,,,,,,,
+Trial_Level_24,NCT03008070,NATIVE,Lanifibranor,Liver_MASH,small_molecule,1,6.12,ChEMBL3545181 pan-PPAR mean pEC50 (EC50=750 nM),0.9649,0.7277,0.8225,0.5845,,,,,,,,
+Trial_Level_24,NCT04166773,SYNERGY-NASH,Tirzepatide,Liver_MASH,peptide,1,9.05,ChEMBL4297528 GIPR/GLP1R mean pEC50 (EC50=0.89 nM),0.8545,0.6368,0.8617,0.5995,,,,,,,,
+Trial_Level_24,NCT04767529,HARMONY,Efruxifermin,Liver_MASH,peptide,1,9.3,Human FGFR1c/2c/3c-KLB pEC50 (EC50=0.50 nM),0.2299,0.4372,0.5387,0.5126,,,,,,,,
+Trial_Level_24,NCT02540993,FIDELIO-DKD,Finerenone,Kidney_CKD,small_molecule,1,7.74,ChEMBL3301607 NR3C2 pIC50 (IC50=18 nM),0.0535,0.3343,0.0544,0.2394,,,,,,,,
+Trial_Level_24,NCT03036150,DAPA-CKD,Dapagliflozin,Kidney_CKD,small_molecule,1,8.92,ChEMBL429910 SLC5A2 pIC50 (IC50=1.2 nM),0.0749,0.7316,0.166,0.7609,,,,,,,,
+Trial_Level_24,NCT01335464,INPULSIS-1,Nintedanib,Lung_IPF,small_molecule,1,7.47,ChEMBL502835 FGFR/PDGFR/VEGFR mean pIC50 (IC50=34 nM),0.9704,0.9295,0.9704,0.9347,,,,,,,,
+Trial_Level_24,NCT01366209,ASCEND,Pirfenidone,Lung_IPF,small_molecule,1,3.52,ChEMBL12713 TGFB1/collagen synthesis pIC50 (IC50=300 uM),0.233,0.4449,0.0619,0.2609,,,,,,,,
+Trial_Level_24,NCT05321069,FIBRONEER-IPF,Nerandomilast,Lung_IPF,small_molecule,1,8.05,ChEMBL5095154 PDE4B pIC50 (IC50=8.9 nM),0.0682,0.2549,0.0718,0.2796,,,,,,,,
+Trial_Level_24,NCT01672866,GS-US-321-0105,Simtuzumab (F3),Liver_MASH,antibody,0,6.7,Human LOXL2 allosteric mAb pIC50 (IC50=200 nM),0.0442,0.3182,0.0432,0.3462,,,,,,,,
+Trial_Level_24,NCT01672879,GS-US-321-0106,Simtuzumab (F4),Liver_MASH,antibody,0,6.7,Human LOXL2 allosteric mAb pIC50 (IC50=200 nM),0.0432,0.3168,0.0424,0.3453,,,,,,,,
+Trial_Level_24,NCT01769196,RAINIER,Simtuzumab (IPF),Lung_IPF,antibody,0,6.7,Human LOXL2 allosteric mAb pIC50 (IC50=200 nM),0.0381,0.1915,0.0378,0.2056,,,,,,,,
+Trial_Level_24,NCT03053050,STELLAR-3,Selonsertib (F3),Liver_MASH,small_molecule,0,8.3,ChEMBL3707246 MAP3K5/ASK1 pIC50 (IC50=5.0 nM),0.0423,0.3155,0.043,0.346,,,,,,,,
+Trial_Level_24,NCT03053063,STELLAR-4,Selonsertib (F4),Liver_MASH,small_molecule,0,8.3,ChEMBL3707246 MAP3K5/ASK1 pIC50 (IC50=5.0 nM),0.0409,0.3134,0.0416,0.3443,,,,,,,,
+Trial_Level_24,NCT02177786,GS-US-223-1015,Selonsertib (DKD),Kidney_CKD,small_molecule,0,8.3,ChEMBL3707246 MAP3K5/ASK1 pIC50 (IC50=5.0 nM),0.0412,0.1214,0.0412,0.1546,,,,,,,,
+Trial_Level_24,NCT03028740,AURORA,Cenicriviroc,Liver_MASH,small_molecule,0,8.15,ChEMBL2103838 CCR2/CCR5 mean pIC50 (IC50=7.1 nM),0.0411,0.3137,0.0417,0.3444,,,,,,,,
+Trial_Level_24,NCT02704403,RESOLVE-IT,Elafibranor,Liver_MASH,small_molecule,0,5.45,ChEMBL1236924 PPARA/PPARD mean pEC50 (EC50=3.5 uM),0.327,0.4702,0.0823,0.3796,,,,,,,,
+Trial_Level_24,NCT02855164,FLIGHT-FXR,Tropifexor,Liver_MASH,small_molecule,0,9.7,ChEMBL3545085 NR1H4/FXR pEC50 (EC50=0.20 nM),0.0585,0.336,0.1067,0.394,,,,,,,,
+Trial_Level_24,NCT03486899,FALCON 1,Pegbelfermin,Liver_MASH,protein,0,7.85,Human FGFR1c-KLB PEG-FGF21 pEC50 (EC50=14 nM),0.1589,0.4067,0.2796,0.4546,,,,,,,,
+Trial_Level_24,NCT03955146,ZEPHYRUS-1,Pamrevlumab,Lung_IPF,antibody,0,8.4,Human CCN2/CTGF mAb pKd (Kd=4.0 nM),0.0366,0.1877,0.037,0.2037,,,,,,,,
+Trial_Level_24,NCT03711162,ISABELA 1,Ziritaxestat,Lung_IPF,small_molecule,0,7.77,ChEMBL3989920 ENPP2/ATX pIC50 (IC50=17 nM),0.9667,0.9246,0.9667,0.9301,,,,,,,,
+Trial_Level_24,NCT04552899,STARSCAPE,Zinpentraxin alfa,Lung_IPF,protein,0,7.1,Human recombinant PTX2/APCS monocyte inhibition pEC50 (EC50=80 nM),0.0473,0.2133,0.0466,0.2278,,,,,,,,
+Trial_Level_24,NCT01872689,RIFF,Lebrikizumab,Lung_IPF,antibody,0,10.0,Human IL13 mAb pKd (Kd=0.10 nM),0.0367,0.188,0.0376,0.2052,,,,,,,,
+Model_Regime_Summary,Summary_Raw_Uniform_pIC50_7.5,All_24_Phase2b3_Trials,24_Antifibrotic_Agents,Liver_Lung_Kidney,All,10,7.74,ChEMBL_v33_Curated_24Trials,0.5167,0.1373,,,0.8714,0.7,0.9929,0.0014,0.2072,0.5,0.9286,0.7143
+Model_Regime_Summary,Summary_LOOO_Platt_Recalibrated_Uniform,All_24_Phase2b3_Trials,24_Antifibrotic_Agents,Liver_Lung_Kidney,All,10,7.74,ChEMBL_v33_Curated_24Trials,0.5819,0.3298,,,0.8429,0.6571,0.9857,0.004,0.1735,0.6,0.9286,0.7643
+Model_Regime_Summary,Summary_ChEMBL_pXC50_Alpha0.08_Raw,All_24_Phase2b3_Trials,24_Antifibrotic_Agents,Liver_Lung_Kidney,All,10,7.74,ChEMBL_v33_Curated_24Trials,0.5287,0.1291,,,0.8714,0.7,0.9929,0.0019,0.2021,0.5,0.9286,0.7143
+Model_Regime_Summary,Summary_ChEMBL_pXC50_Alpha0.15_Raw,All_24_Phase2b3_Trials,24_Antifibrotic_Agents,Liver_Lung_Kidney,All,10,7.74,ChEMBL_v33_Curated_24Trials,0.5374,0.1319,,,0.8643,0.6855,0.9857,0.0021,0.1943,0.6,0.9286,0.7643
+Model_Regime_Summary,Summary_ChEMBL_pXC50_Alpha0.25_Raw,All_24_Phase2b3_Trials,24_Antifibrotic_Agents,Liver_Lung_Kidney,All,10,7.74,ChEMBL_v33_Curated_24Trials,0.5156,0.1555,,,0.8571,0.6714,0.9857,0.0028,0.206,0.5,0.9286,0.7143
+Model_Regime_Summary,Summary_ChEMBL_pXC50_Alpha0.15_LOOO_Recalibrated,All_24_Phase2b3_Trials,24_Antifibrotic_Agents,Liver_Lung_Kidney,All,10,7.74,ChEMBL_v33_Curated_24Trials,0.5443,0.3487,,,0.7643,0.5357,0.9429,0.030597,0.1964,0.7,0.9286,0.8143

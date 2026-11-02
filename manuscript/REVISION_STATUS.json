@@ -1,137 +1,108 @@
 {
-  "plan_file": "Simulated_NatMed_5Reviewer_Panel_and_Closure_v2.md",
-  "version": "Stage II v2.2",
-  "updated_at": "2026-10-31",
+  "phase": "biomed_rebuttal_stage2_v2_6",
+  "target_journal": "Nature Medicine",
+  "version": "Stage II v2.6 (Completed)",
+  "started": "2026-11-01 00:10:00",
+  "last_update": "2026-11-01 17:00:00",
+  "plan_file": "Simulated_NatMed_5Reviewer_Panel_v2_5.md",
+  "total": 10,
+  "completed_layers": [
+    "1_pipeline_and_60_deterministic_tables_regenerated (Peak RAM 2306.0 MB < 7000 MB)",
+    "2_all_9_figures_png_pdf_svg_rerendered_and_100pct_visually_inspected",
+    "3_figure_clean_aesthetic_gate_ALL_10_GATES_PASSED",
+    "4_live_pubmed_verification_Loomba_2023_PMID_36934740",
+    "1_update_EN_md_and_ZH_Preview_md_1to1_parity_passing_manuscript_convention_and_parity_gate",
+    "2_update_Supplementary_Tables_Master_Index_md_and_verified_pubmed_references_json",
+    "3_rebuild_OmniNiche_Flagship_Manuscript_EN_docx_and_v2_6_docx_via_mod08b_build_submission_docx_py",
+    "4_add_v26_regression_test_and_run_pytest_47_passed",
+    "5_write_4part_Point_by_Point_Rebuttal_NatMed_v2_6_md_artifact_and_manuscript_copy"
+  ],
+  "pending_layers_on_resume": [],
   "items": {
     "T1": {
       "status": "completed",
-      "priority": "P0_Fatal",
-      "axis": "reproducibility / statistical-rigor",
-      "summary": "Eliminated synthetic PRNG confusion matrix in 240-trial stoppage audit; built independent 240-trial Manual_Clinical_Adjudication_240 reference from verbatim ClinicalTrials.gov whyStopped narratives and benchmarked unified clause-aware parser (95.83% accuracy, kappa = 0.9413) head-to-head against Naive Keyword Baseline (70.00%, kappa = 0.6105).",
-      "evidence_files": [
-        "omniniche/stage2/v2_statistical_fortification.py",
-        "outputs/stage2_tables/Table_S2a_Stoppage_Audit_240_Sample.csv",
-        "outputs/stage2_tables/Table_S2a_Stoppage_Auditor_Validation.csv",
-        "outputs/stage2_figures/Fig2_MacroAtlas_41396_Systemic_Organ_ClinicalTrials.png"
-      ]
+      "severity": "Major",
+      "summary": "Pairwise M6 vs M3 DeLong tests added to Table_S3f; calibrate Title/Abstract/Results §3/Discussion attribution between M3 (tau_early = 0.6614) and M4-M6 (M6 = 0.6710, P_vs_M1 = 1.11e-21, P_vs_M3 = 0.205 stratified / 0.0563 Group5Fold / 0.0353 single-target / 8.93e-13 Maturation; Core-6 Group5Fold M3 0.6575 vs M6 0.6415, P = 0.0188)."
     },
     "T2": {
       "status": "completed",
-      "priority": "P0_Fatal",
-      "axis": "mechanism-evidence / reproducibility",
-      "summary": "Replaced hand-coded DRUG_COMPARTMENT_MAP and pIC50 tuning with objective organ-specific single-cell pseudobulk expression routing (>=58% of peak compartment) coupled with tau_0-weighted receptor-sink dilution, unsigned ridge-GRN leverage at uniform pIC50 = 7.5, closure-free cell-level module activity coupling across 64 human donors, and stage-blind fixed-s0 evaluation.",
-      "evidence_files": [
-        "omniniche/stage2/fibrosis_mash_deconvolution.py",
-        "outputs/stage2_tables/Table_S4a_PanOrgan_Fibrosis_All_Human_Donors.csv",
-        "outputs/stage2_tables/Table_S4b_CrossOrgan_ZeroShot_Arena.csv",
-        "outputs/stage2_figures/Fig4_PanOrgan_Fibrosis_ZeroShot_and_Hysteresis.png"
-      ]
+      "severity": "Major",
+      "summary": "Harmonized log2(CPM+1) 10-gene D_ECM scaling in pan_disease_drift_law.py & Table_S3m (Solid_Oncology = 0.3500, Pulmonary_IPF_ARDS = 0.3265, Infectious_Sepsis = 0.0700); document 6-to-12 axis aliasing/consensus_drift rule in Methods."
     },
     "T3": {
       "status": "completed",
-      "priority": "P1_Major",
-      "axis": "clinical-validity / statistical-rigor",
-      "summary": "Expanded pan-organ human fibrosis benchmark from 14 to 24 live ClinicalTrials.gov SHA-256-locked Phase IIb/III trials across liver (n=13), lung (n=8), and kidney (n=3) (10 winners vs 14 failures; All-24 AUROC = 0.8714, exact P = 0.0010; Core-14 AUROC = 0.9583; Stage-Blind AUROC = 0.7643 / 0.9375; bidirectional 3x3 & LOOO AUROC = 0.8357-0.8821).",
-      "evidence_files": [
-        "omniniche/stage2/fibrosis_mash_deconvolution.py",
-        "outputs/stage2_tables/Table_S4_Fibrosis_Phase3_Benchmark_Trials.csv",
-        "outputs/stage2_tables/Table_S4f_Bidirectional_3x3_CrossOrgan_Transfer.csv",
-        "outputs/stage2_figures/Fig4_PanOrgan_Fibrosis_ZeroShot_and_Hysteresis.png"
-      ]
+      "severity": "Major",
+      "summary": "CD8:myCAF added to Fig. 5d (6 methods, clean 2-col legend); report B5_Uninformative_Linear_Mean (0.6065 on n=83; 0.6442 on n=107; 0.6548/0.5385 on melanoma; 0.7630 on NSCLC bulk) and BCC No-Visium (1.0000, P=0.0266) symmetrically across Table 2 and Results §6; distinguish n=83 monotherapy, n=24 chemo-IO, and n=14 post-resection scRNA."
     },
     "T4": {
       "status": "completed",
-      "priority": "P1_Major",
-      "axis": "novelty-significance / statistical-rigor",
-      "summary": "Executed head-to-head benchmark and joint synergy evaluation against Open Targets v24.09 target-disease human genetic association and somatic mutation evidence across n = 11,637 scientific and n = 23,761 maturation trials (Genetics + DNAcc AUROC = 0.6977 vs Genetics alone 0.6362, DeLong P = 7.13e-10; Maturation 0.7190 vs 0.6631, P = 2.19e-103; 3-pillar target-clustered OR = 1.38, P_cluster = 2.39e-4).",
-      "evidence_files": [
-        "omniniche/stage2/v2_statistical_fortification.py",
-        "outputs/stage2_tables/Table_S3l_Genetics_vs_DNAcc_Orthogonality.csv",
-        "outputs/stage2_tables/Table_S3g_Multivariable_FixedEffects_Control.csv",
-        "outputs/stage2_figures/Fig3_PanOrgan_Dynamic_Drift_and_DNAcc_Law.png"
-      ]
+      "severity": "Major",
+      "summary": "Fig. 4c annotated with borderless legend contrasting empirical Youden cutoff p >= 0.0535 (10/10 [100%] sensitivity, 10/14 [71.4%] specificity) vs raw physical basin cutoff p >= 0.50 (5/10 [50%] sensitivity, 13/14 [92.9%] specificity); update Results §4, Table 2, Discussion, and Fig. 4c legend."
     },
     "T5": {
       "status": "completed",
-      "priority": "P1_Major",
-      "axis": "statistical-rigor / experimental-design",
-      "summary": "Replaced hand-assigned AXIS_FIBROTIC_BARRIER constants with empirical collagen-myofibroblast ECM density D_ECM(axis) in [0.070, 0.350] derived from HPA v23 and single-cell stroma; added unseen-target Group5Fold CV inside single-target monotherapies (scientific P = 1.35e-4; maturation AUROC = 0.6375, P = 7.39e-123); added regulatory approval (R6, AUROC = 0.6777) and strict 9-axis parenchymal (R7, AUROC = 0.6860) sensitivity regimes; achieved significant within-modality DNAcc gains across small molecules, antibodies, and proteins/peptides.",
-      "evidence_files": [
-        "omniniche/stage2/pan_disease_drift_law.py",
-        "omniniche/stage2/v2_statistical_fortification.py",
-        "outputs/stage2_tables/Table_S3m_Empirical_Axis_ECM_Density.csv",
-        "outputs/stage2_tables/Table_S3f_SixStep_Ablation_and_GroupKFold.csv",
-        "outputs/stage2_tables/Table_S3k_WithinModality_DNAcc_Stratified_Audit.csv",
-        "outputs/stage2_tables/Table_S3e_Unreported_Stop_Sensitivity_Bounds.csv"
-      ]
+      "severity": "Major",
+      "summary": "Fig. 5e annotated with exact delta and Mann-Whitney P = 0.78 (n.s.); define Net CD8+ Cytotoxic Score = CD8_eff - 0.5*CD8_exh in Methods, note 7/15 T-cell-sorted fractions lacking paired myCAF counts, and moderate 'confirmed' to exploratory non-significant trend in Results §6 and Fig. 5e legend."
     },
     "T6": {
       "status": "completed",
-      "priority": "P1_Major",
-      "axis": "experimental-design / claim-moderation",
-      "summary": "Eliminated response-label-stratified early/late staging in solid oncology drift calculation by computing Delta_tau strictly from response-label-free early primary BCC tumors vs advanced resected NSCLC tumors; standardized ectopic switch denominators across all profiled targets (17.8%-37.1%) and expressed targets (21.0%-41.3%).",
-      "evidence_files": [
-        "omniniche/stage2/pan_disease_drift_law.py",
-        "outputs/stage2_tables/Table_S3_TargetGene_6Axis_Drift_Atlas.csv",
-        "outputs/stage2_figures/Extended_Data_Fig2_SixAxis_SingleCell_Drift_and_Ablation.png"
-      ]
+      "severity": "Minor-Major",
+      "summary": "Report Open Targets Human Genetics adjusted ORs in Results §3 (+5 FE OR = 1.12, P_cluster = 0.0477; 3-pillar FE OR = 1.06, P_cluster = 0.328 alongside DNAcc OR = 1.42, P_cluster = 1.04e-4 and static tau_0 OR = 0.97, P_cluster = 0.719) and explain between-axis fixed-effect absorption."
     },
     "T7": {
       "status": "completed",
-      "priority": "P1_Major",
-      "axis": "clinical-validity / reproducibility",
-      "summary": "Set GSE123813 streaming to exact single-UMI fidelity (umi_stride = 1); ingested real GEO GSE91061 (n=49 pre-nivolumab monotherapy melanoma) and GSE78220 (n=26 pre-pembrolizumab monotherapy melanoma) cohorts, scaling strictly pre-treatment biopsies from n = 32 to n = 107 (including n = 83 pure anti-PD-1 monotherapy); added OmniNiche (No-Visium), 18-gene GEP, CAF/TIDE, and CD8:myCAF baselines plus dual anti-PD-1 + SPP1/TREM2 TAM rescue (74.6%).",
-      "evidence_files": [
-        "omniniche/stage2/solid_tumor_spatial_icb.py",
-        "outputs/stage2_tables/Table_S5_SolidTumor_ICB_Spatial_Responder_Benchmark.csv",
-        "outputs/stage2_tables/Table_S5i_Pooled_PreTreatment_107Patients_Master.csv",
-        "outputs/stage2_figures/Fig5_SolidTumor_Visium_Exclusion_and_PreICB_Responder.png"
-      ]
+      "severity": "Minor-Major",
+      "summary": "Clarify SLC5A2 native tubular expression (tau_0 = 0.8959 in GSE271188) vs tubuloglomerular hemodynamic routing in Methods, and discuss incretin stage sensitivity (semaglutide 0.7531 -> 0.0592, tirzepatide 0.8545 -> 0.0623, pegbelfermin 0.1589 -> 0.9648 under StageBlind_FixedS0) citing Loomba et al. Lancet Gastroenterol Hepatol 2023 (PMID: 36934740)."
     },
     "T8": {
       "status": "completed",
-      "priority": "P1_Major",
-      "axis": "reproducibility / writing-clarity",
-      "summary": "Unified clause-aware negation-stripping stoppage parser across macro_clinical_census.py and v2_statistical_fortification.py (admin halts = 4,838 / 9,406 = 51.4%; 2020-2025 pooled = 64.0%, 2021 peak = 66.3%); reconciled modality counts across all 29,791 target-resolved trials (18,128 small-molecule regimens [17,963 typed + 165 untyped chemical], 7,308 IgG antibodies, 4,355 non-antibody biologics [4,021 proteins/peptides + 334 cell/gene/oligo]).",
-      "evidence_files": [
-        "omniniche/stage2/macro_clinical_census.py",
-        "omniniche/stage2/v2_statistical_fortification.py",
-        "outputs/stage2_tables/Table_S1_Systemic_Organ_ClinicalTrials_PRISMA_Summary.csv",
-        "outputs/stage2_tables/Table_S2_Target_Resolved_Trials_Deconvolution.csv"
-      ]
+      "severity": "Minor-Major",
+      "summary": "Clarify deterministic in silico operator shift framing for P = 1.78e-13 across n = 70 non-responders (Results §6 & Fig. 5g legend) and pre-treatment bulk CAF barrier load framing for HR = 1.95 (Abstract & Fig. 1d legend)."
     },
     "T9": {
       "status": "completed",
-      "priority": "P2_Minor_Major",
-      "axis": "figures-and-tables / writing-clarity",
-      "summary": "Added explicit Block A (Deconfounded Scientific Cohort, n = 11,637, G = 374) and Block B (Definitive Phase II-to-III/IV Maturation Cohort & Per-Axis Breakdown, n = 23,761, G = 561) headers in Table 1 and updated Fig. 2-5 and Extended Data Figs. 1-4.",
-      "evidence_files": [
-        "manuscript/OmniNiche_Flagship_Manuscript_EN.md",
-        "manuscript/OmniNiche_Flagship_Manuscript_ZH_Preview.md"
-      ]
+      "severity": "Minor",
+      "summary": "Fig. 5b title updated to '20,880 QC Spots'; update Results §6, Extended Data Table 1, Fig. 5b/ED Fig. 4a legends to '20,880 quality-filtered spots (of 21,796 total profiled)' and document LOPO logistic projection clipped to [0.08, 0.92] (observed 0.2714-0.9200, 26 tied at 0.9200: 12 R, 14 NR) in Methods."
     },
     "T10": {
       "status": "completed",
-      "priority": "P2_Minor",
-      "axis": "claim-moderation / clinical-validity",
-      "summary": "Added explicit translational toxicology discussion of systemic pan-TGFBR1 (ALK5) cardiac valvulopathy risks and live-verified literature citations for spatially/lineage-restricted stromal alternatives (inhaled ALK5 inhibitors, LRRC15+ myofibroblast targeting, and TREM2/SPP1 or CXCL9:SPP1 myeloid reprogramming).",
-      "evidence_files": [
-        "manuscript/OmniNiche_Flagship_Manuscript_EN.md",
-        "outputs/stage2_tables/verified_pubmed_references.json"
-      ]
+      "severity": "Minor",
+      "summary": "Replace 'symmetric bivariate Moran spatial lag' with 'directed k = 6 nearest-neighbor bivariate Moran spatial lag' in Methods."
     }
   },
-  "completed": [
-    "T1",
-    "T2",
-    "T3",
-    "T4",
-    "T5",
-    "T6",
-    "T7",
-    "T8",
-    "T9",
-    "T10"
-  ],
-  "failed": []
+  "previous_phases": {
+    "v2_5_second_round_journal_benchmark": {
+      "plan_file": "Journal_Benchmark_SecondRound_Teardown_v2_5.md",
+      "completed": [
+        "MOD-01",
+        "MOD-02",
+        "MOD-03",
+        "MOD-04",
+        "MOD-05",
+        "MOD-06",
+        "MOD-07",
+        "MOD-08"
+      ]
+    },
+    "v2_4_simulated_natmed_5reviewer_panel": {
+      "plan_file": "Simulated_NatMed_Peer_Review_v2_3_Report.md",
+      "completed": [
+        "T1",
+        "T2",
+        "T3",
+        "T4",
+        "T5",
+        "T6",
+        "T7",
+        "T8",
+        "T9",
+        "T10",
+        "T11",
+        "T12",
+        "T13",
+        "T14",
+        "T15"
+      ]
+    }
+  }
 }

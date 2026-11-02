@@ -47,8 +47,10 @@ from omniniche.stage2.v2_statistical_fortification import (
     _wilson_ci95,
     audit_stoppage_classifier_benchmark,
     bootstrap_classification_metrics,
+    compute_2d_continuous_dose_synergy_surface,
     compute_2d_fibrosis_bliss_matrix_and_landscape,
     compute_2d_tumor_waddington_surface_shift,
+    compute_antipd1_monotherapy_survival_and_roc,
     compute_calibration_deciles,
     compute_continuous_fibrosis_hysteresis_curve,
     compute_continuous_profile_likelihood_curves,
@@ -791,6 +793,9 @@ def main() -> None:
     bliss_2d_df.to_csv(out_tables / "Table_S4e_Fibrosis_2D_Bliss_Matrix.csv", index=False, encoding="utf-8")
     np.savez_compressed(out_tables / "Fig4_Waddington_2D_Quiver_Fibrosis.npz", **fib_quiver_npz)
 
+    dose_syn_df = compute_2d_continuous_dose_synergy_surface(grammar_liv, n_grid=13)
+    dose_syn_df.to_csv(out_tables / "Table_S4h_Continuous_2D_Dose_Synergy_Surface.csv", index=False, encoding="utf-8")
+
     print("\n>>> [Step 6/7] Fortifying 4-Cohort Solid-Tumor Anti-PD-1 Benchmarks (N=83 Pure Mono & N=107 All Pre-Treatment)...", flush=True)
     df_bcc = pd.read_csv(out_tables / "Table_S5c_GSE123813_PreAntiPD1_Patient_Predictions.csv")
     df_m91 = pd.read_csv(out_tables / "Table_S5j_GSE91061_Melanoma_PreNivo_Mono_Predictions.csv")
@@ -895,6 +900,11 @@ def main() -> None:
 
     tum_quiver_npz = compute_2d_tumor_waddington_surface_shift(prox_4_mapped)
     np.savez_compressed(out_tables / "Fig5_Waddington_2D_Quiver_SolidTumor.npz", **tum_quiver_npz)
+
+    surv_74_df, surv_sum_df, roc_107_df = compute_antipd1_monotherapy_survival_and_roc(vault_sc, out_tables)
+    surv_74_df.to_csv(out_tables / "Table_S5l_AntiPD1_Monotherapy_Survival_74Patients.csv", index=False, encoding="utf-8")
+    surv_sum_df.to_csv(out_tables / "Table_S5m_AntiPD1_Survival_Summary.csv", index=False, encoding="utf-8")
+    roc_107_df.to_csv(out_tables / "Table_S5n_PreTreatment_107Patients_ROC_Curves.csv", index=False, encoding="utf-8")
 
     _, peak_bytes = tracemalloc.get_traced_memory()
     tracemalloc.stop()

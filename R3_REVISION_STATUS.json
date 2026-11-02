@@ -1,0 +1,19 @@
+{
+  "skill": "flagship-round3-elevation",
+  "initialized_at": "2026-11-01T19:17:35",
+  "manuscript_state_path": "F:\\OmniNiche_Universal\\manuscript\\MANUSCRIPT_STATE.json",
+  "target_journal": "Nature Computational Science",
+  "locked_title": "Dynamic single-cell niche remodeling and biophysical steric exclusion govern clinical trial attrition across human organs",
+  "project_archetype": "multiomics",
+  "modules": {
+    "M0_round2_snapshot_archived": true,
+    "M1_benchmarks_esm_peer_reviews_downloaded": true,
+    "M2_four_pass_teardown_and_figure_autopsy_completed": true,
+    "M3_orthogonal_depth_code_and_validations_executed": true,
+    "M4_organic_main_supp_figure_ecosystem_rebuilt_and_inspected": true,
+    "M5_three_reader_cognitive_ergonomics_rewritten": true,
+    "M6_full_package_six_round_parity_audit_passed": true
+  },
+  "locked_user_approved_figures": [],
+  "last_verified_at": "2026-11-02T01:24:33"
+}

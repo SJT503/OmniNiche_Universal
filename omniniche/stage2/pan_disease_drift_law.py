@@ -142,16 +142,13 @@ ECM_BARRIER_SIGNATURE_GENES: tuple[str, ...] = (
     "COL1A1",
     "COL1A2",
     "COL3A1",
-    "POSTN",
     "FN1",
-    "LOXL2",
-    "CCN2",
-    "FAP",
+    "POSTN",
     "ACTA2",
-    "TGFB1",
-    "TGFBR1",
-    "PDGFRA",
-    "PDGFRB",
+    "FAP",
+    "LUM",
+    "DCN",
+    "THBS2",
 )
 
 # Organ-specific normal HPA cell-type keywords for secondary axes lacking paired stage-resolved scRNA-seq
@@ -169,11 +166,13 @@ def compute_empirical_axis_ecm_density_map(
     vault_pb: pathlib.Path,
     hpa_tsv_path: pathlib.Path | None = None,
 ) -> dict[str, float]:
-    """Derive empirical interstitial ECM barrier penalty D_ECM(axis) in [0.06, 0.36] from single-cell & HPA data.
+    """Derive empirical interstitial ECM barrier penalty D_ECM(axis) in [0.07, 0.35] from harmonized log2(CPM+1) data.
 
-    For the 6 primary stage-resolved human single-cell axes, D_ECM is proportional to the empirical late-stage
-    compartmental expression of conserved interstitial matrix/stromal genes (`ECM_BARRIER_SIGNATURE_GENES`).
-    For the 6 secondary axes, D_ECM is derived from organ-matched HPA single-cell ECM transcript abundance.
+    For the 6 primary stage-resolved human single-cell axes, D_ECM is proportional to the harmonized log2(CPM + 1)
+    late-stage compartmental expression of the 10-gene structural collagen-myofibroblast signature
+    (`ECM_BARRIER_SIGNATURE_GENES`), automatically converting natural-log ln(CP10K + 1) matrices onto the
+    identical log2(CPM + 1) scale. For the 6 secondary axes, D_ECM is derived from organ-matched HPA single-cell
+    nCPM transcript abundance scaled by 0.72 relative to active fibrotic remodeling.
     """
     core_files = {
         "Hepatic_MASH_Fibrosis": "axis1_liver_fibrosis_late_comp.csv",
@@ -189,15 +188,23 @@ def compute_empirical_axis_ecm_density_map(
         if fpath.exists():
             ldf = pd.read_csv(fpath, index_col=0)
             ldf.index = ldf.index.astype(str).str.upper()
+            mat_vals = ldf.to_numpy(dtype=float)
+            if mat_vals.size > 0 and float(np.nanmax(mat_vals)) < 8.0:
+                # Harmonize natural-log ln(CP10K + 1) pseudobulk onto log2(CPM + 1)
+                ldf = pd.DataFrame(
+                    np.log2(np.expm1(np.maximum(mat_vals, 0.0)) * 100.0 + 1.0),
+                    index=ldf.index,
+                    columns=ldf.columns,
+                )
             present = [g for g in ECM_BARRIER_SIGNATURE_GENES if g in ldf.index]
             if present:
-                # Peak stromal/mesenchymal compartment log2(CPM+1) across conserved ECM barrier genes
+                # Peak stromal/mesenchymal compartment log2(CPM+1) across 10-gene structural ECM signature
                 raw_scores[ax] = float(ldf.loc[present].max(axis=1).mean())
 
     # Secondary axes from HPA single-cell reference if available
     if hpa_tsv_path is not None and hpa_tsv_path.exists():
         hpa = pd.read_csv(hpa_tsv_path, sep="\t")
-        val_col = "nTPM" if "nTPM" in hpa.columns else hpa.columns[-1]
+        val_col = "nTPM" if "nTPM" in hpa.columns else ("nCPM" if "nCPM" in hpa.columns else hpa.columns[-1])
         hpa_ecm = hpa[hpa["Gene name"].astype(str).str.upper().isin(ECM_BARRIER_SIGNATURE_GENES)].copy()
         if not hpa_ecm.empty:
             piv = hpa_ecm.pivot_table(index="Gene name", columns="Cell type", values=val_col, aggfunc="mean").fillna(0.0)

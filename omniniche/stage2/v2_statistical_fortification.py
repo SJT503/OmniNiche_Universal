@@ -615,11 +615,18 @@ def evaluate_six_step_dnacc_ablation(
     rows = []
     for cv_name, grp_arr in [("Stratified_5Fold", None), ("UnseenTarget_Group5Fold", groups)]:
         p_m1 = _oof_logistic_predictions(steps[0][2], y, groups=grp_arr, seed=seed)
+        p_m3 = _oof_logistic_predictions(steps[2][2], y, groups=grp_arr, seed=seed)
         prev_p = p_m1
         for step_idx, (sid, sdesc, X_mat) in enumerate(steps):
-            p_curr = p_m1 if step_idx == 0 else _oof_logistic_predictions(X_mat, y, groups=grp_arr, seed=seed)
+            if step_idx == 0:
+                p_curr = p_m1
+            elif step_idx == 2:
+                p_curr = p_m3
+            else:
+                p_curr = _oof_logistic_predictions(X_mat, y, groups=grp_arr, seed=seed)
             b_stats = bootstrap_classification_metrics(y, p_curr, n_boot=n_boot, seed=seed + step_idx)
             dl_vs_m1 = fast_delong_paired_test(y, p_curr, p_m1)
+            dl_vs_m3 = fast_delong_paired_test(y, p_curr, p_m3)
             dl_vs_prev = fast_delong_paired_test(y, p_curr, prev_p)
             rows.append(
                 {
@@ -643,6 +650,9 @@ def evaluate_six_step_dnacc_ablation(
                     "delta_auroc_vs_m1": round(dl_vs_m1["delta_auroc"], 4),
                     "delong_p_vs_m1": dl_vs_m1["p_value"],
                     "delong_log10p_vs_m1": round(dl_vs_m1["log10_p"], 3),
+                    "delta_auroc_vs_m3": round(dl_vs_m3["delta_auroc"], 4),
+                    "delong_p_vs_m3": dl_vs_m3["p_value"],
+                    "delong_log10p_vs_m3": round(dl_vs_m3["log10_p"], 3),
                     "delta_auroc_vs_prev": round(dl_vs_prev["delta_auroc"], 4),
                     "delong_p_vs_prev": dl_vs_prev["p_value"],
                 }
@@ -662,6 +672,7 @@ def evaluate_six_step_dnacc_ablation(
                 ys = sub_df["clinical_success"].to_numpy(dtype=int)
                 gs = sub_df["primary_target_gene"].fillna("UNKNOWN").astype(str).to_numpy()
                 X1_s = sub_df[["tau0_healthy"]].to_numpy(dtype=float)
+                X3_s = sub_df[["tau0_healthy", "vital_bystander_hazard", "tau_early"]].to_numpy(dtype=float)
                 X6_s = np.column_stack(
                     [
                         sub_df["tau0_healthy"].to_numpy(dtype=float),
@@ -677,9 +688,11 @@ def evaluate_six_step_dnacc_ablation(
                 )
                 grp_arg = gs if use_groups else None
                 p1_s = _oof_logistic_predictions(X1_s, ys, groups=grp_arg, seed=seed)
+                p3_s = _oof_logistic_predictions(X3_s, ys, groups=grp_arg, seed=seed)
                 p6_s = _oof_logistic_predictions(X6_s, ys, groups=grp_arg, seed=seed)
                 b6_s = bootstrap_classification_metrics(ys, p6_s, n_boot=n_boot, seed=seed + 50)
                 dl_s = fast_delong_paired_test(ys, p6_s, p1_s)
+                dl_s3 = fast_delong_paired_test(ys, p6_s, p3_s)
                 rows.append(
                     {
                         "cohort": cohort_name,
@@ -702,6 +715,9 @@ def evaluate_six_step_dnacc_ablation(
                         "delta_auroc_vs_m1": round(dl_s["delta_auroc"], 4),
                         "delong_p_vs_m1": dl_s["p_value"],
                         "delong_log10p_vs_m1": round(dl_s["log10_p"], 3),
+                        "delta_auroc_vs_m3": round(dl_s3["delta_auroc"], 4),
+                        "delong_p_vs_m3": dl_s3["p_value"],
+                        "delong_log10p_vs_m3": round(dl_s3["log10_p"], 3),
                         "delta_auroc_vs_prev": round(dl_s["delta_auroc"], 4),
                         "delong_p_vs_prev": dl_s["p_value"],
                     }
@@ -1885,3 +1901,263 @@ def compute_2d_tumor_waddington_surface_shift(
         out[f"U_2d_{tag}"] = u - np.min(u)
 
     return out
+
+
+# ---------------------------------------------------------------------------
+# 9. v2.3 Continuous 2D Dose-Response Bliss Surface, Survival & ROC Curves
+# ---------------------------------------------------------------------------
+def compute_2d_continuous_dose_synergy_surface(
+    grammar: NicheGrammar,
+    n_grid: int = 13,
+) -> pd.DataFrame:
+    """Compute continuous 2D Parenchyma x Myofibroblast dose-response remission & Bliss excess surface in locked F4 cirrhosis."""
+    solver = LangevinNicheSolver(grammar, t_end=96.0, dt=0.5)
+    s0_f4 = np.array([0.85, 0.88, 0.90], dtype=float)
+    paren_grid = np.linspace(0.0, 0.90, n_grid)
+    myofib_grid = np.linspace(0.0, 0.30, n_grid)
+
+    mono_paren: dict[int, float] = {}
+    for i, ep in enumerate(paren_grid):
+        regs = [] if ep <= 1e-9 else [InterventionRegimen("Parenchyma_Injury", float(ep), "small_molecule")]
+        res = solver.simulate_ensemble(s0=s0_f4, regimens=regs, n_patients=220, seed=5100 + i)
+        mono_paren[i] = float(res["remission_rate"])
+
+    mono_myofib: dict[int, float] = {}
+    for j, em in enumerate(myofib_grid):
+        regs = [] if em <= 1e-9 else [InterventionRegimen("Myofibroblast", float(em), "small_molecule")]
+        res = solver.simulate_ensemble(s0=s0_f4, regimens=regs, n_patients=220, seed=5200 + j)
+        mono_myofib[j] = float(res["remission_rate"])
+
+    rows = []
+    for j, em in enumerate(myofib_grid):
+        for i, ep in enumerate(paren_grid):
+            p_a = mono_paren[i]
+            p_b = mono_myofib[j]
+            exp_bliss = p_a + p_b - (p_a * p_b)
+            if ep <= 1e-9:
+                obs = p_b
+            elif em <= 1e-9:
+                obs = p_a
+            else:
+                regs_ab = [
+                    InterventionRegimen("Parenchyma_Injury", float(ep), "small_molecule"),
+                    InterventionRegimen("Myofibroblast", float(em), "small_molecule"),
+                ]
+                res_ab = solver.simulate_ensemble(s0=s0_f4, regimens=regs_ab, n_patients=220, seed=5500 + j * 31 + i)
+                obs = float(res_ab["remission_rate"])
+            rows.append(
+                {
+                    "idx_parenchyma": int(i),
+                    "idx_myofibroblast": int(j),
+                    "eta_parenchyma": round(float(ep), 4),
+                    "eta_myofibroblast": round(float(em), 4),
+                    "mono_parenchyma_remission": round(p_a, 4),
+                    "mono_myofibroblast_remission": round(p_b, 4),
+                    "expected_bliss_remission": round(exp_bliss, 4),
+                    "observed_combo_remission": round(obs, 4),
+                    "bliss_synergy_excess": round(obs - exp_bliss, 4),
+                }
+            )
+    return pd.DataFrame(rows)
+
+
+def _mantel_cox_logrank_and_cox_hr(
+    time_months: np.ndarray,
+    event_dead: np.ndarray,
+    unfavorable_group: np.ndarray,
+    strata: np.ndarray | None = None,
+) -> dict[str, float]:
+    """Two-sided unstratified & cohort-stratified Mantel-Cox log-rank test and exact 1-df Cox partial-likelihood HR."""
+    t = np.asarray(time_months, dtype=float)
+    e = np.asarray(event_dead, dtype=int)
+    x = np.asarray(unfavorable_group, dtype=int)
+    s_arr = np.zeros(len(t), dtype=object) if strata is None else np.asarray(strata, dtype=object)
+
+    def _eval_logrank_and_cox(strata_vec: np.ndarray) -> tuple[float, float, float, float, float]:
+        o1_sum, e1_sum, v_sum = 0.0, 0.0, 0.0
+        uniq_strata = pd.unique(strata_vec)
+        for st_val in uniq_strata:
+            m_st = strata_vec == st_val
+            ts, es, xs = t[m_st], e[m_st], x[m_st]
+            for ti in np.sort(np.unique(ts[es == 1])):
+                at_risk = ts >= ti
+                n = int(np.sum(at_risk))
+                n1 = int(np.sum(at_risk & (xs == 1)))
+                d = int(np.sum((ts == ti) & (es == 1)))
+                d1 = int(np.sum((ts == ti) & (es == 1) & (xs == 1)))
+                if n <= 1:
+                    continue
+                o1_sum += d1
+                e1_sum += d * (n1 / float(n))
+                v_sum += (n1 * (n - n1) * d * (n - d)) / float(n * n * (n - 1))
+
+        chi2_val = ((o1_sum - e1_sum) ** 2) / v_sum if v_sum > 0 else 0.0
+        p_val = float(stats.chi2.sf(chi2_val, df=1))
+
+        beta = 0.0
+        hess = 0.0
+        for _ in range(35):
+            grad, hess = 0.0, 0.0
+            for st_val in uniq_strata:
+                m_st = strata_vec == st_val
+                ts, es, xfs = t[m_st], e[m_st], x[m_st].astype(float)
+                for ti in np.sort(np.unique(ts[es == 1])):
+                    risk = ts >= ti
+                    ev = (ts == ti) & (es == 1)
+                    d = float(np.sum(ev))
+                    w = np.exp(beta * xfs[risk])
+                    s0 = float(np.sum(w))
+                    s1 = float(np.sum(w * xfs[risk]))
+                    s2 = float(np.sum(w * xfs[risk] * xfs[risk]))
+                    grad += float(np.sum(xfs[ev])) - d * (s1 / s0)
+                    hess += d * ((s2 / s0) - (s1 / s0) ** 2)
+            if abs(hess) < 1e-12:
+                break
+            step = grad / hess
+            beta += step
+            if abs(step) < 1e-9:
+                break
+
+        se = math.sqrt(1.0 / hess) if hess > 0 else float("nan")
+        hr = math.exp(beta)
+        lo = math.exp(beta - 1.96 * se) if math.isfinite(se) else float("nan")
+        hi = math.exp(beta + 1.96 * se) if math.isfinite(se) else float("nan")
+        return hr, lo, hi, float(chi2_val), p_val
+
+    hr_u, lo_u, hi_u, chi2_u, p_u = _eval_logrank_and_cox(np.zeros(len(t), dtype=int))
+    hr_s, lo_s, hi_s, chi2_s, p_s = _eval_logrank_and_cox(s_arr)
+    return {
+        "n_unfavorable": int(np.sum(x == 1)),
+        "n_favorable": int(np.sum(x == 0)),
+        "deaths_unfavorable": int(np.sum((x == 1) & (e == 1))),
+        "deaths_favorable": int(np.sum((x == 0) & (e == 1))),
+        "hazard_ratio": round(hr_u, 4),
+        "hr_ci95_low": round(lo_u, 4),
+        "hr_ci95_high": round(hi_u, 4),
+        "logrank_chi2": round(chi2_u, 4),
+        "logrank_p": round(p_u, 5),
+        "stratified_hazard_ratio": round(hr_s, 4),
+        "stratified_hr_ci95_low": round(lo_s, 4),
+        "stratified_hr_ci95_high": round(hi_s, 4),
+        "stratified_logrank_chi2": round(chi2_s, 4),
+        "stratified_logrank_p": round(p_s, 5),
+    }
+
+
+def compute_antipd1_monotherapy_survival_and_roc(
+    vault_sc: pathlib.Path,
+    out_tables: pathlib.Path,
+    n_boot_roc: int = 2000,
+    seed: int = 2026,
+) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    """Build deterministic n=74 anti-PD-1 monotherapy OS tables (GSE78220 + GSE91061) and n=107 continuous ROC curves."""
+    import gzip
+    import re
+    from sklearn.metrics import roc_curve
+
+    # 1. Parse GSE78220 series matrix overall survival (Hugo et al., Cell 2016)
+    sm78 = vault_sc / "GSE78220_Melanoma_Pembrolizumab_Monotherapy" / "GSE78220_series_matrix.txt.gz"
+    titles, chars = [], []
+    with gzip.open(sm78, "rt", encoding="utf-8", errors="ignore") as f:
+        for line in f:
+            if line.startswith("!Sample_title"):
+                titles = [c.strip('"') for c in line.strip().split("\t")[1:]]
+            elif line.startswith("!Sample_characteristics_ch1"):
+                chars.append([c.strip('"') for c in line.strip().split("\t")[1:]])
+    rows78 = []
+    for j, t_str in enumerate(titles):
+        rec = {"pt_num": re.sub(r"[AB]$", "", t_str)}
+        for crow in chars:
+            if j < len(crow) and ": " in crow[j]:
+                k, v = crow[j].split(": ", 1)
+                rec[k.strip().lower()] = v.strip()
+        rows78.append(rec)
+    df78_meta = pd.DataFrame(rows78)
+    df78_meta = df78_meta[df78_meta["biopsy time"] == "pre-treatment"].drop_duplicates(subset=["pt_num"]).copy()
+    df78_meta["patient_id"] = "GSE78220_" + df78_meta["pt_num"]
+    df78_meta["os_days"] = pd.to_numeric(df78_meta["overall survival (days)"], errors="coerce")
+    df78_meta["event_dead"] = (df78_meta["vital status"].str.lower() == "dead").astype(int)
+
+    s5k = pd.read_csv(out_tables / "Table_S5k_GSE78220_Melanoma_PrePembro_Mono_Predictions.csv")
+    m78 = s5k.merge(df78_meta[["patient_id", "os_days", "event_dead"]], on="patient_id", how="inner").dropna(subset=["os_days"])
+
+    # 2. Parse GSE91061 CA209-038 overall survival (Riaz et al., Cell 2017; Surv(OS, !OS_SOR))
+    bms_csv = vault_sc / "GSE91061_Melanoma_Nivolumab_Monotherapy" / "bms038_clinical_data.csv"
+    df91_meta = pd.read_csv(bms_csv)
+    df91_meta["patient_id"] = "GSE91061_" + df91_meta["PatientID"].astype(str)
+    df91_meta["os_days"] = pd.to_numeric(df91_meta["OS"], errors="coerce")
+    df91_meta["event_dead"] = (1 - pd.to_numeric(df91_meta["OS_SOR"], errors="coerce")).astype(int)
+
+    s5j = pd.read_csv(out_tables / "Table_S5j_GSE91061_Melanoma_PreNivo_Mono_Predictions.csv")
+    m91 = s5j.merge(df91_meta[["patient_id", "os_days", "event_dead"]], on="patient_id", how="inner").dropna(subset=["os_days", "event_dead"])
+
+    surv_df = pd.concat([m78, m91], ignore_index=True)
+    surv_df["os_months"] = (surv_df["os_days"] / 30.4375).round(4)
+    # Note: b7_published_caf_exclusion_prob is inverted responder probability (low CAF exclusion = high prob),
+    # so high stromal CAF-exclusion barrier burden corresponds to below-median b7_published_caf_exclusion_prob.
+    med_b7 = float(surv_df["b7_published_caf_exclusion_prob"].median())
+    surv_df["stromal_barrier_high"] = (surv_df["b7_published_caf_exclusion_prob"] < med_b7).astype(int)
+    surv_df["stromal_barrier_group"] = np.where(surv_df["stromal_barrier_high"] == 1, "High_Stromal_Barrier", "Low_Stromal_Barrier")
+
+    # Pre-specified median-split survival summary across all primary scores (100% transparent reporting)
+    surv_specs = [
+        ("Stromal_CAF_Exclusion_Barrier_High_vs_Low", surv_df["stromal_barrier_high"].to_numpy()),
+        ("OmniNiche_Predicted_NonResponder_vs_Responder_Median", (surv_df["simulated_icb_remission_prob"] < surv_df["simulated_icb_remission_prob"].median()).astype(int).to_numpy()),
+        ("Published_18Gene_GEP_Low_vs_High_Median", (surv_df["b6_published_gep18_prob"] < surv_df["b6_published_gep18_prob"].median()).astype(int).to_numpy()),
+        ("Static_PDL1_CD274_Low_vs_High_Median", (surv_df["b1_static_pdl1_prob"] < surv_df["b1_static_pdl1_prob"].median()).astype(int).to_numpy()),
+    ]
+    surv_sum_rows = []
+    for s_name, unfav_vec in surv_specs:
+        res_s = _mantel_cox_logrank_and_cox_hr(
+            surv_df["os_months"].to_numpy(),
+            surv_df["event_dead"].to_numpy(),
+            unfav_vec,
+            strata=surv_df["cohort"].to_numpy(),
+        )
+        surv_sum_rows.append({"stratification": s_name, "n_total": int(len(surv_df)), "total_deaths": int(surv_df["event_dead"].sum()), **res_s})
+    surv_summary_df = pd.DataFrame(surv_sum_rows)
+
+    # 3. Deterministic n=107 strictly pre-treatment ROC curves + 2,000-bootstrap 95% TPR envelope on 101-point FPR grid
+    s5i = pd.read_csv(out_tables / "Table_S5i_Pooled_PreTreatment_107Patients_Master.csv")
+    y_all = s5i["responder"].to_numpy(dtype=int)
+    fpr_grid = np.linspace(0.0, 1.0, 101)
+    rng = np.random.default_rng(seed)
+    pos_idx = np.where(y_all == 1)[0]
+    neg_idx = np.where(y_all == 0)[0]
+
+    roc_methods = [
+        ("OmniNiche_v2_Spatial_Langevin", "simulated_icb_remission_prob"),
+        ("OmniNiche_NoVisium_UniformPij", "no_visium_icb_remission_prob"),
+        ("B6_Published_18Gene_Tcell_GEP", "b6_published_gep18_prob"),
+        ("B7_Published_CAF_TIDE_Exclusion", "b7_published_caf_exclusion_prob"),
+        ("B1_Static_PDL1_CD274", "b1_static_pdl1_prob"),
+    ]
+    roc_rows = []
+    for m_name, col in roc_methods:
+        scores = s5i[col].to_numpy(dtype=float)
+        fpr_emp, tpr_emp, _ = roc_curve(y_all, scores)
+        tpr_interp = np.interp(fpr_grid, fpr_emp, tpr_emp)
+        tpr_interp[0] = 0.0
+        tpr_interp[-1] = 1.0
+
+        boot_tprs = np.zeros((n_boot_roc, len(fpr_grid)), dtype=float)
+        for b in range(n_boot_roc):
+            b_idx = np.concatenate([rng.choice(pos_idx, size=len(pos_idx), replace=True), rng.choice(neg_idx, size=len(neg_idx), replace=True)])
+            fb, tb, _ = roc_curve(y_all[b_idx], scores[b_idx])
+            bi_tpr = np.interp(fpr_grid, fb, tb)
+            bi_tpr[0] = 0.0
+            bi_tpr[-1] = 1.0
+            boot_tprs[b] = bi_tpr
+        ci_lo = np.quantile(boot_tprs, 0.025, axis=0)
+        ci_hi = np.quantile(boot_tprs, 0.975, axis=0)
+        for fg, tg, lo_g, hi_g in zip(fpr_grid, tpr_interp, ci_lo, ci_hi):
+            roc_rows.append(
+                {
+                    "method": m_name,
+                    "fpr": round(float(fg), 4),
+                    "tpr": round(float(tg), 4),
+                    "tpr_ci95_low": round(float(lo_g), 4),
+                    "tpr_ci95_high": round(float(hi_g), 4),
+                }
+            )
+    return surv_df, surv_summary_df, pd.DataFrame(roc_rows)

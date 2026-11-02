@@ -289,6 +289,11 @@ def download_monotherapy_icb_geo_cohorts(vault_sc: pathlib.Path) -> dict[str, An
             "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE91nnn/GSE91061/suppl/GSE91061_BMS038109Sample.hg19KnownGene.raw.csv.gz",
         ),
         (
+            "GSE91061_Melanoma_Nivolumab_Monotherapy",
+            "bms038_clinical_data.csv",
+            "https://raw.githubusercontent.com/riazn/bms038_analysis/master/data/bms038_clinical_data.csv",
+        ),
+        (
             "GSE78220_Melanoma_Pembrolizumab_Monotherapy",
             "GSE78220_series_matrix.txt.gz",
             "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE78nnn/GSE78220/matrix/GSE78220_series_matrix.txt.gz",

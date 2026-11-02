@@ -6,6 +6,12 @@ __pycache__/
 dist/
 build/
 outputs/private_*/
+v_round2_archive/
+benchmarks_r3/
+manuscript/*_v2_6.docx
+manuscript/*_v3_0.docx
+manuscript/*_v3_1.docx
+manuscript/Cover_Letter_NatMed.*
 data_vault/*/*
 !data_vault/*/.gitkeep
 !data_vault/*/*manifest*.json

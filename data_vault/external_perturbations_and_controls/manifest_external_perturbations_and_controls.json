@@ -1,0 +1,93 @@
+{
+  "GSE239760_all_full.soft.gz": {
+    "accession": "GSE239760",
+    "path": "F:\\OmniNiche_Universal\\data_vault\\external_perturbations_and_controls\\GSE239760_TGFBR1i_Galunisertib_Vactosertib\\GSE239760_all_full.soft.gz",
+    "source_url": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE239760&targ=all&form=text&view=full",
+    "size_bytes": 7363739,
+    "sha256": "de81979f2995428ae9f5fe4a53b0ce14c90b42da9dfca2b51aa1bd17e2fdf81a"
+  },
+  "GSE154646_raw_counts_GRCh38.p13_NCBI.tsv.gz": {
+    "accession": "GSE154646",
+    "path": "F:\\OmniNiche_Universal\\data_vault\\external_perturbations_and_controls\\GSE154646_TGFBR1i_RepSox_Human\\GSE154646_raw_counts_GRCh38.p13_NCBI.tsv.gz",
+    "source_url": "https://www.ncbi.nlm.nih.gov/geo/download/?type=rnaseq_counts&acc=GSE154646&format=file&file=GSE154646_raw_counts_GRCh38.p13_NCBI.tsv.gz",
+    "size_bytes": 806414,
+    "sha256": "7eff4fbe9fe0b8b4f99d6d45f4ec761665668c0cf0d666b816ac548f51df655a"
+  },
+  "GSE154646_gsm_meta.soft.gz": {
+    "accession": "GSE154646",
+    "path": "F:\\OmniNiche_Universal\\data_vault\\external_perturbations_and_controls\\GSE154646_TGFBR1i_RepSox_Human\\GSE154646_gsm_meta.soft.gz",
+    "source_url": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE154646&targ=gsm&form=text&view=brief",
+    "size_bytes": 2941,
+    "sha256": "31b5fe07f80e8a5ecb20ad8ccd55ce39feec1a654e94e988c990e949ccf72412"
+  },
+  "GSE226249_raw_counts_GRCh38.p13_NCBI.tsv.gz": {
+    "accession": "GSE226249",
+    "path": "F:\\OmniNiche_Universal\\data_vault\\external_perturbations_and_controls\\GSE226249_Pirfenidone_Human_IPF_Fibroblasts\\GSE226249_raw_counts_GRCh38.p13_NCBI.tsv.gz",
+    "source_url": "https://www.ncbi.nlm.nih.gov/geo/download/?type=rnaseq_counts&acc=GSE226249&format=file&file=GSE226249_raw_counts_GRCh38.p13_NCBI.tsv.gz",
+    "size_bytes": 1141981,
+    "sha256": "1f30949ab90ab7a7ba6b100c56cf614aec9439f31375f0c7d9b1cb34791fbf33"
+  },
+  "GSE226249_gsm_meta.soft.gz": {
+    "accession": "GSE226249",
+    "path": "F:\\OmniNiche_Universal\\data_vault\\external_perturbations_and_controls\\GSE226249_Pirfenidone_Human_IPF_Fibroblasts\\GSE226249_gsm_meta.soft.gz",
+    "source_url": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE226249&targ=gsm&form=text&view=brief",
+    "size_bytes": 2145,
+    "sha256": "75ed58e8db4ea87e19ab873e1a58cd152f85e58c6f49883af0e281f940990e50"
+  },
+  "GSE210020_raw_counts_GRCh38.p13_NCBI.tsv.gz": {
+    "accession": "GSE210020",
+    "path": "F:\\OmniNiche_Universal\\data_vault\\external_perturbations_and_controls\\GSE210020_Nintedanib_Human_Lung_Fibroblasts\\GSE210020_raw_counts_GRCh38.p13_NCBI.tsv.gz",
+    "source_url": "https://www.ncbi.nlm.nih.gov/geo/download/?type=rnaseq_counts&acc=GSE210020&format=file&file=GSE210020_raw_counts_GRCh38.p13_NCBI.tsv.gz",
+    "size_bytes": 1782389,
+    "sha256": "1b48e62770bc872b4e8254ddb5a22e7010668439b2aaf910c4888aabb5f18a99"
+  },
+  "GSE210020_gsm_meta.soft.gz": {
+    "accession": "GSE210020",
+    "path": "F:\\OmniNiche_Universal\\data_vault\\external_perturbations_and_controls\\GSE210020_Nintedanib_Human_Lung_Fibroblasts\\GSE210020_gsm_meta.soft.gz",
+    "source_url": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE210020&targ=gsm&form=text&view=brief",
+    "size_bytes": 4248,
+    "sha256": "6383695a2eac25e0d7d1f40adb6513a54c6d577ada9a0212783cd3ba49a64118"
+  },
+  "GSE65904_gsm_full.soft.gz": {
+    "accession": "GSE65904",
+    "path": "F:\\OmniNiche_Universal\\data_vault\\external_perturbations_and_controls\\GSE65904_NonICB_Melanoma_Survival\\GSE65904_gsm_full.soft.gz",
+    "source_url": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE65904&targ=gsm&form=text&view=full",
+    "size_bytes": 95473100,
+    "sha256": "90fc05af555ed41b278385dd894f86c599a251ece559c25736ae64a7e1bfffed"
+  },
+  "GPL10558_platform.soft.gz": {
+    "accession": "GPL10558",
+    "path": "F:\\OmniNiche_Universal\\data_vault\\external_perturbations_and_controls\\GSE65904_NonICB_Melanoma_Survival\\GPL10558_platform.soft.gz",
+    "source_url": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GPL10558&targ=self&form=text&view=full",
+    "size_bytes": 15459212,
+    "sha256": "c9b2bb2eac13fac86597ea0399d61970214f10174ab7f60c428302e538062c17"
+  },
+  "GSE22153_gsm_full.soft.gz": {
+    "accession": "GSE22153",
+    "path": "F:\\OmniNiche_Universal\\data_vault\\external_perturbations_and_controls\\GSE22153_NonICB_StageIV_Melanoma_OS\\GSE22153_gsm_full.soft.gz",
+    "source_url": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE22153&targ=gsm&form=text&view=full",
+    "size_bytes": 19025836,
+    "sha256": "c34729ca7a17937cdf284606e01d0fb926540952dfac2e02ae311596f5cda249"
+  },
+  "GPL6102_platform.soft.gz": {
+    "accession": "GPL6102",
+    "path": "F:\\OmniNiche_Universal\\data_vault\\external_perturbations_and_controls\\GSE22153_NonICB_StageIV_Melanoma_OS\\GPL6102_platform.soft.gz",
+    "source_url": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GPL6102&targ=self&form=text&view=full",
+    "size_bytes": 6249455,
+    "sha256": "2a57a1ef7276730f52a7d49499ecfdffcdce271f3b0bad4795055f8e3d984e30"
+  },
+  "GSE115137_raw_counts_GRCh38.p13_NCBI.tsv.gz": {
+    "accession": "GSE115137",
+    "path": "F:\\OmniNiche_Universal\\data_vault\\external_perturbations_and_controls\\GSE115137_TGFBR1i_A8301_Human_Mesenchymal_Stroma\\GSE115137_raw_counts_GRCh38.p13_NCBI.tsv.gz",
+    "source_url": "https://www.ncbi.nlm.nih.gov/geo/download/?type=rnaseq_counts&acc=GSE115137&format=file&file=GSE115137_raw_counts_GRCh38.p13_NCBI.tsv.gz",
+    "size_bytes": 644515,
+    "sha256": "6cf673fbd9ad8503d56c921872259e147efdd8472d4b970cc4831b4d6e004a2e"
+  },
+  "GSE115137_gsm_meta.soft.gz": {
+    "accession": "GSE115137",
+    "path": "F:\\OmniNiche_Universal\\data_vault\\external_perturbations_and_controls\\GSE115137_TGFBR1i_A8301_Human_Mesenchymal_Stroma\\GSE115137_gsm_meta.soft.gz",
+    "source_url": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE115137&targ=gsm&form=text&view=brief",
+    "size_bytes": 2112,
+    "sha256": "9ded0b8834721837f09d561656e13d695b02535fa5fb60183d162a6d090aa70b"
+  }
+}
